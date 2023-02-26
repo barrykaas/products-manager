@@ -40,8 +40,7 @@ function QRCodeView({ text }) {
   }, [qrCodeRef]);
 
   return (
-    <Box>
-        <Button>Hello world</Button>
+    <Box sx={{ mt: 2 }}>
       <div id="reader" width="400px"></div>
     </Box>
   );

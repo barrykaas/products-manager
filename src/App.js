@@ -4,7 +4,7 @@ import './App.css';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 //import BrandList from './brandsList';
-import { Paper, Container} from '@mui/material';
+import { Typography, Paper, Container} from '@mui/material';
 import ButtonAppBar from './MyAppBar'
 //import ProductTable from './productsTable'
 import QRCodeView from './BarcodeScanner'
@@ -19,6 +19,10 @@ function App() {
   return (
     <div className="App">
       {      
+      <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+    />
       /* <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
@@ -40,10 +44,14 @@ function App() {
       <CssBaseline />
       <ButtonAppBar />
    
-      
-        <Paper>
+      <Container maxWidth="sm">
+      <Paper sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }} elevation={2}>
+        <Typography component="h1" variant="h4" align="left">
+            Scan
+        </Typography>
         <QRCodeView />
         </Paper>
+        </Container>
       
       
       
