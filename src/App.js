@@ -6,7 +6,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 //import BrandList from './brandsList';
 import { Paper, Container} from '@mui/material';
 import ButtonAppBar from './MyAppBar'
-import ProductTable from './productsTable'
+//import ProductTable from './productsTable'
 import QRCodeView from './BarcodeScanner'
 
 const darkTheme = createTheme({
@@ -42,7 +42,7 @@ function App() {
    
       
         <Paper>
-        <ProductTable />
+        <QRCodeView />
         </Paper>
       
       
