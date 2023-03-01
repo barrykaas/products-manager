@@ -6,8 +6,9 @@ import CssBaseline from '@mui/material/CssBaseline';
 //import BrandList from './brandsList';
 import { Typography, Paper, Container} from '@mui/material';
 import ButtonAppBar from './MyAppBar'
-//import ProductTable from './productsTable'
+import ProductTable from './productsTable'
 import QRCodeView from './BarcodeScanner'
+import EventItem from './EventItem';
 
 const darkTheme = createTheme({
   palette: {
@@ -15,7 +16,21 @@ const darkTheme = createTheme({
   },
 });
 
+
+
 function App() {
+  let events = [
+    { "name": "Diner",
+      "date": "27-feb-2022",
+      "participants": ["Cas", "Rutger"]},
+      { "name": "Diner",
+      "date": "28-feb-2022",
+      "participants": ["Julian", "Jelle"]},
+      { "name": "Diner",
+      "date": "29-feb-2022",
+      "participants": ["Cas", "Rutger"]}
+  ]
+
   return (
     <div className="App">
       {      
@@ -38,21 +53,14 @@ function App() {
           Learn React
         </a>
         < BrandList />
+        <QRCodeView />
       </header>
        */}
        <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
+      
       <ButtonAppBar />
    
-      <Container maxWidth="sm">
-      <Paper sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }} elevation={2}>
-        <Typography component="h1" variant="h4" align="left">
-            Scan
-        </Typography>
-        <QRCodeView />
-        </Paper>
-        </Container>
-      
+      <ProductTable />
       
       
       </ThemeProvider>
@@ -61,5 +69,18 @@ function App() {
     </div>
   );
 }
+
+// <Container maxWidth="sm">
+//       {/* <Paper sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }} elevation={2}>
+//         <Typography component="h1" variant="h4" align="left">
+//             Scan
+//         </Typography>
+        
+        
+//         </Paper> */}
+//         {events.map(event => (
+//             <EventItem event={event}/>
+//         ))}
+//         </Container>
 
 export default App;
