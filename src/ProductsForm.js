@@ -103,12 +103,15 @@
 
 // export default FormikForm;
 
-import React from 'react';
+import React, { useState, useEffect } from "react";
+
 import ReactDOM from 'react-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+
 
 const validationSchema = yup.object({
   email: yup
@@ -121,10 +124,31 @@ const validationSchema = yup.object({
     .required('Password is required'),
 });
 
+function BrandsSearcher() {
+  const [brands, setBrands] = useState([]);
+  useEffect(() => {
+  fetch('https://django.producten.kaas/api/brands/')
+  .then(response => response.json())
+  .then(data => setBrands(data))
+  .catch(error => console.error(error));
+}, []);
+
+  return (
+    
+    <Autocomplete
+      disablePortal
+      id="combo-box-demo"
+      options={brands.map(element => element.name)}
+      sx={{ width: 300 }}
+      renderInput={(params) => <TextField {...params} label="Movie" />}
+    />
+  );
+}
+
 const ProductsForm = () => {
   const formik = useFormik({
     initialValues: {
-      email: 'foobar@example.com',
+      brand: '',
       password: 'foobar',
     },
     validationSchema: validationSchema,
@@ -136,15 +160,16 @@ const ProductsForm = () => {
   return (
     <div>
       <form onSubmit={formik.handleSubmit}>
-        <TextField
+        <BrandsSearcher
           fullWidth
-          id="email"
-          name="email"
-          label="Email"
-          value={formik.values.email}
+          id="brand"
+          name="brand"
+          label="brand"
+          value={formik.values.brand}
           onChange={formik.handleChange}
-          error={formik.touched.email && Boolean(formik.errors.email)}
-          helperText={formik.touched.email && formik.errors.email}
+          error={formik.touched.brand && Boolean(formik.errors.brand)}
+          helperText={formik.touched.brand && formik.errors.brand}
+          margin="normal"
         />
         <TextField
           fullWidth
@@ -156,6 +181,7 @@ const ProductsForm = () => {
           onChange={formik.handleChange}
           error={formik.touched.password && Boolean(formik.errors.password)}
           helperText={formik.touched.password && formik.errors.password}
+          margin="normal"
         />
         <Button color="primary" variant="contained" fullWidth type="submit">
           Submit

@@ -16,7 +16,7 @@ function ProductTable() {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch("http://django.producten.kaas/api/products/");
+      const response = await fetch("https://django.producten.kaas/api/products/");
       const data = await response.json();
       setProducts(data);
     }

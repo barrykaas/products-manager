@@ -7,8 +7,10 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { Typography, Paper, Container} from '@mui/material';
 import ButtonAppBar from './MyAppBar'
 import ProductTable from './productsTable'
-import QRCodeView from './BarcodeScanner'
+//import QRCodeView from './BarcodeScanner'
 import EventItem from './EventItem';
+import ProductsForm from './ProductsForm';
+import React from "react";
 
 const darkTheme = createTheme({
   palette: {
@@ -57,12 +59,15 @@ function App() {
       </header>
        */}
        <ThemeProvider theme={darkTheme}>
+       <CssBaseline />
       
       <ButtonAppBar />
-   
-      <ProductTable />
-      
-      
+       
+      <Container maxWidth="sm">
+      <Paper sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }} elevation={2}>
+      <ProductsForm />
+      </Paper>
+      </Container>
       </ThemeProvider>
 
 
