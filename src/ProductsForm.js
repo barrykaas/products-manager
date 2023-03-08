@@ -14,6 +14,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
 import getToken from "./apiForAH";
+import ProductCard from "./ProductsSummary";
 
 const validationSchema = yup.object({
   email: yup
@@ -113,8 +114,10 @@ const ProductsForm = () => {
       const data = await response.json();
       if(data['count'] === 0) {
         //setProducts()
+        setProducts(null);
       } else if (data['count'] === 1) {
         setProduct(data['results'][0]);
+        setFormState(3);
       }
       
     }
@@ -131,6 +134,7 @@ const ProductsForm = () => {
           <Tab label="Scan" {...a11yProps(0)} />
           <Tab label="Merk" {...a11yProps(1)} />
           <Tab label="Type" {...a11yProps(2)} />
+          <Tab label="Summary" {...a11yProps(2)} />
         </Tabs>
       </Box>
       <TabPanel value={formState} index={0}>
@@ -142,6 +146,14 @@ const ProductsForm = () => {
       </TabPanel>
       <TabPanel value={formState} index={2}>
         Type
+      </TabPanel>
+      <TabPanel value={formState} index={3}>    
+        {
+          product ? (
+            <ProductCard product={product} />
+          ) : (
+            <p>Not found</p>
+          )}
       </TabPanel>
       <div style={styles.buttonContainer}>
         <Button
@@ -159,12 +171,7 @@ const ProductsForm = () => {
           Next
         </Button>
       </div>
-      {
-        product ? (
-          <p>{JSON.stringify(product)}</p>
-        ) : (
-          <p>Not found</p>
-        )}
+      
       {/* {data ? (
         <p>Received data: {JSON.stringify(data)}</p>
       ) : (
