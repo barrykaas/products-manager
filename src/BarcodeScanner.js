@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Box, Link, Button } from '@mui/material';
 import {Html5QrcodeScanner} from "html5-qrcode"
 
@@ -11,14 +11,15 @@ import {Html5QrcodeScanner} from "html5-qrcode"
 //   },
 // }));
 
-function QRCodeView({ text }) {
-
+function QRCodeView({ setBarcode }) {
+  
 
   const qrCodeRef = useRef(null);
 
 
   const onScanSuccess = (decodedText, decodedResult) => {
     alert(`Code matched = ${decodedText}`);
+    setBarcode(decodedText);
     // handle the scanned code as you like, for example:
     console.log(`Code matched = ${decodedText}`, decodedResult);
   }

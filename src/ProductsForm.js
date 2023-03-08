@@ -1,107 +1,3 @@
-// import React from 'react';
-// import { Formik, Form, Field } from 'formik';
-// import TextField from '@material-ui/core/TextField';
-// import { useFormik } from 'formik';
-// import Button from '@material-ui/core/Button';
-// import TextField from '@material-ui/core/TextField';
-
-// const initialValues = {
-//   id: '',
-//   name: '',
-//   unit_number: '',
-//   unit_weightvol: '',
-//   unit_price: '',
-//   unit_type: '',
-//   date_added: '',
-//   brand: '',
-//   barcode: '',
-//   image: '',
-//   category: ''
-// };
-
-// const onSubmit = (values) => {
-//   // send the values to the REST API endpoint
-//   fetch('https://example.com/api/endpoint', {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json'
-//     },
-//     body: JSON.stringify(values)
-//   })
-//     .then(response => response.json())
-//     .then(data => console.log(data))
-//     .catch(error => console.error(error));
-// };
-
-// const FormikForm = () => (
-//   <Formik
-//     initialValues={initialValues}
-//     onSubmit={onSubmit}
-//   >
-//     {({ values, handleChange, handleBlur, handleSubmit }) => (
-//       <Form onSubmit={handleSubmit}>
-//         <Field name="id">
-//           {({ field }) => (
-//             <TextField label="ID" {...field} />
-//           )}
-//         </Field>
-//         <Field name="name">
-//           {({ field }) => (
-//             <TextField label="Name" {...field} />
-//           )}
-//         </Field>
-//         <Field name="unit_number">
-//           {({ field }) => (
-//             <TextField label="Unit Number" {...field} />
-//           )}
-//         </Field>
-//         <Field name="unit_weightvol">
-//           {({ field }) => (
-//             <TextField label="Unit Weight/Vol" {...field} />
-//           )}
-//         </Field>
-//         <Field name="unit_price">
-//           {({ field }) => (
-//             <TextField label="Unit Price" {...field} />
-//           )}
-//         </Field>
-//         <Field name="unit_type">
-//           {({ field }) => (
-//             <TextField label="Unit Type" {...field} />
-//           )}
-//         </Field>
-//         <Field name="date_added">
-//           {({ field }) => (
-//             <TextField label="Date Added" {...field} />
-//           )}
-//         </Field>
-//         <Field name="brand">
-//           {({ field }) => (
-//             <TextField label="Brand" {...field} />
-//           )}
-//         </Field>
-//         <Field name="barcode">
-//           {({ field }) => (
-//             <TextField label="Barcode" {...field} />
-//           )}
-//         </Field>
-//         <Field name="image">
-//           {({ field }) => (
-//             <TextField label="Image" {...field} />
-//           )}
-//         </Field>
-//         <Field name="category">
-//           {({ field }) => (
-//             <TextField label="Category" {...field} />
-//           )}
-//         </Field>
-//         <Button type="submit" variant="contained" color="primary">Submit</Button>
-//       </Form>
-//     )}
-//   </Formik>
-// );
-
-// export default FormikForm;
 
 import React, { useState, useEffect } from "react";
 
@@ -111,7 +7,13 @@ import * as yup from 'yup';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+import QRCodeView from "./BarcodeScanner";
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
+import getToken from "./apiForAH";
 
 const validationSchema = yup.object({
   email: yup
@@ -127,25 +29,152 @@ const validationSchema = yup.object({
 function BrandsSearcher() {
   const [brands, setBrands] = useState([]);
   useEffect(() => {
-  fetch('https://django.producten.kaas/api/brands/')
-  .then(response => response.json())
-  .then(data => setBrands(data))
-  .catch(error => console.error(error));
-}, []);
+    fetch('https://django.producten.kaas/api/brands/')
+      .then(response => response.json())
+      .then(data => setBrands(data))
+      .catch(error => console.error(error));
+  }, []);
 
   return (
-    
+
     <Autocomplete
       disablePortal
       id="combo-box-demo"
       options={brands.map(element => element.name)}
-      sx={{ width: 300 }}
-      renderInput={(params) => <TextField {...params} label="Movie" />}
+      renderInput={(params) => <TextField {...params} label="Merk" />}
     />
   );
 }
 
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
+
+
+const styles = {
+  buttonContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginTop: '1rem',
+  },
+  prevButton: {
+    marginRight: 'auto',
+  },
+  nextButton: {
+    marginLeft: 'auto',
+  },
+};
+
 const ProductsForm = () => {
+  const [barcode, setBarcode_] = useState(null);
+
+  const [product, setProduct] = useState(null);
+
+  const [formState, setFormState] = useState(0);
+
+  const nextPage = () => {
+    setFormState(formState+1);
+  };
+
+  const handleChange = (event, newValue) => {
+    setFormState(newValue);
+  };
+
+  const [data, setData] = useState(null);
+
+  const setBarcode = (barcode) => {
+    setBarcode_(barcode);
+    
+    async function fetchData(barcode) {
+      const response = await fetch(`https://django.producten.kaas/api/products/?barcode=${barcode}`);
+      const data = await response.json();
+      if(data['count'] === 0) {
+        //setProducts()
+      } else if (data['count'] === 1) {
+        setProduct(data['results'][0]);
+      }
+      
+    }
+  
+    fetchData(barcode);
+  }
+
+
+  return (
+    <div>
+      
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Tabs value={formState} onChange={handleChange} aria-label="basic tabs example">
+          <Tab label="Scan" {...a11yProps(0)} />
+          <Tab label="Merk" {...a11yProps(1)} />
+          <Tab label="Type" {...a11yProps(2)} />
+        </Tabs>
+      </Box>
+      <TabPanel value={formState} index={0}>
+        Scan
+        <QRCodeView setBarcode={setBarcode} />
+      </TabPanel>
+      <TabPanel value={formState} index={1}>
+        Merk
+      </TabPanel>
+      <TabPanel value={formState} index={2}>
+        Type
+      </TabPanel>
+      <div style={styles.buttonContainer}>
+        <Button
+         
+         
+          style={styles.prevButton}
+        >
+          Previous
+        </Button>
+        <Button
+          
+          onClick={nextPage}
+          style={styles.nextButton}
+        >
+          Next
+        </Button>
+      </div>
+      {
+        product ? (
+          <p>{JSON.stringify(product)}</p>
+        ) : (
+          <p>Not found</p>
+        )}
+      {/* {data ? (
+        <p>Received data: {JSON.stringify(data)}</p>
+      ) : (
+        <p>Loading data...</p>
+      )} */}
+    </div>
+  );
+};
+
+const BrandPartForm = () => {
   const formik = useFormik({
     initialValues: {
       brand: '',
@@ -171,6 +200,7 @@ const ProductsForm = () => {
           helperText={formik.touched.brand && formik.errors.brand}
           margin="normal"
         />
+
         <TextField
           fullWidth
           id="password"
