@@ -7,14 +7,16 @@ import * as yup from 'yup';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import QRCodeView from "./BarcodeScanner";
+
+
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
-import getToken from "./apiForAH";
-import ProductCard from "./ProductsSummary";
+import getToken from "../apiForAH";
+import ProductCard from "../ProductsSummary";
+import BarcodeScanner from "../BarcodeScanner";
 
 const validationSchema = yup.object({
   email: yup
@@ -114,7 +116,7 @@ const ProductsForm = () => {
       const data = await response.json();
       if(data['count'] === 0) {
         //setProducts()
-        setProducts(null);
+        setProduct(null);
       } else if (data['count'] === 1) {
         setProduct(data['results'][0]);
         setFormState(3);
@@ -138,11 +140,10 @@ const ProductsForm = () => {
         </Tabs>
       </Box>
       <TabPanel value={formState} index={0}>
-        Scan
-        <QRCodeView setBarcode={setBarcode} />
+        <BarcodeScanner setBarcode={setBarcode}/>
       </TabPanel>
       <TabPanel value={formState} index={1}>
-        Merk
+        BarcodeScanner
       </TabPanel>
       <TabPanel value={formState} index={2}>
         Type

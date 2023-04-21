@@ -7,13 +7,14 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import NativeSelect from '@mui/material/NativeSelect';
 //import BrandList from './brandsList';
-import { Typography, Paper, Container } from '@mui/material';
+import { Typography, Paper, Container, Box } from '@mui/material';
 import ButtonAppBar from './MyAppBar'
 import ProductTable from './productsTable'
 
 import EventItem from './EventItem';
-import ProductsForm from './ProductsForm';
-import React, {useState} from "react";
+import React, { useState } from "react";
+
+import EventController from './Events/EventController';
 
 const darkTheme = createTheme({
   palette: {
@@ -42,8 +43,6 @@ function App() {
     }
   ]
 
-  const [barcode, setBarcode] = useState(null);
-
   return (
     <div className="App">
       {
@@ -71,52 +70,32 @@ function App() {
        */}
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
+        <EventController />
+        {/* <ButtonAppBar />
 
-        <ButtonAppBar />
 
-        
 
         <Container maxWidth="sm">
-          <Paper sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }} elevation={2}>
-            <FormControl fullWidth>
-              <InputLabel variant="standard" htmlFor="uncontrolled-native">
-                Age
-              </InputLabel>
-              <NativeSelect
-                defaultValue={30}
-                inputProps={{
-                  name: 'age',
-                  id: 'uncontrolled-native',
-                }}
-              >
-                
-                <option value={10}>Ten</option>
-                <option value={20}>Twenty</option>
-                <option value={30}>Thirty</option>
-                <option value={10}>Ten</option>
-                <option value={20}>Twenty</option>
-                <option value={30}>Thirty</option>
-                <option value={10}>Ten</option>
-                <option value={20}>Twenty</option>
-                <option value={30}>Thirty</option>
-                <option value={10}>Ten</option>
-                <option value={20}>Twenty</option>
-                <option value={30}>Thirty</option>
-                <option value={10}>Ten</option>
-                <option value={20}>Twenty</option>
-                <option value={30}>Thirty</option>
-              </NativeSelect>
-            </FormControl>
+          <Box
+            sx={{
+              marginTop: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
             <ProductsForm />
-            Barcode = {barcode}
-          </Paper>
-        </Container>
-      </ThemeProvider>
+          </Box>
+          </Container> */}
+      </ThemeProvider> 
 
 
     </div>
   );
 }
+
+// <Paper sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }} elevation={2}>
+// </Paper>
 
 // <Container maxWidth="sm">
 //       {/* <Paper sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }} elevation={2}>
