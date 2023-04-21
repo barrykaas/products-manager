@@ -15,6 +15,9 @@ import EventItem from './EventItem';
 import React, { useState } from "react";
 
 import EventController from './Events/EventController';
+import ShoppingsListsController from './ShoppingLists/ShoppingListsController';
+
+
 
 const darkTheme = createTheme({
   palette: {
@@ -70,7 +73,7 @@ function App() {
        */}
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-        <EventController />
+        <ShoppingsListsController />
         {/* <ButtonAppBar />
 
 

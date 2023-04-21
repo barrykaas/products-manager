@@ -11,7 +11,6 @@ function EventController() {
         <>
             <EventAppBar />
             <EventsList />
-          
         </>
     );
 }

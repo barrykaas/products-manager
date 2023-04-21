@@ -1,6 +1,6 @@
-import { ListItem, ListItemAvatar, Typography, ListItemText, Divider, Avatar, List, ListItemButton} from "@mui/material";
+import { Typography, ListItemText, Divider, List, ListItemButton } from "@mui/material";
 
-function EventsListItem() {
+function ShoppingListsListItem() {
     return (<ListItemButton alignItems="flex-start">
         {/* <ListItemAvatar>
             <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
@@ -24,15 +24,16 @@ function EventsListItem() {
     </ListItemButton>);
 }
 
-function EventsList() {
+function ShoppingsLists() {
+
+    
+
     return (
         <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-            <EventsListItem />
+            <ShoppingListsListItem />
             <Divider component="li" />
         </List>
     );
 }
 
-
-
-export default EventsList;
+export default ShoppingsLists;
