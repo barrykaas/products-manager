@@ -16,21 +16,3 @@ function EventController() {
 }
 
 export default EventController;
-
-//   {/* <Container maxWidth="sm">
-            
-                
-                
-//                 {/* <EventsList /> */}
-//                 <Box
-//                     sx={{
-//                         marginTop: 2,
-//                         display: 'flex',
-//                         flexDirection: 'column',
-//                         alignItems: 'center',
-//                     }}
-//                 >
-//                     {/* <ProductsForm /> */}
-//                 </Box>
-                
-//             </Container> */}

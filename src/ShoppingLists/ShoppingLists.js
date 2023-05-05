@@ -1,12 +1,25 @@
-import { Typography, ListItemText, Divider, List, ListItemButton } from "@mui/material";
+import { Typography, ListItemText, Divider, List, ListItemButton, Collapse } from "@mui/material";
+import React from "react";
+import { TransitionGroup } from 'react-transition-group';
 
-function ShoppingListsListItem() {
-    return (<ListItemButton alignItems="flex-start">
-        {/* <ListItemAvatar>
-            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-        </ListItemAvatar> */}
+
+function ShoppingListsListItem({ item, listTypes, onSelectList }) {
+
+    function getDate() {
+        const date = new Date(item.transaction_date);
+        const formattedDate = date.toLocaleDateString();
+        return formattedDate
+    }
+
+    function getType() {
+        const filtered = listTypes.filter((type) => item.type === type.id)
+        const itemType = filtered.length > 0 ? filtered[0].type : "";
+        return itemType
+    }
+
+    return (<ListItemButton alignItems="flex-start" onClick={(event) => { onSelectList(item.id) }}>
         <ListItemText
-            primary="Currie"
+            primary={item.name}
             secondary={
                 <>
                     <Typography
@@ -15,25 +28,28 @@ function ShoppingListsListItem() {
                         variant="body2"
                         color="text.primary"
                     >
-                        Cas, Julian
+
+                        {getType()}
+                        {/* {listTypes.filter((type) => item.id === type.id)[0].type} */}
                     </Typography>
-                    {" - July 20, 2023"}
+                    {" - " + getDate()}
                 </>
             }
         />
     </ListItemButton>);
 }
 
-function ShoppingsLists() {
-
-    
-
+const ShoppingLists = (({ lists, listTypes, onSelectList }) => {
     return (
         <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-            <ShoppingListsListItem />
-            <Divider component="li" />
+            {lists.map((item) => (
+                <React.Fragment key={item.id}>
+                    <ShoppingListsListItem item={item} listTypes={listTypes} onSelectList={onSelectList} />
+                    <Divider component="li" />
+                </React.Fragment>
+            ))}
         </List>
     );
-}
+});
 
-export default ShoppingsLists;
+export default ShoppingLists;

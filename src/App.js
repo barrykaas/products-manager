@@ -16,8 +16,13 @@ import React, { useState } from "react";
 
 import EventController from './Events/EventController';
 import ShoppingsListsController from './ShoppingLists/ShoppingListsController';
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from '@tanstack/react-query'
 
-
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const darkTheme = createTheme({
   palette: {
@@ -26,33 +31,27 @@ const darkTheme = createTheme({
 });
 
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+      //staleTime: 5 * 1000,
+    },
+  },
+});
+
 
 function App() {
-  let events = [
-    {
-      "name": "Diner",
-      "date": "27-feb-2022",
-      "participants": ["Cas", "Rutger"]
-    },
-    {
-      "name": "Diner",
-      "date": "28-feb-2022",
-      "participants": ["Julian", "Jelle"]
-    },
-    {
-      "name": "Diner",
-      "date": "29-feb-2022",
-      "participants": ["Cas", "Rutger"]
-    }
-  ]
 
   return (
-    <div className="App">
-      {
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-        />
+    <QueryClientProvider client={queryClient}>
+      <div className="App">
+        {
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+          />
       /* <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
@@ -71,10 +70,10 @@ function App() {
         <QRCodeView />
       </header>
        */}
-      <ThemeProvider theme={darkTheme}>
-        <CssBaseline />
-        <ShoppingsListsController />
-        {/* <ButtonAppBar />
+        <ThemeProvider theme={darkTheme}>
+          <CssBaseline />
+          <ShoppingsListsController />
+          {/* <ButtonAppBar />
 
 
 
@@ -90,10 +89,12 @@ function App() {
             <ProductsForm />
           </Box>
           </Container> */}
-      </ThemeProvider> 
+        </ThemeProvider>
 
 
-    </div>
+      </div>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 }
 
