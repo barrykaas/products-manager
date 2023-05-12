@@ -1,18 +1,22 @@
 import { Avatar, Divider, List, ListItem, ListItemAvatar, ListItemText, Skeleton, Typography, Button, ButtonGroup, ListItemSecondaryAction, Grid, Box, Chip } from "@mui/material";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React from "react";
 import { getBrandsFn, getShoppingListFn } from "./ShoppingListApiQueries";
+import axios from "axios";
+
 
 function ShoppingListProductItem({ item }) {
+    const queryClient = useQueryClient()
+
     const { isLoading, isError, data, error } = useQuery({ queryKey: ['brands'], queryFn: getBrandsFn })
 
     const quantityMutation = useMutation({
         mutationFn: async (updatedItem) => {
-             const data = await axios.patch(`https://django.producten.kaas/api/listitems/${item.id}`, updatedItem)
+             const data = await axios.patch(`https://django.producten.kaas/api/listitems/${item.id}/`, updatedItem)
              return data
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ['todos', item.id]});
+            queryClient.invalidateQueries({queryKey: ['shoppinglistitems']});
         },
         onError: (error, variables, context) => {
             // An error happened!
@@ -21,16 +25,21 @@ function ShoppingListProductItem({ item }) {
     });
 
     const increaseQuantity = () => {
+
         quantityMutation.mutate({'product_quantity': item.product_quantity + 1})
     }
 
     const decreaseQuantity = () => {
-        quantityMutation.mutate({'product_quantity': item.product_quantity -1})
+        if((item.product_quantity - 1) > 0) {
+            quantityMutation.mutate({'product_quantity': item.product_quantity -1})
+        }
     }
 
     if (isLoading || isError) {
         return <Skeleton />
     }
+
+    const disabledDecrease = (item.product_quantity === 1)
 
     const brand = data.data.filter(brand_item => item.product.brand === brand_item.id)[0].name
 
@@ -60,7 +69,7 @@ function ShoppingListProductItem({ item }) {
             <Box sx={{ mt:1, mb: 2, ml:2 }}>
                 <ButtonGroup size="small" variant="outlined" aria-label="outlined button group">
                     <Button onClick={() => increaseQuantity()}>+</Button>
-                    <Button onClick={() => decreaseQuantity()}>-</Button>
+                    <Button disabled={disabledDecrease} onClick={() => decreaseQuantity()}>-</Button>
                 </ButtonGroup>
             </Box>
 
@@ -75,7 +84,7 @@ function ShoppingListProductItem({ item }) {
 
 export default function ShoppingListItemForm({ id }) {
     const { isLoading, isError, data, error } = useQuery({
-        queryKey: ['shoppinglist', id],
+        queryKey: ['shoppinglistitems'],
         queryFn: async () => {
             const data = await getShoppingListFn(id)
             return data.data
@@ -89,8 +98,6 @@ export default function ShoppingListItemForm({ id }) {
     if (isLoading) {
         return <Skeleton />
     }
-
-
 
     return (
         <List sx={{ width: '100%' }}>

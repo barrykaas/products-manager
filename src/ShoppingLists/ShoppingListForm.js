@@ -1,5 +1,5 @@
 import { useFormik } from 'formik';
-import { Button, Box, TextField, Stack, MenuItem, Select, InputLabel, FormControl, Paper, Typography, Divider } from '@mui/material';
+import { Button, Box, TextField, Stack, MenuItem, Select, InputLabel, FormControl, Paper, Typography, Divider, Grid } from '@mui/material';
 
 import * as yup from 'yup';
 import { useEffect, useState } from 'react';
@@ -109,9 +109,17 @@ export function ShoppingListForm({handleFormSubmit, listTypes, initialValues = {
                 
                 <Stack spacing={2} sx={{mt:2}}>
                 <Divider />
-                    <Typography variant="h5" component="h5" color="text.primary">
-                        Producten
-                    </Typography>
+
+                <Grid container alignItems="center">
+                    <Grid item xs>
+                        <Typography variant="h5" component="h5" color="text.primary">
+                            Producten
+                        </Typography>
+                    </Grid>
+                    <Grid item>
+                        <Button>Add</Button>
+                    </Grid>
+                </Grid>
                     <Paper>
                         <ShoppingListItemForm id={initialValues.id} />
                     </Paper>
@@ -121,8 +129,6 @@ export function ShoppingListForm({handleFormSubmit, listTypes, initialValues = {
     );
 };
 
-const delay = ms => new Promise(res => setTimeout(res, ms));
-
 export function ShoppingListCreateForm({listTypes, didSuccesfullyCreate}) {
     const queryClient = useQueryClient()
 
@@ -130,7 +136,7 @@ export function ShoppingListCreateForm({listTypes, didSuccesfullyCreate}) {
         mutationFn: createShoppingListFn,
         onSuccess: () => {
             didSuccesfullyCreate();
-            queryClient.invalidateQueries();
+            queryClient.invalidateQueries({queryKey: ['shoppinglists']});
         },
         onError: (error, variables, context) => {
             // An error happened!
@@ -150,7 +156,7 @@ export function ShoppingListEditForm({listTypes, didSuccesfullyEdit, item}) {
         },
         onSuccess: () => {
             didSuccesfullyEdit();
-            queryClient.invalidateQueries();
+            queryClient.invalidateQueries({queryKey: ['shoppinglists']});
         },
         onError: (error, variables, context) => {
             // An error happened!

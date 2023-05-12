@@ -29,7 +29,7 @@ function ShoppingsListsController() {
         setOpen(false);
     };
 
-    const fetchProjects = async ({ pageParam = 0 }) => {
+    const fetchShoppingLists = async ({ pageParam = 0 }) => {
         let res
         if(pageParam === 0) {
             res = await fetch('https://django.producten.kaas/api/lists/?page=1')
@@ -50,7 +50,7 @@ function ShoppingsListsController() {
         refetch
     } = useInfiniteQuery({
         queryKey: ['shoppinglists'],
-        queryFn: fetchProjects,
+        queryFn: fetchShoppingLists,
         getNextPageParam: (lastPage, pages) => lastPage['next'],
     })
 

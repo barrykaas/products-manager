@@ -23,6 +23,7 @@ import {
 } from '@tanstack/react-query'
 
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import EventsList from './Events/EventsList';
 
 const darkTheme = createTheme({
   palette: {
@@ -72,7 +73,8 @@ function App() {
        */}
         <ThemeProvider theme={darkTheme}>
           <CssBaseline />
-          <ShoppingsListsController />
+          {/* <ShoppingsListsController /> */}
+          <EventController />
           {/* <ButtonAppBar />
 
 
