@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Typography, Paper, Container, Box, Alert, Snackbar } from '@mui/material';
+import { Button, Alert, Snackbar } from '@mui/material';
 import EventAppBar from './EventAppBar';
 import EventsList from './EventsList';
 import ParticipantsPicker from './ParticipantsController';
@@ -7,31 +7,75 @@ import ParticipantsPicker from './ParticipantsController';
 
 //import ButtonAppBar from './MyAppBar'
 
-function EventController() {
+
+import FormDialog from '../Helpers/FormDialog';
+import { EventCreateForm, EventEditForm } from './EventForm';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+import { useConfirm } from 'material-ui-confirm';
+
+function EventController({handleSelectedEvent}) {
+    const queryClient = useQueryClient()
 
     const [currentEvent, setCurrentEvent] = useState(null);
-    const [pickerOpen, setPickerOpen] = useState(false);
 
     const [messageOpen, setMessageOpen] = useState(false);
 
     const [messageText, setMessageText] = useState("");
     const [messageState, setMessageState] = useState(true);
 
+    const [editOpen, setEditOpen] = useState(false);
+
+    const [createOpen, setCreateOpen] = useState(false);
+
 
     const handleEditParticipants = (event) => {
         setCurrentEvent(event);
-        setPickerOpen(true);
+        setEditOpen(true);
     };
 
-    //handleEditParticipants("gfhweiuhui");
+    const handleAddEvent = () => {
+        setCreateOpen(true)
+    }
 
-    const handleEditorClose = (message, isSuccess) => {
-        setPickerOpen(false);
-        setCurrentEvent(null);
+    const didSuccesfullyCreate = (message) => {
+        setCreateOpen(false);
         setMessageOpen(true);
         setMessageText(message);
-        setMessageState(isSuccess);
-    };
+    }
+
+    const didSuccesfullyEdit = (message) => {
+        setEditOpen(false);
+        setMessageOpen(true);
+        setMessageText(message);
+    }
+
+    const confirm = useConfirm();
+
+    const deleteParticipantMutation = useMutation({
+        mutationFn: async (itemId) => {
+             const data = await axios.delete(`https://django.producten.kaas/api/events/${itemId}/`)
+             return data
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ['events']});
+        },
+        onError: (error, variables, context) => {
+            // An error happened!
+            console.log(`Error`)
+          },
+    });
+
+    const handleRemoveClick = (event) => {
+        confirm({ description: `Verwijderen van ${event.name}` })
+            .then(() => {
+                deleteParticipantMutation.mutate(event.id)
+                didSuccesfullyEdit("Verwijderd!")
+            })
+            .catch(() => {
+                
+            });
+    }
 
 
     return (
@@ -41,10 +85,21 @@ function EventController() {
                     {messageText}
                 </Alert>
             </Snackbar>
-            <EventAppBar />
-            <EventsList handleEdit={handleEditParticipants} />
-            {pickerOpen ? <ParticipantsPicker open={pickerOpen} event={currentEvent} handleEditorClose={handleEditorClose} /> : <></>}
+            <EventAppBar onAdd={handleAddEvent} />
+            <EventsList handleEdit={handleEditParticipants} handleSelectedEvent={handleSelectedEvent} />
 
+            <FormDialog title={"Events"} open={createOpen} onClose={() => setCreateOpen(false)}>
+                <EventCreateForm didSuccesfullyCreate={didSuccesfullyCreate} />
+            </FormDialog>
+
+            {currentEvent ? 
+            <FormDialog title={"Events"} open={editOpen} onClose={() => setEditOpen(false)} secondaryButtons={
+                <Button variant="contained" color={"error"} onClick={() => handleRemoveClick(currentEvent)} >Remove</Button>
+            }>
+                <EventEditForm didSuccesfullyEdit={didSuccesfullyEdit} item={currentEvent}/>
+            </FormDialog>
+            : <></>
+        }
 
         </>
     );

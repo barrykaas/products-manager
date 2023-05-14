@@ -7,16 +7,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import ShoppingLists from './ShoppingLists';
 import useShoppingListTypes from './Helpers/ShoppingListTypes';
 
-import {useInfiniteQuery } from '@tanstack/react-query'
-import { useTheme } from '@emotion/react';
+import FormDialog from '../Helpers/FormDialog';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-    return <Slide direction="up" ref={ref} {...props} />;
-  });
-
-  const TransitionRight = React.forwardRef(function Transition(props, ref) {
-    return <Slide direction="left" ref={ref} {...props} />;
-  });
 
 function ShoppingsListsController() {
     const [open, setOpen] = useState(false);
@@ -41,13 +34,10 @@ function ShoppingsListsController() {
     
     const {
         data,
-        error,
         fetchNextPage,
         hasNextPage,
         isFetching,
         isFetchingNextPage,
-        status,
-        refetch
     } = useInfiniteQuery({
         queryKey: ['shoppinglists'],
         queryFn: fetchShoppingLists,
@@ -69,9 +59,6 @@ function ShoppingsListsController() {
         setOpenEditor(true);
     };
 
-    const theme = useTheme();
-    const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
-
     if (isFetching) {
         shoppingListView = <CircularProgress />
     } else {
@@ -92,71 +79,27 @@ function ShoppingsListsController() {
             <Button disabled={!hasNextPage || isFetchingNextPage} onClick={() => fetchNextPage()}>Load more</Button>
             
             
-            <Dialog
-                //fullScreen
-                fullScreen={fullScreen}
+            <FormDialog
                 open={open}
-                fullWidth={true}
                 onClose={handleClose}
-                maxWidth='sm'
-                TransitionComponent={Transition}
+                title={"Voeg lijst toe"}
             >
-                <AppBar sx={{ position: 'relative' }}>
-                    <Toolbar>
-                        <IconButton
-                            edge="start"
-                            color="inherit"
-                            onClick={handleClose}
-                            aria-label="close"
-                        >
-                            <CloseIcon />
-                        </IconButton>
-                        <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-                            Voeg lijst toe
-                        </Typography>
-                        {/* <Button autoFocus color="inherit" onClick={handleClose}>
-                            save
-                        </Button> */}
-
-                        
-                    </Toolbar>
-                </AppBar>
-                
                 <ShoppingListCreateForm didSuccesfullyCreate={() => {setOpen(false)}} listTypes={listTypes}/>
-            </Dialog>
+            </FormDialog>
 
-            <Dialog
-                fullScreen={fullScreen}
-                fullWidth={true}
+            <FormDialog
                 open={openEditor}
-                maxWidth='sm'
                 onClose={handleEditorClose}
-                TransitionComponent={TransitionRight}
+                title={ currentEditingItem.length != 0 
+                    ? <> Aanpassen van {currentEditingItem[0].name} </>
+                    : <> Laden </>
+                    }
             >
-                <AppBar sx={{ position: 'relative' }}>
-                    <Toolbar>
-                        <IconButton
-                            edge="start"
-                            color="inherit"
-                            onClick={handleEditorClose}
-                            aria-label="close"
-                        >
-                            <CloseIcon />
-                        </IconButton>
-                        <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-                            { currentEditingItem.length != 0 
-                            ? <> Aanpassen van {currentEditingItem[0].name} </>
-                            : <> Laden </>
-                            }
-                        </Typography>
-                        
-                    </Toolbar>
-                </AppBar>
                 { currentEditingItem.length != 0 
                     ? <ShoppingListEditForm didSuccesfullyEdit={() => {handleEditorClose()}} listTypes={listTypes} item={currentEditingItem[0]} />
                     : <> Laden </>
                 }
-            </Dialog>
+            </FormDialog>
         </>
     );
 }

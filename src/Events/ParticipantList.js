@@ -5,7 +5,28 @@ import { getPersonsFn } from "./EventsApiQueries";
 
 
 
-export default function ParticipantsList({persons, handleToggle, checked}) {
+export default function ParticipantsList({setChecked, checked}) {
+
+    const { isLoading, isError, data, error } = useQuery({ queryKey: ['persons'], queryFn: getPersonsFn })
+
+    const persons = data.data;
+
+    const handleToggle = (value) => () => {
+      const currentIndex = checked.indexOf(value);
+      const newChecked = [...checked];
+
+      if (currentIndex === -1) {
+        newChecked.push(value);
+      } else {
+        newChecked.splice(currentIndex, 1);
+      }
+
+      setChecked(newChecked);
+    };
+
+    if (isLoading || isError) {
+      return <Skeleton />
+    }
 
     return (
       <List sx={{ width: '100%', bgcolor: 'background.paper' }}>

@@ -4,8 +4,8 @@ export const getPersonsFn = async () => {
     return axios.get(`https://django.producten.kaas/api/persons/`)
 };
 
-export const createEventFn = async () => {
-    return axios.get(`https://django.producten.kaas/api/persons/`)
+export const createEventFn = async (data) => {
+    return axios.post(`https://django.producten.kaas/api/events/`, data)
 };
 
 export const fetchEvents = async ({ pageParam = 0 }) => {
