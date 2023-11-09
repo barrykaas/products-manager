@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Alert, Snackbar } from '@mui/material';
-import EventAppBar from './EventAppBar';
+import {EventAppBar, EventAppBarClosable} from './EventAppBar';
 import EventsList from './EventsList';
 import ParticipantsPicker from './ParticipantsController';
 // import ProductsForm from '../Products/ProductsForm';
@@ -14,7 +14,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useConfirm } from 'material-ui-confirm';
 
-function EventController({handleSelectedEvent}) {
+function EventController({handleSelectedEvent, onClose}) {
     const queryClient = useQueryClient()
 
     const [currentEvent, setCurrentEvent] = useState(null);
@@ -85,7 +85,10 @@ function EventController({handleSelectedEvent}) {
                     {messageText}
                 </Alert>
             </Snackbar>
-            <EventAppBar onAdd={handleAddEvent} />
+            {onClose ? 
+            <EventAppBarClosable onClose={onClose} title={"Events"} onAdd={handleAddEvent} /> :
+            <EventAppBar title={"Events"} onAdd={handleAddEvent} /> 
+            }
             <EventsList handleEdit={handleEditParticipants} handleSelectedEvent={handleSelectedEvent} />
 
             <FormDialog title={"Events"} open={createOpen} onClose={() => setCreateOpen(false)}>

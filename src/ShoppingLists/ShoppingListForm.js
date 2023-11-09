@@ -13,6 +13,8 @@ import 'dayjs/locale/en-gb';
 import ShoppingListItemForm from './ShoppingListItemForm';
 
 import { getPersonsFn } from "../Events/EventsApiQueries";
+import EventController from '../Events/EventController';
+import FormDialog from '../Helpers/FormDialog';
 
 
 const validationSchema = yup.object({
@@ -28,6 +30,7 @@ const validationSchema = yup.object({
     payer: yup
       .number()
       .nullable(true)
+    
     //   .when('type', {
     //     is: (val) => val === '2' || val === '3',
     //     then: yup.number().nullable(false).required('Payer is required'),
@@ -164,27 +167,47 @@ export function ShoppingListForm({ handleFormSubmit, listTypes, initialValues = 
                 </Button>
             </Stack>
 
-            <Stack spacing={2} sx={{ mt: 2 }}>
-                <Divider />
-
-                <Grid container alignItems="center">
-                    <Grid item xs>
-                        <Typography variant="h5" component="h5" color="text.primary">
-                            Producten
-                        </Typography>
-                    </Grid>
-                    <Grid item>
-                        <Button>Add</Button>
-                    </Grid>
-                </Grid>
-                <Paper>
-                    <ShoppingListItemForm id={initialValues.id} />
-                </Paper>
-            </Stack>
+            <ShoppingListItemController initialValues={initialValues} />
 
         </Box>
     );
 };
+
+function ShoppingListItemController({initialValues}) {
+    const [eventControllerModalOpen, setEventControllerModalOpen] = useState(false);
+
+    function handleAddButtonClick() {
+        setEventControllerModalOpen(true);
+    }
+
+    function handleSelectedEvent(event) {
+        console.log(event)
+        setEventControllerModalOpen(false);
+    }
+
+    return (<Stack spacing={2} sx={{ mt: 2 }}>
+        <Divider />
+
+        <Grid container alignItems="center">
+            <Grid item xs>
+                <Typography variant="h5" component="h5" color="text.primary">
+                    Producten
+                </Typography>
+            </Grid>
+            <Grid item>
+                <Button onClick={handleAddButtonClick}>Add event</Button>
+            </Grid>
+        </Grid>
+        <Paper>
+            <ShoppingListItemForm id={initialValues.id} />
+        </Paper>
+        <FormDialog hasToolbar={false} title={"Welk event?"} open={eventControllerModalOpen} onClose={() => setEventControllerModalOpen(false)}>
+            <EventController handleSelectedEvent={handleSelectedEvent} onClose={() => setEventControllerModalOpen(false)}/>
+        </FormDialog>
+
+    </Stack>
+    );
+}
 
 export function ShoppingListCreateForm({ listTypes, didSuccesfullyCreate }) {
     const queryClient = useQueryClient()

@@ -1,6 +1,7 @@
-import { Typography, ListItemText, Divider, List, ListItemButton, Collapse } from "@mui/material";
+import { Typography, ListItemText, Divider, List, ListItemButton, Collapse, Skeleton } from "@mui/material";
 import React from "react";
-import { TransitionGroup } from 'react-transition-group';
+import { getPersonsFn } from "../Events/EventsApiQueries";
+import { useQuery } from "@tanstack/react-query";
 
 
 function ShoppingListsListItem({ item, listTypes, onSelectList }) {
@@ -17,6 +18,33 @@ function ShoppingListsListItem({ item, listTypes, onSelectList }) {
         return itemType
     }
 
+    const { isLoading, isError, data, error } = useQuery({ queryKey: ['persons'], queryFn: getPersonsFn })
+
+    if (isLoading || isError) {
+        return <Skeleton />
+    }
+
+    const persons = data.data;
+
+    function getPayer() {
+        const person = persons.find((person) => person.id === item.payer);
+        return (
+            person ?
+            <>
+            {' - '}
+            <Typography sx={{ display: 'inline', fontStyle: 'italic' }}
+                        component="span"
+                        variant="body2"
+                        color="text.primary"
+                    >
+                {person.name}
+            </Typography>
+            </> 
+            
+            : 
+            '');
+      }
+
     return (<ListItemButton alignItems="flex-start" onClick={(event) => { onSelectList(item.id) }}>
         <ListItemText
             primary={item.name}
@@ -28,10 +56,12 @@ function ShoppingListsListItem({ item, listTypes, onSelectList }) {
                         variant="body2"
                         color="text.primary"
                     >
-
+                            
                         {getType()}
+                        
                         {/* {listTypes.filter((type) => item.id === type.id)[0].type} */}
                     </Typography>
+                    {getPayer()}
                     {" - " + getDate()}
                 </>
             }

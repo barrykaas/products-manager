@@ -10,13 +10,12 @@ import Link from '@mui/material/Link';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 
-
-export function EventAppBar({ onAdd }) {
+export function ProductAppBar({ onAdd }) {
     return (
         <AppBar position="static">
             <Toolbar>
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                    Events
+                    Products
                 </Typography>
                 <IconButton onClick={onAdd} color="primary" aria-label="add to shopping cart">
                     <AddIcon />
@@ -26,7 +25,7 @@ export function EventAppBar({ onAdd }) {
     );
 }
 
-export function EventAppBarClosable({ onAdd, onClose }) {
+export function ProductAppBarClosable({ onAdd, onClose }) {
     return (
 
         <AppBar position="static">
@@ -40,7 +39,7 @@ export function EventAppBarClosable({ onAdd, onClose }) {
                     <CloseIcon />
                 </IconButton>
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                    Selecteer event
+                    Selecteer product
                 </Typography>
                 <IconButton onClick={onAdd} color="primary" aria-label="add to shopping cart">
                     <AddIcon />

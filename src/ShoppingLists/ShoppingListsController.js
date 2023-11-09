@@ -78,7 +78,6 @@ function ShoppingsListsController() {
             {shoppingListView}
             <Button disabled={!hasNextPage || isFetchingNextPage} onClick={() => fetchNextPage()}>Load more</Button>
             
-            
             <FormDialog
                 open={open}
                 onClose={handleClose}

@@ -1,232 +1,226 @@
-
-import React, { useState, useEffect } from "react";
-
-import ReactDOM from 'react-dom';
+import { Box, Button, InputAdornment, Skeleton, Stack, TextField, Tooltip } from '@mui/material';
 import { useFormik } from 'formik';
+
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+import dayjs from 'dayjs';
+import 'dayjs/locale/en-gb';
 import * as yup from 'yup';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
 
+import { createProductFn } from './ProductsApiQueries';
+import UnitTypeSelector, { useUnitType } from './ProductUnitTypeSelector';
 
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
+// const validationSchema = yup.object({
+//     date_added: yup
+//         .date('Enter transaction date')
+//         .required('Transaction date is required'),
+//     name: yup
+//         .string('Enter name')
+//         .required('Name is required'),
+//     unit_number: yup
+//         .number('Enter unit number')
+//         .required('Unit number is required'),
+//     unit_weightvol: yup
+//         .number('Enter unit weight/volume')
+//         .required('Unit weight/volume is required'),
+//     unit_price: yup
+//         .number('Enter unit price')
+//         .required('Unit price is required'),
+//     unit_type: yup
+//         .number('Select unit type')
+//         .required('Unit type is required')
+// });
 
-import getToken from "../apiForAH";
-import ProductCard from "../ProductsSummary";
-import BarcodeScanner from "../BarcodeScanner";
 
 const validationSchema = yup.object({
-  email: yup
-    .string('Enter your email')
-    .email('Enter a valid email')
-    .required('Email is required'),
-  password: yup
-    .string('Enter your password')
-    .min(8, 'Password should be of minimum 8 characters length')
-    .required('Password is required'),
+    date_added: yup
+        .date('Enter transaction date')
+        .required('Transaction date is required'),
+    name: yup
+        .string('Enter name')
+        .required('Name is required'),
+    unit_number: yup
+        .number('Enter unit number')
+        .required('Unit number is required'),
+    unit_weightvol: yup
+        .mixed() // Use the mixed() type to allow number or null
+        .nullable() // Allow null values
+        .typeError('Unit weight/volume must be a number or null') // Custom error message for non-number values
+        .when('unit_type', {is: 3, then: yup.number().required('Unit weight/volume is required'), otherwise: yup.string().nullable()}),
+    unit_price: yup
+        .number('Enter unit price')
+        .required('Unit price is required'),
+    unit_type: yup
+        .number('Select unit type')
+        .required('Unit type is required')
 });
 
-function BrandsSearcher() {
-  const [brands, setBrands] = useState([]);
-  useEffect(() => {
-    fetch('https://django.producten.kaas/api/brands/')
-      .then(response => response.json())
-      .then(data => setBrands(data))
-      .catch(error => console.error(error));
-  }, []);
+export function ProductForm({
+    handleFormSubmit,
+    listTypes,
+    initialValues = {
+        date_added: new Date(),
+        name: '',
+        unit_number: '',
+        unit_weightvol: '',
+        unit_price: '',
+        unit_type: '',
+    },
+}) {
+    const formik = useFormik({
+        initialValues: initialValues,
+        validationSchema: validationSchema,
+        onSubmit: (values) => {
+            console.log('Submit called');
+            handleFormSubmit(values);
+        },
+    });
 
-  return (
+    const {isLoading, isError, unitTypeInfo} = useUnitType(formik.values.unit_type)
 
-    <Autocomplete
-      disablePortal
-      id="combo-box-demo"
-      options={brands.map(element => element.name)}
-      renderInput={(params) => <TextField {...params} label="Merk" />}
-    />
-  );
-}
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
-
-
-const styles = {
-  buttonContainer: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginTop: '1rem',
-  },
-  prevButton: {
-    marginRight: 'auto',
-  },
-  nextButton: {
-    marginLeft: 'auto',
-  },
-};
-
-const ProductsForm = () => {
-  const [barcode, setBarcode_] = useState(null);
-
-  const [product, setProduct] = useState(null);
-
-  const [formState, setFormState] = useState(0);
-
-  const nextPage = () => {
-    setFormState(formState+1);
-  };
-
-  const handleChange = (event, newValue) => {
-    setFormState(newValue);
-  };
-
-  const [data, setData] = useState(null);
-
-  const setBarcode = (barcode) => {
-    setBarcode_(barcode);
-    
-    async function fetchData(barcode) {
-      const response = await fetch(`https://django.producten.kaas/api/products/?barcode=${barcode}`);
-      const data = await response.json();
-      if(data['count'] === 0) {
-        //setProducts()
-        setProduct(null);
-      } else if (data['count'] === 1) {
-        setProduct(data['results'][0]);
-        setFormState(3);
-      }
-      
+    if(isLoading || isError) {
+        return <Skeleton />
     }
-  
-    fetchData(barcode);
-  }
 
+    console.log(unitTypeInfo);
+    
+    return (
+        <Box sx={{ p: 2, height: 1, width: 1, bgcolor: 'background.paper' }}>
 
-  return (
-    <div>
-      
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={formState} onChange={handleChange} aria-label="basic tabs example">
-          <Tab label="Scan" {...a11yProps(0)} />
-          <Tab label="Merk" {...a11yProps(1)} />
-          <Tab label="Type" {...a11yProps(2)} />
-          <Tab label="Summary" {...a11yProps(2)} />
-        </Tabs>
-      </Box>
-      <TabPanel value={formState} index={0}>
-        <BarcodeScanner setBarcode={setBarcode}/>
-      </TabPanel>
-      <TabPanel value={formState} index={1}>
-        BarcodeScanner
-      </TabPanel>
-      <TabPanel value={formState} index={2}>
-        Type
-      </TabPanel>
-      <TabPanel value={formState} index={3}>    
-        {
-          product ? (
-            <ProductCard product={product} />
-          ) : (
-            <p>Not found</p>
-          )}
-      </TabPanel>
-      <div style={styles.buttonContainer}>
-        <Button
-         
-         
-          style={styles.prevButton}
-        >
-          Previous
-        </Button>
-        <Button
-          
-          onClick={nextPage}
-          style={styles.nextButton}
-        >
-          Next
-        </Button>
-      </div>
-      
-      {/* {data ? (
-        <p>Received data: {JSON.stringify(data)}</p>
-      ) : (
-        <p>Loading data...</p>
-      )} */}
-    </div>
-  );
+            
+            <Stack component="form" spacing={2} onSubmit={formik.handleSubmit}>
+                <TextField
+                    fullWidth
+                    id="name"
+                    name="name"
+                    label="Name"
+                    value={formik.values.name}
+                    onChange={formik.handleChange}
+                    error={formik.touched.name && Boolean(formik.errors.name)}
+                    helperText={formik.touched.name && formik.errors.name}
+                />
+        
+                <UnitTypeSelector
+                    name="unit_type"
+                    label="Eenheid"
+                    value={formik.values.unit_type}
+                    onChange={formik.handleChange}
+                    formik={formik}
+                />
+
+                <TextField
+                    fullWidth
+                    id="unit_number"
+                    name="unit_number"
+                    label="Aantal"
+                    value={formik.values.unit_number}
+                    onChange={formik.handleChange}
+                    error={
+                        formik.touched.unit_number && Boolean(formik.errors.unit_number)
+                    }
+                    helperText={
+                        formik.touched.unit_number && formik.errors.unit_number
+                    }
+                />
+                <TextField
+                    fullWidth
+                    disabled={unitTypeInfo === null}
+                    id="unit_weightvol"
+                    name="unit_weightvol"
+                    label="Unit weight/volume"
+                    value={formik.values.unit_weightvol}
+                    onChange={formik.handleChange}
+                    InputProps={{
+                        endAdornment: <InputAdornment position="start">{unitTypeInfo}</InputAdornment>,
+                      }}
+                    error={
+                        formik.touched.unit_weightvol &&
+                        Boolean(formik.errors.unit_weightvol)
+                    }
+                    helperText={
+                        formik.touched.unit_weightvol && formik.errors.unit_weightvol
+                    }
+                />
+                <TextField
+                    fullWidth
+                    id="unit_price"
+                    name="unit_price"
+                    label="Unit price"
+                    value={formik.values.unit_price}
+                    onChange={formik.handleChange}
+                    error={formik.touched.unit_price && Boolean(formik.errors.unit_price)}
+                    helperText={formik.touched.unit_price && formik.errors.unit_price}
+                    InputProps={{
+                        startAdornment: <InputAdornment position="start">€</InputAdornment>,
+                      }}
+                />
+
+                
+
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={'en-gb'}>
+                    <DatePicker
+                        id="date_added"
+                        name="date_added"
+                        label="Transaction date"
+                        value={dayjs(formik.values.date_added)}
+                        onChange={(value) => {
+                            formik.setFieldValue('date_added', value);
+                        }}
+                        slotProps={{
+                            textField: {
+                                helperText:
+                                    formik.touched.date_added && formik.errors.date_added,
+                                error: formik.touched.date_added && Boolean(formik.errors.date_added),
+                            },
+                        }}
+                    />
+                </LocalizationProvider>
+
+                <Button color="primary" variant="contained" fullWidth type="submit">
+                    Save
+                </Button>
+            </Stack>
+        </Box>
+    );
 };
+export function ProductCreateForm({ didSuccesfullyCreate }) {
+    const queryClient = useQueryClient()
 
-const BrandPartForm = () => {
-  const formik = useFormik({
-    initialValues: {
-      brand: '',
-      password: 'foobar',
-    },
-    validationSchema: validationSchema,
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
-    },
-  });
+    const mutation = useMutation({
+        mutationFn: createProductFn,
+        onSuccess: ({ data }) => {
+            queryClient.invalidateQueries({ queryKey: ['products'] });
+            didSuccesfullyCreate("Toegevoegd!");
+        },
+        onError: (error, variables, context) => {
+            // An error happened!
+            console.log(`Error`)
+        },
+    });
 
-  return (
-    <div>
-      <form onSubmit={formik.handleSubmit}>
-        <BrandsSearcher
-          fullWidth
-          id="brand"
-          name="brand"
-          label="brand"
-          value={formik.values.brand}
-          onChange={formik.handleChange}
-          error={formik.touched.brand && Boolean(formik.errors.brand)}
-          helperText={formik.touched.brand && formik.errors.brand}
-          margin="normal"
-        />
+    return (<ProductForm handleFormSubmit={(data) => { mutation.mutate(data) }} />)
+}
 
-        <TextField
-          fullWidth
-          id="password"
-          name="password"
-          label="Password"
-          type="password"
-          value={formik.values.password}
-          onChange={formik.handleChange}
-          error={formik.touched.password && Boolean(formik.errors.password)}
-          helperText={formik.touched.password && formik.errors.password}
-          margin="normal"
-        />
-        <Button color="primary" variant="contained" fullWidth type="submit">
-          Submit
-        </Button>
-      </form>
-    </div>
-  );
-};
+export function ProductEditForm({ didSuccessfullyEdit, item }) {
+    const queryClient = useQueryClient()
 
-export default ProductsForm;
+    const mutation = useMutation({
+        mutationFn: async (updatedItem) => {
+            console.log(updatedItem);
+            return axios.patch(`https://django.producten.kaas/api/products/${item.id}/`, updatedItem)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['products'] });
+            didSuccessfullyEdit("Aangepast!");
+        },
+        onError: (error, variables, context) => {
+            // An error happened!
+            console.log(`Error`)
+        },
+    });
+
+    return (<ProductForm handleFormSubmit={(updatedItem) => { mutation.mutate(updatedItem) }}
+        initialValues={item} />)
+}

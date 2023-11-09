@@ -70,7 +70,12 @@ export function EventForm({ handleFormSubmit, initialValues}) {
                         }}
                     />
                 </LocalizationProvider>
+                <Paper variant="outlined" >
                 <ParticipantsList setChecked={(value) => formik.setFieldValue('event_participants', value)} checked={formik.values.event_participants} />
+                </Paper>
+                
+                <Button color="secondary" variant="contained" fullWidth>Add shoppinglist</Button>
+                <Divider />
                 <Button color="primary" variant="contained" fullWidth type="submit">
                     Save
                 </Button>

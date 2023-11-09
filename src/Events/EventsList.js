@@ -39,7 +39,14 @@ function EventsListItem({ item, handleEdit, handleSelectedEvent }) {
                         })}
                         <Chip size="small" label={getDate()} color="primary" />
                     </Stack> */}
-                    {getDate()}
+                    <Typography
+                        sx={{ display: 'inline' }}
+                        component="span"
+                        variant="body2"
+                        color="text.primary"
+                    >{getDate()}</Typography>
+
+                    
                     {eventParticipantPersons.map((person, index) => {
                         return index === 0 ? " - " + person.name : `, ${person.name}`;
                     }).join('')}

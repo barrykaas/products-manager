@@ -7,7 +7,7 @@ const TransitionRight = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
 });
 
-function FormDialog({ open, onClose, title, secondaryButtons, children }) {
+function FormDialog({ open, onClose, title, secondaryButtons, hasToolbar = true, children }) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -20,6 +20,7 @@ function FormDialog({ open, onClose, title, secondaryButtons, children }) {
       maxWidth='sm'
       TransitionComponent={TransitionRight}
     >
+      { hasToolbar ? 
       <AppBar sx={{ position: 'relative' }}>
         <Toolbar>
           <IconButton
@@ -41,6 +42,7 @@ function FormDialog({ open, onClose, title, secondaryButtons, children }) {
 
         </Toolbar>
       </AppBar>
+:<></>}
       {children}
     </Dialog>
   );

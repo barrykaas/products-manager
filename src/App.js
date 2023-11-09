@@ -27,6 +27,7 @@ import { ConfirmProvider } from "material-ui-confirm";
 
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import EventsList from './Events/EventsList';
+import ProductController from './Products/ProductController';
 
 const darkTheme = createTheme({
   palette: {
@@ -40,7 +41,7 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
-      //staleTime: 5 * 1000,
+      staleTime: 5 * 1000,
     },
   },
 });
@@ -77,7 +78,8 @@ function App() {
         <ThemeProvider theme={darkTheme}>
           <CssBaseline />
           <ConfirmProvider>
-          <ShoppingsListsController />
+          {/* <ShoppingsListsController /> */}
+          <ProductController />
           {/* <EventController /> */}
           </ConfirmProvider>
           {/* <ButtonAppBar />

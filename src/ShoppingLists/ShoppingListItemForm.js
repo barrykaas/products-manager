@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React from "react";
 import { getBrandsFn, getShoppingListFn } from "./ShoppingListApiQueries";
 import axios from "axios";
+import ShoppingListEventLabel from "./ShoppingListEventLabel";
 
 
 function ShoppingListProductItem({ item }) {
@@ -25,7 +26,6 @@ function ShoppingListProductItem({ item }) {
     });
 
     const increaseQuantity = () => {
-
         quantityMutation.mutate({'product_quantity': item.product_quantity + 1})
     }
 
@@ -49,10 +49,12 @@ function ShoppingListProductItem({ item }) {
             <Box sx={{ my: 1, mx: 2 }}>
                 <Grid container alignItems="center">
                     <Grid item xs={0.5}>
+                        <Typography gutterBottom variant="overline" component="div">
                         {item.product_quantity}x
+                        </Typography>
                     </Grid>
                     <Grid item xs>
-                        <Typography gutterBottom variant="h5" component="div">
+                        <Typography gutterBottom variant="h6" component="div">
                             {item.product.name}
                         </Typography>
                     </Grid>
@@ -91,22 +93,60 @@ export default function ShoppingListItemForm({ id }) {
         },
     })
 
+    const { isLoadingBrands, isErrorBrands, dataBrands, errorBrands } = useQuery({ queryKey: ['events'], queryFn: getBrandsFn })
+
     if (isError) {
         return <p>{JSON.stringify(error)}</p>
     }
 
-    if (isLoading) {
+    if (isErrorBrands) {
+        return <p>{JSON.stringify(errorBrands)}</p>
+    }
+
+    if (isLoading || isLoadingBrands) {
         return <Skeleton />
     }
 
+    const groupedEvents = {};
+
+    data.items.forEach(item => {
+        const eventID = item.event;
+        if (!groupedEvents.hasOwnProperty(eventID)) {
+          groupedEvents[eventID] = [];
+        }
+        groupedEvents[eventID].push(item);
+    });
+
+    console.log(groupedEvents);
+
     return (
         <List sx={{ width: '100%' }}>
-            {data.items.map(item => (
+            
+            {/* {data.items.map(item => (
                 <React.Fragment key={item.id}>
                     <ShoppingListProductItem item={item} />
                     <Divider component="li" />
                 </React.Fragment>
-            ))}
+            ))} */}
+
+            {Object.keys(groupedEvents).map(event => (
+                //<p>{event}</p>
+                <React.Fragment key={event}>
+                    <Box sx={{ my: 1, mx: 2 }}>
+                    <ShoppingListEventLabel eventId={event} />
+                    </Box>
+                    <Divider component="li" />
+                    <List sx={{ width: '100%' }}>
+                    {groupedEvents[event].map(item => (
+                        <React.Fragment key={item.id}>
+                            <ShoppingListProductItem item={item} />
+                            <Divider component="li" />
+                        </React.Fragment>
+                    ))}
+                    </List>
+                </React.Fragment>
+            ))
+            }
         </List>
     )
 };
