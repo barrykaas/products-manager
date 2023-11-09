@@ -5,6 +5,7 @@ import { getBrandsFn, getShoppingListFn } from "./ShoppingListApiQueries";
 import axios from "axios";
 import ShoppingListEventLabel from "./ShoppingListEventLabel";
 
+import apiPath from "../Api/ApiPath";
 
 function ShoppingListProductItem({ item }) {
     const queryClient = useQueryClient()
@@ -13,7 +14,7 @@ function ShoppingListProductItem({ item }) {
 
     const quantityMutation = useMutation({
         mutationFn: async (updatedItem) => {
-             const data = await axios.patch(`https://django.producten.kaas/api/listitems/${item.id}/`, updatedItem)
+             const data = await axios.patch(`${apiPath}/listitems/${item.id}/`, updatedItem)
              return data
         },
         onSuccess: () => {

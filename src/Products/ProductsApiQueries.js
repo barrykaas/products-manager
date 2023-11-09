@@ -1,21 +1,22 @@
 import axios from "axios";
+import apiPath from "../Api/ApiPath";
 
 export const getPersonsFn = async () => {
-    return axios.get(`https://django.producten.kaas/api/persons/`)
+    return axios.get(`${apiPath}/persons/`)
 };
 
 export const getUnitTypesFn = async () => {
-    return axios.get(`https://django.producten.kaas/api/unittypes/`);
+    return axios.get(`${apiPath}/unittypes/`);
 };
 
 export const createProductFn = async (data) => {
-    return axios.post(`https://django.producten.kaas/api/products/`, data)
+    return axios.post(`${apiPath}/products/`, data)
 };
 
 export const fetchProducts = async ({ pageParam = 0 }) => {
     let res
     if(pageParam === 0) {
-        res = await fetch('https://django.producten.kaas/api/products/?page=1')
+        res = await fetch(`${apiPath}/products/?page=1`)
     } else {
         res = await fetch(pageParam)
     }
@@ -31,7 +32,7 @@ export const fetchProductsAndSearchFn = async (pageParam = 0, searchQuery) => {
 
     let res
     if(pageParam === 0) {
-        res = await fetch(`https://django.producten.kaas/api/products/?page=1&search=${searchQuery}`)
+        res = await fetch(`${apiPath}/products/?page=1&search=${searchQuery}`)
     } else {
         res = await fetch(pageParam)
     }

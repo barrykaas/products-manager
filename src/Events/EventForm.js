@@ -15,6 +15,8 @@ import EmbeddedParticipantsEditor from './EmbeddedParticipantsEditor'
 import ParticipantsPicker from './ParticipantsController';
 import ParticipantsList from './ParticipantList';
 
+import apiPath from '../Api/ApiPath';
+
 const validationSchema = yup.object({
     event_date: yup
         .date('Enter date of event')
@@ -109,7 +111,7 @@ export function EventEditForm({ didSuccesfullyEdit, item }) {
 
     const mutation = useMutation({
         mutationFn: async (updatedItem) => {
-            return axios.patch(`https://django.producten.kaas/api/events/${item.id}/`, updatedItem)
+            return axios.patch(`${apiPath}/events/${item.id}/`, updatedItem)
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['events'] });

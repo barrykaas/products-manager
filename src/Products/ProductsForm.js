@@ -12,6 +12,8 @@ import * as yup from 'yup';
 import { createProductFn } from './ProductsApiQueries';
 import UnitTypeSelector, { useUnitType } from './ProductUnitTypeSelector';
 
+import apiPath from '../Api/ApiPath';
+
 // const validationSchema = yup.object({
 //     date_added: yup
 //         .date('Enter transaction date')
@@ -209,7 +211,7 @@ export function ProductEditForm({ didSuccessfullyEdit, item }) {
     const mutation = useMutation({
         mutationFn: async (updatedItem) => {
             console.log(updatedItem);
-            return axios.patch(`https://django.producten.kaas/api/products/${item.id}/`, updatedItem)
+            return axios.patch(`${apiPath}/products/${item.id}/`, updatedItem)
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['products'] });

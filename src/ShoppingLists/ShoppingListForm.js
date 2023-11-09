@@ -16,6 +16,8 @@ import { getPersonsFn } from "../Events/EventsApiQueries";
 import EventController from '../Events/EventController';
 import FormDialog from '../Helpers/FormDialog';
 
+import apiPath from '../Api/ApiPath';
+
 
 const validationSchema = yup.object({
     transaction_date: yup
@@ -232,7 +234,7 @@ export function ShoppingListEditForm({ listTypes, didSuccesfullyEdit, item }) {
 
     const mutation = useMutation({
         mutationFn: async (updatedItem) => {
-            return axios.put(`https://django.producten.kaas/api/lists/${item.id}/`, updatedItem)
+            return axios.put(`${apiPath}/lists/${item.id}/`, updatedItem)
         },
         onSuccess: () => {
             didSuccesfullyEdit();

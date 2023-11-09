@@ -18,6 +18,8 @@ import getToken from "../apiForAH";
 import ProductCard from "../ProductsSummary";
 import BarcodeScanner from "../BarcodeScanner";
 
+import apiPath from "../Api/ApiPath";
+
 const validationSchema = yup.object({
   email: yup
     .string('Enter your email')
@@ -32,7 +34,7 @@ const validationSchema = yup.object({
 function BrandsSearcher() {
   const [brands, setBrands] = useState([]);
   useEffect(() => {
-    fetch('https://django.producten.kaas/api/brands/')
+    fetch(`${apiPath}/brands/`)
       .then(response => response.json())
       .then(data => setBrands(data))
       .catch(error => console.error(error));
@@ -112,7 +114,7 @@ const ProductsForm = () => {
     setBarcode_(barcode);
     
     async function fetchData(barcode) {
-      const response = await fetch(`https://django.producten.kaas/api/products/?barcode=${barcode}`);
+      const response = await fetch(`${apiPath}/products/?barcode=${barcode}`);
       const data = await response.json();
       if(data['count'] === 0) {
         //setProducts()

@@ -10,6 +10,7 @@ import useShoppingListTypes from './Helpers/ShoppingListTypes';
 import FormDialog from '../Helpers/FormDialog';
 import { useInfiniteQuery } from '@tanstack/react-query';
 
+import apiPath from '../Api/ApiPath';
 
 function ShoppingsListsController() {
     const [open, setOpen] = useState(false);
@@ -25,7 +26,7 @@ function ShoppingsListsController() {
     const fetchShoppingLists = async ({ pageParam = 0 }) => {
         let res
         if(pageParam === 0) {
-            res = await fetch('https://django.producten.kaas/api/lists/?page=1')
+            res = await fetch(`${apiPath}/lists/?page=1`)
         } else {
             res = await fetch(pageParam)
         }

@@ -14,6 +14,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useConfirm } from 'material-ui-confirm';
 
+import apiPath from '../Api/ApiPath';
+
 function EventController({handleSelectedEvent, onClose}) {
     const queryClient = useQueryClient()
 
@@ -54,7 +56,7 @@ function EventController({handleSelectedEvent, onClose}) {
 
     const deleteParticipantMutation = useMutation({
         mutationFn: async (itemId) => {
-             const data = await axios.delete(`https://django.producten.kaas/api/events/${itemId}/`)
+             const data = await axios.delete(`${apiPath}/events/${itemId}/`)
              return data
         },
         onSuccess: () => {

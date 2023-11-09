@@ -10,13 +10,14 @@ import {
   makeStyles
 } from '@mui/material';
 
+import apiPath from "./Api/ApiPath";
 
 function ProductTable() {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch("https://django.producten.kaas/api/products/");
+      const response = await fetch(`${apiPath}/products/`);
       const data = await response.json();
       setProducts(data);
     }

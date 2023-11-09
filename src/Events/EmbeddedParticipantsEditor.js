@@ -40,6 +40,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getPersonsFn } from "./EventsApiQueries";
 import axios from "axios";
 
+import apiPath from "../Api/ApiPath";
+
 
 const TransitionRight = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="left" ref={ref} {...props} />;
@@ -63,7 +65,7 @@ export default function EmbeddedParticipantsEditor({ event, handleEditorClose })
 
     const deleteParticipantMutation = useMutation({
         mutationFn: async (itemId) => {
-             const data = await axios.delete(`https://django.producten.kaas/api/eventparticipants/${itemId}/`)
+             const data = await axios.delete(`${apiPath}/eventparticipants/${itemId}/`)
              return data
         },
         onSuccess: () => {
@@ -77,7 +79,7 @@ export default function EmbeddedParticipantsEditor({ event, handleEditorClose })
 
     const addParticipantMutation = useMutation({
         mutationFn: async (newParticipant) => {
-             const data = await axios.post(`https://django.producten.kaas/api/eventparticipants/`, newParticipant)
+             const data = await axios.post(`${apiPath}/eventparticipants/`, newParticipant)
              return data
         },
         onSuccess: () => {
