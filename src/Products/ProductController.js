@@ -14,6 +14,8 @@ import ProductsList from './ProductsList';
 import { ProductCreateForm, ProductEditForm } from './ProductsForm';
 import { Search } from '@mui/icons-material';
 
+import apiPath from '../Api/ApiPath';
+
 
 function ProductController({ handleSelectedProduct, onClose }) {
     const queryClient = useQueryClient();
@@ -56,7 +58,7 @@ function ProductController({ handleSelectedProduct, onClose }) {
 
     const deleteProductMutation = useMutation({
         mutationFn: async (itemId) => {
-            const data = await axios.delete(`https://django.producten.kaas/api/products/${itemId}/`);
+            const data = await axios.delete(`${apiPath}/products/${itemId}/`);
             return data;
         },
         onSuccess: () => {

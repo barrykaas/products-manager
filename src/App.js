@@ -78,8 +78,8 @@ function App() {
         <ThemeProvider theme={darkTheme}>
           <CssBaseline />
           <ConfirmProvider>
-          {/* <ShoppingsListsController /> */}
-          <ProductController />
+          <ShoppingsListsController />
+          {/* <ProductController /> */}
           {/* <EventController /> */}
           </ConfirmProvider>
           {/* <ButtonAppBar />
