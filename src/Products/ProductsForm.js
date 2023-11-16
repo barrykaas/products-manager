@@ -142,7 +142,7 @@ export function ProductForm({
     return (
         <Box sx={{ p: 2, height: 1, width: 1, bgcolor: 'background.paper' }}>
             <FormDialog title={"Producten"} open={barcodeSelectOpen} onClose={() => setBarcodeSelectOpen(false)}>
-                <ScannedItemsList/>
+                <ScannedItemsList disableKnownProducts={true} />
             </FormDialog>
 
             <Stack component="form" spacing={2} onSubmit={formik.handleSubmit}>

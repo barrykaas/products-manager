@@ -3,10 +3,11 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import React from "react";
 
 import { fetchScannedItems, getBarcodeProduct } from './ScannedApiQueries';
-import { ProductListItem, DrawProductListItem } from '../Helpers/ProductListItem';
+import { BarcodeListItem } from "./BarcodeListItem";
+import { ProductListItem } from '../Helpers/ProductListItem';
 
 
-function ScannedItemsListItem({ item, selectBarcode }) {
+function ScannedItemsListItem({ item, selectBarcode, disableKnownProduct=false }) {
   const barcode = item.barcode;
 
   const { isLoading, isError, data, error } = useQuery({
@@ -24,17 +25,17 @@ function ScannedItemsListItem({ item, selectBarcode }) {
 
   if (!product) {
     return (
-      <DrawProductListItem name={item.barcode} />
+      <BarcodeListItem barcode={item.barcode} handleSelection={selectBarcode} />
     );
   }
 
   return (
-    <ProductListItem product={product} />
+    <ProductListItem product={product} available={!disableKnownProduct} />
   );
 }
 
 
-export default function ScannedItemsList({selectBarcode}) {
+export default function ScannedItemsList({ selectBarcode, disableKnownProducts=false }) {
   const {
     data,
     isFetching,
@@ -52,14 +53,13 @@ export default function ScannedItemsList({selectBarcode}) {
   }
 
   const scannedItemsData = data.pages.flatMap((page) => page.results);
-  console.log(data.pages);
 
   return (
     <>
       <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
         {scannedItemsData.map((item) => (
           <React.Fragment key={item.id}>
-            <ScannedItemsListItem item={item} />
+            <ScannedItemsListItem item={item} disableKnownProduct={disableKnownProducts} />
             <Divider component="li" />
           </React.Fragment>
         ))}

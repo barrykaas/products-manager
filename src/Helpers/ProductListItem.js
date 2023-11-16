@@ -1,13 +1,13 @@
-import { Typography, Grid, Box, ListItem, ListItemText, ListItemButton, Skeleton, CircularProgress } from "@mui/material";
+import { Typography, Box, ListItem, ListItemText, ListItemButton, CircularProgress } from "@mui/material";
 import { useBrands } from "./Brands";
 import useHumanReadableProduct from "../Products/HumanReadableProduct";
 
 
-export function ProductListItem({ product, handleSelection }) {
+export function ProductListItem({ product, handleSelection, available = true }) {
     const brands = useBrands();
     let brandName;
-    const {isLoadingHuman, isErrorHuman, formatProductDescription, errorHuman} = useHumanReadableProduct();
-    
+    const { isLoadingHuman, isErrorHuman, formatProductDescription, errorHuman } = useHumanReadableProduct();
+
     if (brands.isLoading || brands.isError) {
         brandName = <CircularProgress />;
     } else {
@@ -23,10 +23,12 @@ export function ProductListItem({ product, handleSelection }) {
         unitPrice={product.unit_price}
         quantity={quantityString}
         barcode={product.barcode}
+        handleSelection={handleSelection}
+        available={available}
     />;
 }
 
-export function DrawProductListItem({ name, brand, unitPrice, quantity, barcode, handleSelection }) {
+export function DrawProductListItem({ name, brand, unitPrice, quantity, barcode, handleSelection, available = true }) {
 
     let primary = name;
     if (barcode) {
@@ -38,7 +40,7 @@ export function DrawProductListItem({ name, brand, unitPrice, quantity, barcode,
 
     return (
         <ListItem alignItems="flex-start" disablePadding>
-            <ListItemButton onClick={handleSelection}>
+            <ListItemButton onClick={handleSelection} disabled={!available}>
                 <ListItemText
                     primary={primary}
                     secondary={
