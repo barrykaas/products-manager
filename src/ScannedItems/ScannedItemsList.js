@@ -6,7 +6,7 @@ import { fetchScannedItems, getBarcodeProduct } from './ScannedApiQueries';
 import { ProductListItem, DrawProductListItem } from '../Helpers/ProductListItem';
 
 
-function ScannedItemsListItem({ item }) {
+function ScannedItemsListItem({ item, selectBarcode }) {
   const barcode = item.barcode;
 
   const { isLoading, isError, data, error } = useQuery({
@@ -34,7 +34,7 @@ function ScannedItemsListItem({ item }) {
 }
 
 
-export default function ScannedItemsList() {
+export default function ScannedItemsList({selectBarcode}) {
   const {
     data,
     isFetching,

@@ -109,7 +109,7 @@ function ProductController({ handleSelectedProduct, onClose }) {
             <ProductsList handleEdit={handleEditProduct} handleSelectedProduct={handleSelectedProduct} searchQuery={searchQuery}/>
 
             <FormDialog title={"Producten"} open={createOpen} onClose={() => setCreateOpen(false)}>
-                <ProductCreateForm didSuccessfullyCreate={didSuccessfullyCreate} />
+                <ProductCreateForm didSuccesfullyCreate={didSuccessfullyCreate} />
             </FormDialog>
 
             {currentProduct ? (

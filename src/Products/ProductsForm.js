@@ -1,4 +1,4 @@
-import { Box, Button, InputAdornment, Skeleton, Stack, TextField, Tooltip } from '@mui/material';
+import { Box, Button, IconButton, InputAdornment, Skeleton, Stack, TextField, Tooltip } from '@mui/material';
 import { useFormik } from 'formik';
 
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -13,6 +13,12 @@ import { createProductFn } from './ProductsApiQueries';
 import UnitTypeSelector, { useUnitType } from './ProductUnitTypeSelector';
 
 import apiPath from '../Api/ApiPath';
+import { QrCodeScanner } from '@mui/icons-material';
+import { useState } from 'react';
+import ScannedItemsList from '../ScannedItems/ScannedItemsList';
+import FormDialog from '../Helpers/FormDialog';
+
+
 
 // const validationSchema = yup.object({
 //     date_added: yup
@@ -90,8 +96,11 @@ const validationSchema = yup.object({
             } else {
                 return schema.required('Unit weight/volume is required');
             }
-        })
+        }),
+    barcode: yup.string().nullable(),
 });
+
+
 
 export function ProductForm({
     handleFormSubmit,
@@ -103,16 +112,24 @@ export function ProductForm({
         unit_weightvol: '',
         unit_price: '',
         unit_type: '',
+        barcode: '',
     },
 }) {
     const formik = useFormik({
         initialValues: initialValues,
         validationSchema: validationSchema,
         onSubmit: (values) => {
+            if(values.unit_type === 2) { // Per gewicht -> Verkocht voor een prijs per kilo (met eventueel een vast aantal per verpakking)
+                values.unit_number = null;
+            } else if(values.unit_type === 3) { // Per stuk, zonder gewicht -> Verkocht per stuk, zonder aanduiding van gewicht. 
+                values.unit_weightvol = null;
+            }
             console.log('Submit called');
             handleFormSubmit(values);
         },
     });
+
+    const [barcodeSelectOpen, setBarcodeSelectOpen] = useState(false);
 
     const {isLoading, isError, unitTypeInfo} = useUnitType(formik.values.unit_type)
 
@@ -124,6 +141,10 @@ export function ProductForm({
     
     return (
         <Box sx={{ p: 2, height: 1, width: 1, bgcolor: 'background.paper' }}>
+            <FormDialog title={"Producten"} open={barcodeSelectOpen} onClose={() => setBarcodeSelectOpen(false)}>
+                <ScannedItemsList/>
+            </FormDialog>
+
             <Stack component="form" spacing={2} onSubmit={formik.handleSubmit}>
                 <TextField
                     fullWidth
@@ -149,7 +170,7 @@ export function ProductForm({
                     id="unit_number"
                     name="unit_number"
                     label="Aantal"
-                    value={formik.values.unit_number}
+                    value={formik.values.unit_type === 2 ? '' : formik.values.unit_number}
                     disabled={formik.values.unit_type === 2}
                     onChange={formik.handleChange}
                     error={
@@ -165,7 +186,7 @@ export function ProductForm({
                     id="unit_weightvol"
                     name="unit_weightvol"
                     label="Unit weight/volume"
-                    value={formik.values.unit_weightvol}
+                    value={formik.values.unit_type === 3 ? '' : formik.values.unit_weightvol}
                     onChange={formik.handleChange}
                     InputProps={{
                         endAdornment: <InputAdornment position="start">{unitTypeInfo}</InputAdornment>,
@@ -191,6 +212,32 @@ export function ProductForm({
                         startAdornment: <InputAdornment position="start">€</InputAdornment>,
                       }}
                 />
+                <TextField
+                    fullWidth
+                    id="barcode"
+                    name="barcode"
+                    label="Barcode"
+                    value={formik.values.barcode}
+                    onChange={formik.handleChange}
+                    error={
+                        formik.touched.barcode && Boolean(formik.errors.barcode)
+                    }
+                    helperText={
+                        formik.touched.barcode && formik.errors.barcode
+                    }
+                    InputProps={{
+                        endAdornment: <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          edge="end"
+                            onClick={() => setBarcodeSelectOpen(true)}
+                        >
+                          <QrCodeScanner />
+                        </IconButton>
+                      </InputAdornment>
+                    }}
+                />
+
 
                 
 
