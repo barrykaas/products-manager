@@ -7,6 +7,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getPersonsFn } from "./EventsApiQueries";
 import axios from "axios";
+import apiPath from "../Api/ApiPath";
 
 
 const TransitionRight = React.forwardRef(function Transition(props, ref) {
