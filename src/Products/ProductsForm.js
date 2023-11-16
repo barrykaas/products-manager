@@ -36,6 +36,30 @@ import apiPath from '../Api/ApiPath';
 // });
 
 
+// const validationSchema = yup.object({
+//     date_added: yup
+//         .date('Enter transaction date')
+//         .required('Transaction date is required'),
+//     name: yup
+//         .string('Enter name')
+//         .required('Name is required'),
+//     unit_number: yup
+//         .number('Enter unit number')
+//         .required('Unit number is required'),
+//     unit_weightvol: yup
+//         .mixed() // Use the mixed() type to allow number or null
+//         .nullable() // Allow null values
+//         .typeError('Unit weight/volume must be a number or null') // Custom error message for non-number values
+//         .when('unit_type', {is: 3, then: yup.number().required('Unit weight/volume is required'), otherwise: yup.string().nullable()}),
+//     unit_price: yup
+//         .number('Enter unit price')
+//         .required('Unit price is required'),
+//     unit_type: yup
+//         .number('Select unit type')
+//         .required('Unit type is required')
+// });
+
+
 const validationSchema = yup.object({
     date_added: yup
         .date('Enter transaction date')
@@ -45,18 +69,28 @@ const validationSchema = yup.object({
         .required('Name is required'),
     unit_number: yup
         .number('Enter unit number')
-        .required('Unit number is required'),
-    unit_weightvol: yup
-        .mixed() // Use the mixed() type to allow number or null
-        .nullable() // Allow null values
-        .typeError('Unit weight/volume must be a number or null') // Custom error message for non-number values
-        .when('unit_type', {is: 3, then: yup.number().required('Unit weight/volume is required'), otherwise: yup.string().nullable()}),
+        .when('unit_type', ([unit_type], schema) => {
+            if (unit_type === 2) {
+                return schema;
+            } else {
+                return schema.required('Unit number is required');
+            }
+        }),
     unit_price: yup
         .number('Enter unit price')
         .required('Unit price is required'),
     unit_type: yup
         .number('Select unit type')
-        .required('Unit type is required')
+        .required('Unit type is required'),
+    unit_weightvol: yup
+        .number('Enter unit weight/volume')
+        .when('unit_type', ([unit_type], schema) => {
+            if (unit_type === 3) {
+                return schema;
+            } else {
+                return schema.required('Unit weight/volume is required');
+            }
+        })
 });
 
 export function ProductForm({
@@ -90,8 +124,6 @@ export function ProductForm({
     
     return (
         <Box sx={{ p: 2, height: 1, width: 1, bgcolor: 'background.paper' }}>
-
-            
             <Stack component="form" spacing={2} onSubmit={formik.handleSubmit}>
                 <TextField
                     fullWidth
@@ -118,6 +150,7 @@ export function ProductForm({
                     name="unit_number"
                     label="Aantal"
                     value={formik.values.unit_number}
+                    disabled={formik.values.unit_type === 2}
                     onChange={formik.handleChange}
                     error={
                         formik.touched.unit_number && Boolean(formik.errors.unit_number)
@@ -128,7 +161,7 @@ export function ProductForm({
                 />
                 <TextField
                     fullWidth
-                    disabled={unitTypeInfo === null}
+                    disabled={unitTypeInfo === null || formik.values.unit_type === 3}
                     id="unit_weightvol"
                     name="unit_weightvol"
                     label="Unit weight/volume"
