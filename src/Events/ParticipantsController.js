@@ -31,7 +31,7 @@ function ParticipantsPicker({ event, open, handleEditorClose }) {
 
     const deleteParticipantMutation = useMutation({
         mutationFn: async (itemId) => {
-             const data = await axios.delete(`https://django.producten.kaas/api/eventparticipants/${itemId}/`)
+             const data = await axios.delete(`${apiPath}/eventparticipants/${itemId}/`)
              return data
         },
         onSuccess: () => {
@@ -45,7 +45,7 @@ function ParticipantsPicker({ event, open, handleEditorClose }) {
 
     const addParticipantMutation = useMutation({
         mutationFn: async (newParticipant) => {
-             const data = await axios.post(`https://django.producten.kaas/api/eventparticipants/`, newParticipant)
+             const data = await axios.post(`${apiPath}/eventparticipants/`, newParticipant)
              return data
         },
         onSuccess: () => {
