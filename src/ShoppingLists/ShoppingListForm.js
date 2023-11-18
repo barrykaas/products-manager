@@ -188,6 +188,7 @@ function ShoppingListItemController({initialValues}) {
     function handleSelectedEvent(event) {
         console.log(event)
         setEventControllerModalOpen(false);
+        handleAddProduct(event.id);
     }
 
     const [isAddingProduct, setIsAddingProduct] = useState(false);

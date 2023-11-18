@@ -29,6 +29,21 @@ function ShoppingListProductItem({ item }) {
           },
     });
 
+    // remove mutation
+    const removeMutation = useMutation({
+        mutationFn: async (itemId) => {
+             const data = await axios.delete(`${apiPath}/listitems/${itemId}/`)
+             return data
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ['shoppinglistitems']});
+        },
+        onError: (error, variables, context) => {
+            // An error happened!
+            console.log(`Error`)
+          },
+    });
+
     const increaseQuantity = () => {
         quantityMutation.mutate({'product_quantity': item.product_quantity + 1})
     }
@@ -76,6 +91,7 @@ function ShoppingListProductItem({ item }) {
                 <ButtonGroup size="small" variant="outlined" aria-label="outlined button group">
                     <Button onClick={() => increaseQuantity()}>+</Button>
                     <Button disabled={disabledDecrease} onClick={() => decreaseQuantity()}>-</Button>
+                    <Button color="error">Remove</Button>
                 </ButtonGroup>
             </Box>
 
