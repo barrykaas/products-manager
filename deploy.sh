@@ -1,2 +1,2 @@
 npm run build
-rsync -vrtP build/ kaas:/home/kaas/programs/web/www/products-manager
+rsync -vrtP --delete build/ kaas:/home/kaas/programs/web/www/products-manager
