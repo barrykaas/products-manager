@@ -23,9 +23,13 @@ function ScannedItemsListItem({ item, selectBarcode, disableKnownProduct=false }
   const matchingProducts = data.data.results;
   const product = matchingProducts.length > 0 ? matchingProducts[0] : null;
 
+  function handleSelection() {
+    selectBarcode(barcode);
+  }
+
   if (!product) {
     return (
-      <BarcodeListItem barcode={item.barcode} handleSelection={selectBarcode} />
+      <BarcodeListItem barcode={item.barcode} handleSelection={handleSelection} />
     );
   }
 
@@ -59,7 +63,7 @@ export default function ScannedItemsList({ selectBarcode, disableKnownProducts=f
       <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
         {scannedItemsData.map((item) => (
           <React.Fragment key={item.id}>
-            <ScannedItemsListItem item={item} disableKnownProduct={disableKnownProducts} />
+            <ScannedItemsListItem item={item} disableKnownProduct={disableKnownProducts} selectBarcode={selectBarcode} />
             <Divider component="li" />
           </React.Fragment>
         ))}

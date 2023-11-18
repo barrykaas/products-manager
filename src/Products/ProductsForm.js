@@ -129,6 +129,12 @@ export function ProductForm({
         },
     });
 
+    function handleSelectBarcode(barcode) {
+        console.log(`selected ${barcode}`);
+        formik.setFieldValue('barcode', barcode);
+        setBarcodeSelectOpen(false);
+    }
+
     const [barcodeSelectOpen, setBarcodeSelectOpen] = useState(false);
 
     const {isLoading, isError, unitTypeInfo} = useUnitType(formik.values.unit_type)
@@ -137,12 +143,12 @@ export function ProductForm({
         return <Skeleton />
     }
 
-    console.log(unitTypeInfo);
+    
     
     return (
         <Box sx={{ p: 2, height: 1, width: 1, bgcolor: 'background.paper' }}>
             <FormDialog title={"Producten"} open={barcodeSelectOpen} onClose={() => setBarcodeSelectOpen(false)}>
-                <ScannedItemsList disableKnownProducts={true} />
+                <ScannedItemsList disableKnownProducts={true} selectBarcode={handleSelectBarcode} />
             </FormDialog>
 
             <Stack component="form" spacing={2} onSubmit={formik.handleSubmit}>
