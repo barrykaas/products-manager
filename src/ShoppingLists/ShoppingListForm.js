@@ -17,6 +17,7 @@ import EventController from '../Events/EventController';
 import FormDialog from '../Helpers/FormDialog';
 
 import apiPath from '../Api/ApiPath';
+import ProductController from '../Products/ProductController';
 
 
 const validationSchema = yup.object({
@@ -175,6 +176,8 @@ export function ShoppingListForm({ handleFormSubmit, listTypes, initialValues = 
     );
 };
 
+
+
 function ShoppingListItemController({initialValues}) {
     const [eventControllerModalOpen, setEventControllerModalOpen] = useState(false);
 
@@ -186,6 +189,39 @@ function ShoppingListItemController({initialValues}) {
         console.log(event)
         setEventControllerModalOpen(false);
     }
+
+    const [isAddingProduct, setIsAddingProduct] = useState(false);
+    const [eventIdAddingProduct, setEventIdAddingProduct] = useState(0);
+
+    function handleAddProduct(event) {
+        console.log(event);
+        console.log(`Add product to ${event}`);
+        setEventIdAddingProduct(event);
+        setIsAddingProduct(true);
+    }
+
+    function handleSelectedProduct(product) {
+        console.log(product, eventIdAddingProduct, initialValues.id);
+        setIsAddingProduct(false);
+
+        quantityMutation.mutate({'product_id': product.id, 'product_quantity': 1, 'list': initialValues.id, 'event': eventIdAddingProduct})
+    }
+
+    const queryClient = useQueryClient()
+
+    const quantityMutation = useMutation({
+        mutationFn: async (newItem) => {
+             const data = await axios.post(`${apiPath}/listitems/`, newItem)
+             return data
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: ['shoppinglistitems']});
+        },
+        onError: (error, variables, context) => {
+            // An error happened!
+            console.log(`Error`)
+          },
+    });
 
     //const [newEvent, setNewEvent] = useState(false);
 
@@ -203,10 +239,13 @@ function ShoppingListItemController({initialValues}) {
             </Grid>
         </Grid>
         <Paper>
-            <ShoppingListItemForm id={initialValues.id} />
+            <ShoppingListItemForm id={initialValues.id} handleAddProduct={handleAddProduct} />
         </Paper>
         <FormDialog hasToolbar={false} title={"Welk event?"} open={eventControllerModalOpen} onClose={() => setEventControllerModalOpen(false)}>
             <EventController handleSelectedEvent={handleSelectedEvent} onClose={() => setEventControllerModalOpen(false)}/>
+        </FormDialog>
+        <FormDialog hasToolbar={false} title={"Selecteer product"} open={isAddingProduct} onClose={() => setIsAddingProduct(false)}>
+            <ProductController handleSelectedProduct={handleSelectedProduct} />
         </FormDialog>
 
     </Stack>

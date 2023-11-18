@@ -89,24 +89,17 @@ function ShoppingListProductItem({ item }) {
 
 
 
-export default function ShoppingListItemForm({ id }) {
+export default function ShoppingListItemForm({ id, handleAddProduct }) {
     const { isLoading, isError, data, error } = useQuery({
         queryKey: ['shoppinglistitems', id],
         queryFn: async () => {
             const data = await getShoppingListFn(id)
             return data.data
         },
-    })
+    });
 
-    const [isAddingProduct, setIsAddingProduct] = useState(false);
 
     const { isLoadingBrands, isErrorBrands, dataBrands, errorBrands } = useQuery({ queryKey: ['brands'], queryFn: getBrandsFn })
-
-    function handleAddProduct(event) {
-        console.log(event);
-        console.log(`Add product to ${event}`);
-        setIsAddingProduct(true);
-    }
 
     if (isError) {
         return <p>{JSON.stringify(error)}</p>
@@ -134,7 +127,6 @@ export default function ShoppingListItemForm({ id }) {
     console.log(groupedEvents);
 
     return (
-        <>
         <List sx={{ width: '100%' }}>
             
             {/* {data.items.map(item => (
@@ -163,9 +155,5 @@ export default function ShoppingListItemForm({ id }) {
             ))
             }
         </List>
-        <FormDialog hasToolbar={false} title={"Selecteer product"} open={isAddingProduct} onClose={() => setIsAddingProduct(false)}>
-            <ProductController />
-        </FormDialog>
-        </>
     )
 };
