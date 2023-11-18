@@ -1,11 +1,14 @@
 import { Avatar, Divider, List, ListItem, ListItemAvatar, ListItemText, Skeleton, Typography, Button, ButtonGroup, ListItemSecondaryAction, Grid, Box, Chip } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React from "react";
+import React, { useState } from "react";
 import { getBrandsFn, getShoppingListFn } from "./ShoppingListApiQueries";
 import axios from "axios";
 import ShoppingListEventLabel from "./ShoppingListEventLabel";
 
 import apiPath from "../Api/ApiPath";
+import FormDialog from "../Helpers/FormDialog";
+
+import ProductController from "../Products/ProductController";
 
 function ShoppingListProductItem({ item }) {
     const queryClient = useQueryClient()
@@ -85,16 +88,25 @@ function ShoppingListProductItem({ item }) {
 
 
 
+
 export default function ShoppingListItemForm({ id }) {
     const { isLoading, isError, data, error } = useQuery({
-        queryKey: ['shoppinglistitems'],
+        queryKey: ['shoppinglistitems', id],
         queryFn: async () => {
             const data = await getShoppingListFn(id)
             return data.data
         },
     })
 
-    const { isLoadingBrands, isErrorBrands, dataBrands, errorBrands } = useQuery({ queryKey: ['events'], queryFn: getBrandsFn })
+    const [isAddingProduct, setIsAddingProduct] = useState(false);
+
+    const { isLoadingBrands, isErrorBrands, dataBrands, errorBrands } = useQuery({ queryKey: ['brands'], queryFn: getBrandsFn })
+
+    function handleAddProduct(event) {
+        console.log(event);
+        console.log(`Add product to ${event}`);
+        setIsAddingProduct(true);
+    }
 
     if (isError) {
         return <p>{JSON.stringify(error)}</p>
@@ -107,6 +119,7 @@ export default function ShoppingListItemForm({ id }) {
     if (isLoading || isLoadingBrands) {
         return <Skeleton />
     }
+
 
     const groupedEvents = {};
 
@@ -121,6 +134,7 @@ export default function ShoppingListItemForm({ id }) {
     console.log(groupedEvents);
 
     return (
+        <>
         <List sx={{ width: '100%' }}>
             
             {/* {data.items.map(item => (
@@ -134,7 +148,7 @@ export default function ShoppingListItemForm({ id }) {
                 //<p>{event}</p>
                 <React.Fragment key={event}>
                     <Box sx={{ my: 1, mx: 2 }}>
-                    <ShoppingListEventLabel eventId={event} />
+                    <ShoppingListEventLabel eventId={event} handleAddProduct={handleAddProduct}/>
                     </Box>
                     <Divider component="li" />
                     <List sx={{ width: '100%' }}>
@@ -149,6 +163,9 @@ export default function ShoppingListItemForm({ id }) {
             ))
             }
         </List>
+        <FormDialog hasToolbar={false} title={"Selecteer product"} open={isAddingProduct} onClose={() => setIsAddingProduct(false)}>
+            <ProductController />
+        </FormDialog>
+        </>
     )
 };
-

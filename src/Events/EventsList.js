@@ -64,11 +64,20 @@ export default function EventsList({ handleEdit, handleSelectedEvent }) {
     const {
         data,
         isFetching,
+        isError,
+        error
     } = useInfiniteQuery({
         queryKey: ['events'],
         queryFn: fetchEvents,
         getNextPageParam: (lastPage, pages) => lastPage['next'],
     })
+
+    console.log("data", data);
+
+    if (isError) {
+        console.log(error);
+        return <Skeleton />
+    }
 
     if (isFetching) {
         return <Skeleton />

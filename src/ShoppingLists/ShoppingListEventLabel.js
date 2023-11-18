@@ -4,7 +4,7 @@ import { getEventFn } from './EventLabelApi'; // Import your API function
 import { Button, Chip, Stack, Typography } from '@mui/material';
 
 
-function ShoppingListEventLabel({ eventId }) {
+function ShoppingListEventLabel({ eventId, handleAddProduct }) {
     const { data, isLoading, isError } = useQuery(['event', eventId], () =>
         getEventFn(eventId)
     );
@@ -30,7 +30,7 @@ function ShoppingListEventLabel({ eventId }) {
             </Typography>
             <Chip label={getDate()} variant="outlined" />
             <div style={{ flexGrow: 1 }}></div>
-            <Button variant="outlined" size="small">Add product</Button>
+            <Button variant="outlined" size="small" onClick={(e) => handleAddProduct(eventId)}>Add product</Button>
         </Stack>
 
     );

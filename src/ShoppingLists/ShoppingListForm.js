@@ -46,7 +46,7 @@ export function ShoppingListForm({ handleFormSubmit, listTypes, initialValues = 
     type: 2,
     payer: '',
     name: '',
-} }) {
+}, isCreating = true}) {
 
     const { isLoading, isError, data, error } = useQuery({ queryKey: ['persons'], queryFn: getPersonsFn })
 
@@ -165,11 +165,11 @@ export function ShoppingListForm({ handleFormSubmit, listTypes, initialValues = 
 
 
                 <Button color="primary" variant="contained" fullWidth type="submit">
-                    Save
+                    {isCreating ? 'Create' : 'Update'}
                 </Button>
             </Stack>
-
-            <ShoppingListItemController initialValues={initialValues} />
+            { !isCreating && <ShoppingListItemController initialValues={initialValues} />}
+            
 
         </Box>
     );
@@ -186,6 +186,8 @@ function ShoppingListItemController({initialValues}) {
         console.log(event)
         setEventControllerModalOpen(false);
     }
+
+    //const [newEvent, setNewEvent] = useState(false);
 
     return (<Stack spacing={2} sx={{ mt: 2 }}>
         <Divider />
@@ -246,5 +248,5 @@ export function ShoppingListEditForm({ listTypes, didSuccesfullyEdit, item }) {
         },
     });
 
-    return (<ShoppingListForm handleFormSubmit={(updatedItem) => { mutation.mutate(updatedItem) }} listTypes={listTypes} initialValues={item} />)
+    return (<ShoppingListForm isCreating={false} handleFormSubmit={(updatedItem) => { mutation.mutate(updatedItem) }} listTypes={listTypes} initialValues={item} />)
 }
