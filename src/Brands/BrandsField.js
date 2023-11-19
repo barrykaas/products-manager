@@ -18,8 +18,6 @@ export default function BrandsField() {
 
     let allBrands = [{name: 'Merkloos', id: undefined}].concat(brands.data.data);
 
-    // TODO: https://mui.com/material-ui/react-autocomplete/#hint
-
     return (
         <Autocomplete
             id="brandsField"
