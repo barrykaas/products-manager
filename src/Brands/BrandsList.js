@@ -76,7 +76,7 @@ export default function BrandsList({ handleDelete, handleSelectBrand, searchQuer
 
                 {filteredBrands.map((item) => (
                     <Fragment key={item.id}>
-                        <BrandsListItem brand={item}  />
+                        <BrandsListItem brand={item} handleDelete={handleDelete} />
                         <Divider component="li" />
                     </Fragment>
                 ))}
