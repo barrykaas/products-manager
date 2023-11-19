@@ -1,4 +1,4 @@
-import { Typography, Box, ListItem, ListItemText, ListItemButton, CircularProgress } from "@mui/material";
+import { Typography, Box, ListItem, ListItemText, ListItemButton, CircularProgress, Skeleton } from "@mui/material";
 import { useBrands } from "./Brands";
 import useHumanReadableProduct from "../Products/HumanReadableProduct";
 
@@ -6,10 +6,10 @@ import useHumanReadableProduct from "../Products/HumanReadableProduct";
 export function ProductListItem({ product, handleSelection, available = true }) {
     const brands = useBrands();
     let brandName;
-    const { isLoadingHuman, isErrorHuman, formatProductDescription, errorHuman } = useHumanReadableProduct();
+    const { formatProductDescription } = useHumanReadableProduct();
 
     if (brands.isLoading || brands.isError) {
-        brandName = <CircularProgress />;
+        brandName = "Loading brand...";
     } else {
         const filteredBrand = brands.data.data.filter(brandItem => product.brand === brandItem.id);
         brandName = filteredBrand.length > 0 ? filteredBrand[0].name : null;

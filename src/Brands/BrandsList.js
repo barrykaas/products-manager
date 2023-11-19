@@ -1,11 +1,59 @@
-import { CircularProgress, List, Divider } from "@mui/material";
+import { CircularProgress, List, Divider, ListItem, ListItemText, ListItemButton, IconButton } from "@mui/material";
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { Fragment } from "react";
 
-import { useBrands } from "./queries";
+import { addBrandFn, brandsQueryKey, useBrands } from "./queries";
 import { matchesSearch } from "../Helpers/search";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 
-export default function BrandsList({ handleEdit, handleSelectBrand, searchQuery }) {
+function BrandsListItem({ brand, handleSelect, handleDelete }) {
+    return (
+        <ListItem alignItems="flex-start" disablePadding secondaryAction={
+            <IconButton aria-label="comment" onClick={() => handleDelete(brand)}>
+                <DeleteForeverIcon />
+            </IconButton>
+        } >
+            <ListItemButton onClick={handleSelect}>
+                <ListItemText primary={brand.name} />
+            </ListItemButton>
+        </ListItem>
+    );
+}
+
+
+function QuickAddSuggestion({ brandName, handleSelect, onAddSuccess, onAddError }) {
+
+    const queryClient = useQueryClient();
+    const brandMutation = useMutation({
+        mutationFn: addBrandFn,
+        onSuccess: ({ data }) => {
+            queryClient.invalidateQueries({ queryKey: [brandsQueryKey] });
+            onAddSuccess();
+        },
+        onError: onAddError
+    });
+
+    if (!brandName) return;
+    const newBrandData = { name: brandName };
+
+    return (
+        <>
+            <ListItem alignItems="flex-start" disablePadding>
+                <ListItemButton onClick={() => {
+                    brandMutation.mutate(newBrandData);
+                    handleSelect();
+                }}>
+                    <ListItemText primary={`Voeg nieuw merk toe: ${brandName}`} />
+                </ListItemButton>
+            </ListItem>
+            <Divider component="li" />
+        </>
+    );
+}
+
+
+export default function BrandsList({ handleDelete, handleSelectBrand, searchQuery }) {
     const brands = useBrands();
 
     if (brands.isLoading) {
@@ -15,23 +63,24 @@ export default function BrandsList({ handleEdit, handleSelectBrand, searchQuery 
         return (<p>Error: {brands.error}</p>);
     }
 
-    let filteredBrands = brands.data.data
+    let filteredBrands = brands.data.data;
     if (searchQuery) {
-        filteredBrands = brands.data.data.filter((brand) => matchesSearch(searchQuery, brand.name));
+        filteredBrands = filteredBrands.filter((brand) => matchesSearch(searchQuery, brand.name));
     }
+
 
     return (
         <>
             <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                <QuickAddSuggestion brandName={searchQuery} />
+
                 {filteredBrands.map((item) => (
                     <Fragment key={item.id}>
-                        {/* <ProductsListItem item={item} handleEdit={handleEdit} handleSelectedProduct={() => handleSelectedProduct(item)} /> */}
-                        <p>{item.name}</p>
+                        <BrandsListItem brand={item}  />
                         <Divider component="li" />
                     </Fragment>
                 ))}
             </List>
-            {/* <Button disabled={!hasNextPage || isFetchingNextPage} onClick={() => fetchNextPage()}>Load more</Button> */}
         </>
     );
 }
