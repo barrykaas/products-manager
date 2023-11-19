@@ -17,6 +17,7 @@ import { QrCodeScanner } from '@mui/icons-material';
 import { useState } from 'react';
 import ScannedItemsList from '../ScannedItems/ScannedItemsList';
 import FormDialog from '../Helpers/FormDialog';
+import BrandsField from '../Brands/BrandsField';
 
 
 
@@ -108,6 +109,7 @@ export function ProductForm({
     initialValues = {
         date_added: new Date(),
         name: '',
+        brand: '',
         unit_number: '',
         unit_weightvol: '',
         unit_price: '',
@@ -162,6 +164,8 @@ export function ProductForm({
                     error={formik.touched.name && Boolean(formik.errors.name)}
                     helperText={formik.touched.name && formik.errors.name}
                 />
+
+                <BrandsField />
         
                 <UnitTypeSelector
                     name="unit_type"
