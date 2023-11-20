@@ -2,15 +2,14 @@ import { CircularProgress, List, Divider, ListItem, ListItemText, ListItemButton
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { Fragment } from "react";
 
-import { addBrandFn, brandsQueryKey, useBrands } from "./queries";
+import { useBrandAdder, useBrands } from "./queries";
 import { matchesSearch } from "../Helpers/search";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 
 function BrandsListItem({ brand, handleSelect, handleDelete }) {
     return (
         <ListItem alignItems="flex-start" disablePadding secondaryAction={
-            <IconButton aria-label="comment" onClick={() => handleDelete(brand)}>
+            <IconButton aria-label="comment" onClick={handleDelete}>
                 <DeleteForeverIcon />
             </IconButton>
         } >
@@ -22,28 +21,14 @@ function BrandsListItem({ brand, handleSelect, handleDelete }) {
 }
 
 
-function QuickAddSuggestion({ brandName, handleSelect, onAddSuccess, onAddError }) {
-
-    const queryClient = useQueryClient();
-    const brandMutation = useMutation({
-        mutationFn: addBrandFn,
-        onSuccess: ({ data }) => {
-            queryClient.invalidateQueries({ queryKey: [brandsQueryKey] });
-            onAddSuccess();
-        },
-        onError: onAddError
-    });
-
+function QuickAddSuggestion({ brandName, handleSelect }) {
     if (!brandName) return;
     const newBrandData = { name: brandName };
 
     return (
         <>
             <ListItem alignItems="flex-start" disablePadding>
-                <ListItemButton onClick={() => {
-                    brandMutation.mutate(newBrandData);
-                    handleSelect();
-                }}>
+                <ListItemButton onClick={handleSelect} >
                     <ListItemText primary={`Voeg nieuw merk toe: ${brandName}`} />
                 </ListItemButton>
             </ListItem>
@@ -55,6 +40,7 @@ function QuickAddSuggestion({ brandName, handleSelect, onAddSuccess, onAddError 
 
 export default function BrandsList({ handleDelete, handleSelectBrand, searchQuery }) {
     const brands = useBrands();
+    const addBrand = useBrandAdder();
 
     if (brands.isLoading) {
         return <CircularProgress />;
@@ -68,15 +54,19 @@ export default function BrandsList({ handleDelete, handleSelectBrand, searchQuer
         filteredBrands = filteredBrands.filter((brand) => matchesSearch(searchQuery, brand.name));
     }
 
+    function quickAddBrand() {
+        const newBrandData = { name: searchQuery };
+        addBrand(newBrandData);
+    };
 
     return (
         <>
             <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                <QuickAddSuggestion brandName={searchQuery} />
+                <QuickAddSuggestion brandName={searchQuery} handleSelect={quickAddBrand} />
 
                 {filteredBrands.map((item) => (
                     <Fragment key={item.id}>
-                        <BrandsListItem brand={item} handleDelete={handleDelete} />
+                        <BrandsListItem brand={item} handleDelete={() => handleDelete(item)} />
                         <Divider component="li" />
                     </Fragment>
                 ))}

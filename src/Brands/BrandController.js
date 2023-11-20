@@ -1,24 +1,17 @@
 import { useState } from "react";
 import { Paper, TextField } from "@mui/material";
-import BrandsList from "./BrandsList";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { brandsQueryKey, deleteBrandFn } from "./queries";
 import { useConfirm } from "material-ui-confirm";
+
+import BrandsList from "./BrandsList";
+import { useBrandDeleter } from "./queries";
 
 
 export default function BrandController({ handleSelectBrand, onClose }) {
     const [searchQuery, setSearchQuery] = useState("");
 
-    const queryClient = useQueryClient();
-
-    const deleteBrandMutation = useMutation({
-        mutationFn: deleteBrandFn,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [brandsQueryKey] });
-        },
-        onError: (error, variables, context) => {
-            console.log(`Error`, error);
-        },
+    const deleteBrand = useBrandDeleter({
+        onSuccess: () => console.log("Brand deleted"),
+        onError: (error, variables, context) => console.log(`Error deleting brand:`, error)
     });
 
     const confirm = useConfirm();
@@ -26,9 +19,12 @@ export default function BrandController({ handleSelectBrand, onClose }) {
     function handleDelete(brand) {
         console.log("delete brand", brand);
 
-        confirm({ description: `Verwijderen van ${brand.name}` })
+        confirm({
+            title: "Weet je zeker dat je dit merk wilt verwijderen?",
+            description: `${brand.name}`
+        })
             .then(() => {
-                deleteBrandMutation.mutate(brand.id)
+                deleteBrand(brand.id);
             })
             .catch(() => {
                 
