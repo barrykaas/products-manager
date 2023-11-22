@@ -50,7 +50,7 @@ export default function MainTabBar() {
   return (
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }} >
-        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" centered>
+        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" centered variant="scrollable" scrollButtons="auto">
           <Tab label="Shopping lists" />
           <Tab label="Product list" />
           <Tab label="Events" />
