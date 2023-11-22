@@ -165,7 +165,10 @@ export function ProductForm({
                     helperText={formik.touched.name && formik.errors.name}
                 />
 
-                <BrandsField />
+                <BrandsField
+                    value={formik.values.brand}
+                    setValue={(value) => formik.setFieldValue("brand", value)}
+                />
         
                 <UnitTypeSelector
                     name="unit_type"

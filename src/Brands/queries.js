@@ -42,11 +42,10 @@ export function useBrandAdder( onSuccess, onError ) {
 
     const addBrandMutation = useMutation({
         mutationFn: addBrandFn,
-        onSuccess: () => {
+        onSuccess: (...args) => {
             queryClient.invalidateQueries({ queryKey: [brandsQueryKey] });
-            onSuccess();
+            onSuccess(...args);
         },
-        // onError: onError ? onError : (error, variables, context) => {}
         onError: onError
     });
 
