@@ -2,7 +2,7 @@ import { Button, CircularProgress, Divider, List, Skeleton } from "@mui/material
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import React from "react";
 
-import { fetchScannedItems, getBarcodeProduct } from './ScannedApiQueries';
+import { fetchScannedItems, getBarcodeProduct } from './queries';
 import { BarcodeListItem } from "./BarcodeListItem";
 import { ProductListItem } from '../Helpers/ProductListItem';
 
