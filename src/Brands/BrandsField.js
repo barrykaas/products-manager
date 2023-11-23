@@ -9,12 +9,12 @@ export default function BrandsField({ value, setValue }) {
     const [open, setOpen] = useState(false);
 
     const brands = useBrands();
-    const addBrand = useBrandAdder(
-        (data) => {
+    const addBrand = useBrandAdder({
+        onSuccess: (data) => {
             const newBrand = data.data;
             setValue(newBrand);
         }
-    );
+    });
 
     if (brands.isLoading) {
         return <TextField disabled fullWidth label={"Merken worden geladen..."} />;
@@ -37,12 +37,12 @@ export default function BrandsField({ value, setValue }) {
             value={value}
             onChange={(event, newValue, reason) => {
                 if (typeof newValue === 'string') {
-                    setValue({name: newValue});
+                    setValue({ name: newValue });
                 } else if (newValue && newValue.inputValue) {
                     // "Voeg X toe" geselecteerd
-                    const newBrandData = {name: newValue.inputValue};
+                    const newBrandData = { name: newValue.inputValue };
                     addBrand(newBrandData);
-                    setValue({name: newValue.inputValue});
+                    setValue({ name: newValue.inputValue });
                 } else {
                     setValue(newValue);
                 }
@@ -53,15 +53,15 @@ export default function BrandsField({ value, setValue }) {
             getOptionLabel={(option) => {
                 // Value selected with enter, right from the input
                 if (typeof option === 'string') {
-                  return option;
+                    return option;
                 }
                 // Add "xxx" option created dynamically
                 if (option.inputValue) {
-                  return `Voeg "${option.inputValue}" toe`;
+                    return `Voeg "${option.inputValue}" toe`;
                 }
                 // Regular option
                 return option.name;
-              }}
+            }}
             options={allBrands}
             filterOptions={(options, params) => {
                 const filtered = filter(options, params);

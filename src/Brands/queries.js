@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+
 import apiPath from "../Api/ApiPath";
+
 
 export const brandsQueryKey = "brands";
 
@@ -37,7 +39,7 @@ export function useBrandDeleter({ onSuccess, onError }) {
     return deleteBrandMutation.mutate;
 };
 
-export function useBrandAdder( onSuccess, onError ) {
+export function useBrandAdder({ onSuccess, onError }) {
     const queryClient = useQueryClient();
 
     const addBrandMutation = useMutation({

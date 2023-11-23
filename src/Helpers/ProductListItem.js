@@ -1,5 +1,5 @@
 import { Typography, Box, ListItem, ListItemText, ListItemButton, CircularProgress, Skeleton } from "@mui/material";
-import { useBrands } from "./Brands";
+import { useBrands } from "../Brands/queries";
 import useHumanReadableProduct from "../Products/HumanReadableProduct";
 
 
