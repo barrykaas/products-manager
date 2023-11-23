@@ -1,13 +1,13 @@
 import { Button, CircularProgress, Divider, List, Skeleton } from "@mui/material";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
-import { fetchScannedItems, getBarcodeProduct } from './queries';
+import { getBarcodeProduct, useScannedItems } from './queries';
 import { BarcodeListItem } from "./BarcodeListItem";
 import { ProductListItem } from '../Helpers/ProductListItem';
 
 
-function ScannedItemsListItem({ item, selectBarcode, disableKnownProduct=false }) {
+function ScannedItemsListItem({ item, onSelect, disableKnownProduct = false }) {
   const barcode = item.barcode;
 
   const { isLoading, isError, data, error } = useQuery({
@@ -23,13 +23,10 @@ function ScannedItemsListItem({ item, selectBarcode, disableKnownProduct=false }
   const matchingProducts = data.data.results;
   const product = matchingProducts.length > 0 ? matchingProducts[0] : null;
 
-  function handleSelection() {
-    selectBarcode(barcode);
-  }
 
   if (!product) {
     return (
-      <BarcodeListItem barcode={item.barcode} handleSelection={handleSelection} />
+      <BarcodeListItem barcode={item.barcode} onSelect={onSelect} />
     );
   }
 
@@ -39,18 +36,14 @@ function ScannedItemsListItem({ item, selectBarcode, disableKnownProduct=false }
 }
 
 
-export default function ScannedItemsList({ selectBarcode, disableKnownProducts=false }) {
+export default function ScannedItemsList({ selectBarcode, disableKnownProducts = false }) {
   const {
     data,
     isFetching,
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage
-  } = useInfiniteQuery({
-    queryKey: ['scanneditems'],
-    queryFn: ({ pageParam = 1 }) => fetchScannedItems({ pageParam }),
-    getNextPageParam: (lastPage, allPages) => lastPage.next,
-  });
+  } = useScannedItems(disableKnownProducts);
 
   if (isFetching) {
     return <CircularProgress />
@@ -58,12 +51,30 @@ export default function ScannedItemsList({ selectBarcode, disableKnownProducts=f
 
   const scannedItemsData = data.pages.flatMap((page) => page.results);
 
+  let listItem;
+  if (disableKnownProducts) {
+    listItem = (item) => <BarcodeListItem
+      barcode={item.barcode}
+      onSelect={() => selectBarcode(item.barcode)}
+    />;
+  } else {
+    listItem = (item) => <ScannedItemsListItem
+      item={item}
+      disableKnownProduct={disableKnownProducts}
+      onSelect={() => selectBarcode(item.barcode)}
+    />;
+  }
+
   return (
     <>
       <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
         {scannedItemsData.map((item) => (
           <React.Fragment key={item.id}>
-            <ScannedItemsListItem item={item} disableKnownProduct={disableKnownProducts} selectBarcode={selectBarcode} />
+            {listItem(item)}
+            {/* <ScannedItemsListItem
+              item={item}
+              disableKnownProduct={disableKnownProducts}
+              selectBarcode={() => selectBarcode(item.barcode)} /> */}
             <Divider component="li" />
           </React.Fragment>
         ))}
