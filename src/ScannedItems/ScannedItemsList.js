@@ -4,7 +4,7 @@ import React from "react";
 
 import { getBarcodeProduct, useScannedItems } from './queries';
 import { BarcodeListItem } from "./BarcodeListItem";
-import { ProductListItem } from '../Helpers/ProductListItem';
+import { ProductListItem } from '../Products/ProductListItem';
 
 
 function ScannedItemsListItem({ item, onSelect, disableKnownProduct = false }) {
@@ -31,7 +31,7 @@ function ScannedItemsListItem({ item, onSelect, disableKnownProduct = false }) {
   }
 
   return (
-    <ProductListItem product={product} available={!disableKnownProduct} />
+    <ProductListItem product={product} showBarcode disabled={disableKnownProduct} />
   );
 }
 

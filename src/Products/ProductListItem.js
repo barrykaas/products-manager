@@ -1,9 +1,11 @@
-import { Typography, Box, ListItem, ListItemText, ListItemButton, CircularProgress, Skeleton } from "@mui/material";
+import { Typography, Box, ListItem, ListItemText, ListItemButton, IconButton } from "@mui/material";
+import EditIcon from '@mui/icons-material/Edit';
+
 import { useBrands } from "../Brands/queries";
-import useHumanReadableProduct from "../Products/HumanReadableProduct";
+import useHumanReadableProduct from "./HumanReadableProduct";
 
 
-export function ProductListItem({ product, handleSelection, available = true }) {
+export function ProductListItem({ product, onSelect, onEdit, disabled = false, showBarcode = false }) {
     const brands = useBrands();
     let brandName;
     const { formatProductDescription } = useHumanReadableProduct();
@@ -22,13 +24,15 @@ export function ProductListItem({ product, handleSelection, available = true }) 
         brand={brandName}
         unitPrice={product.unit_price}
         quantity={quantityString}
-        barcode={product.barcode}
-        handleSelection={handleSelection}
-        available={available}
+        barcode={showBarcode ? product.barcode : null}
+        onSelect={onSelect}
+        onEdit={onEdit}
+        disabled={disabled}
     />;
 }
 
-export function DrawProductListItem({ name, brand, unitPrice, quantity, barcode, handleSelection, available = true }) {
+
+export function DrawProductListItem({ name, brand, unitPrice, quantity, barcode, onSelect, onEdit, disabled = false }) {
 
     let primary = name;
     if (barcode) {
@@ -38,9 +42,15 @@ export function DrawProductListItem({ name, brand, unitPrice, quantity, barcode,
         </>;
     }
 
+    const editButton = onEdit ?
+        <IconButton aria-label="comment" onClick={onEdit}>
+            <EditIcon />
+        </IconButton>
+        : null;
+
     return (
-        <ListItem alignItems="flex-start" disablePadding>
-            <ListItemButton onClick={handleSelection} disabled={!available}>
+        <ListItem alignItems="flex-start" disablePadding secondaryAction={editButton}>
+            <ListItemButton onClick={onSelect} disabled={disabled}>
                 <ListItemText
                     primary={primary}
                     secondary={
