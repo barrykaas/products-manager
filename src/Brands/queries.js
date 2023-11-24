@@ -24,14 +24,14 @@ export const useBrands = () => {
     return useQuery({ queryKey: [brandsQueryKey], queryFn: getBrandsFn })
 };
 
-export function useBrandDeleter({ onSuccess, onError }) {
+export function useBrandDeleter({ onSuccess, onError } = {}) {
     const queryClient = useQueryClient();
 
     const deleteBrandMutation = useMutation({
         mutationFn: deleteBrandFn,
-        onSuccess: () => {
+        onSuccess: (...args) => {
             queryClient.invalidateQueries({ queryKey: [brandsQueryKey] });
-            onSuccess();
+            if (onSuccess) onSuccess(...args);
         },
         onError: onError
     });
@@ -39,14 +39,14 @@ export function useBrandDeleter({ onSuccess, onError }) {
     return deleteBrandMutation.mutate;
 };
 
-export function useBrandAdder({ onSuccess, onError }) {
+export function useBrandAdder({ onSuccess, onError } = {}) {
     const queryClient = useQueryClient();
 
     const addBrandMutation = useMutation({
         mutationFn: addBrandFn,
         onSuccess: (...args) => {
             queryClient.invalidateQueries({ queryKey: [brandsQueryKey] });
-            onSuccess(...args);
+            if (onSuccess) onSuccess(...args);
         },
         onError: onError
     });

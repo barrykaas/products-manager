@@ -23,7 +23,6 @@ function BrandsListItem({ brand, handleSelect, handleDelete }) {
 
 function QuickAddSuggestion({ brandName, handleSelect }) {
     if (!brandName) return;
-    const newBrandData = { name: brandName };
 
     return (
         <>
