@@ -1,7 +1,7 @@
 import { Typography, Box, ListItem, ListItemText, ListItemButton, IconButton } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 
-import { useBrands } from "../Brands/queries";
+import { useBrands } from "../Brands/BrandsApiQueries";
 import useHumanReadableProduct from "./HumanReadableProduct";
 
 

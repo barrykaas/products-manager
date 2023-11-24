@@ -2,7 +2,7 @@ import { useState, Fragment } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useBrandAdder, useBrands } from './queries';
+import { useBrandAdder, useBrands } from './BrandsApiQueries';
 
 
 export default function BrandsField({ value, setValue }) {

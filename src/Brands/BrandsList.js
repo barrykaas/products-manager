@@ -2,7 +2,7 @@ import { CircularProgress, List, Divider, ListItem, ListItemText, ListItemButton
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { Fragment } from "react";
 
-import { useBrandAdder, useBrands } from "./queries";
+import { useBrandAdder, useBrands } from "./BrandsApiQueries";
 import { matchesSearch } from "../Helpers/search";
 
 

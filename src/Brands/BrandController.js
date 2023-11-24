@@ -3,7 +3,7 @@ import { Paper, TextField } from "@mui/material";
 import { useConfirm } from "material-ui-confirm";
 
 import BrandsList from "./BrandsList";
-import { useBrandDeleter } from "./queries";
+import { useBrandDeleter } from "./BrandsApiQueries";
 
 
 export default function BrandController({ handleSelectBrand, onClose }) {
