@@ -1,4 +1,4 @@
-import { CategoriesList } from "./CategoriesList";
+import CategoriesList from "./CategoriesList";
 
 
 export default function CategoriesController() {
