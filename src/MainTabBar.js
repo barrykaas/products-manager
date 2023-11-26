@@ -1,10 +1,12 @@
 import { Box, Tabs, Tab, Typography } from "@mui/material";
 import { useState } from "react";
+
 import ShoppingsListsController from "./ShoppingLists/ShoppingListsController";
 import ProductController from "./Products/ProductController";
 import EventController from "./Events/EventController";
 import ScannedItemsList from "./ScannedItems/ScannedItemsList";
 import BrandController from "./Brands/BrandController";
+import CategoriesController from "./Categories/CategoriesController";
 
 
 function CustomTabPanel(props) {
@@ -56,6 +58,7 @@ export default function MainTabBar() {
           <Tab label="Events" />
           <Tab label="Scanned items" />
           <Tab label="Brands" />
+          <Tab label="Categorieën" />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -72,6 +75,9 @@ export default function MainTabBar() {
       </CustomTabPanel>
       <CustomTabPanel value={value} index={4}>
         <BrandController />
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={5}>
+        <CategoriesController />
       </CustomTabPanel>
     </Box>
   );
