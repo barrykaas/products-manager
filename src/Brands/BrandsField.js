@@ -2,10 +2,12 @@ import { useState, Fragment } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
+
 import { useBrandAdder, useBrands } from './BrandsApiQueries';
 
+const fieldLabel = "Merk";
 
-export default function BrandsField({ value, setValue }) {
+export default function BrandsField({ value, setValue, disabled=false }) {
     const [open, setOpen] = useState(false);
 
     const brands = useBrands();
@@ -16,6 +18,11 @@ export default function BrandsField({ value, setValue }) {
         }
     });
 
+    if (disabled) {
+        return <TextField disabled fullWidth label={
+            typeof disabled === 'string' ? `${disabled}` : fieldLabel
+        } />;
+    }
     if (brands.isLoading) {
         return <TextField disabled fullWidth label={"Merken worden geladen..."} />;
     }
@@ -79,7 +86,7 @@ export default function BrandsField({ value, setValue }) {
             renderInput={(params) => (
                 <TextField
                     {...params}
-                    label="Brands"
+                    label={fieldLabel}
                     fullWidth
                     InputProps={{
                         ...params.InputProps,
@@ -95,3 +102,21 @@ export default function BrandsField({ value, setValue }) {
         />
     );
 }
+
+
+// export function BrandsIdField({ value, setValue }) {
+//     // const [brandValue, setBrandValue] = useState(null);
+//     const brandsQuery = useBrands();
+
+//     let disabled = false;
+//     if (brandsQuery.isLoading || brandsQuery.isError) {
+//         disabled = 'loading/error...';
+//     }
+
+//     return (
+//         <BrandsField
+//             value={brandsQuery.getBrand(value)}
+//             disabled={disabled}
+//         />
+//     );
+// }
