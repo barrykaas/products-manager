@@ -48,7 +48,7 @@ export default function BrandsList({ handleDelete, handleSelectBrand, searchQuer
         return (<p>Error: {brands.error}</p>);
     }
 
-    let filteredBrands = brands.data.data;
+    let filteredBrands = brands.data;
     if (searchQuery) {
         filteredBrands = filteredBrands.filter((brand) => matchesSearch(searchQuery, brand.name));
     }
