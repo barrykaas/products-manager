@@ -15,7 +15,7 @@ export function ProductListItem({ product, onSelect, onEdit, disabled = false, s
     } else if (brands.isError) {
         brandName = "ERROR loading brands";
     } else {
-        const filteredBrand = brands.data.data.filter(brandItem => product.brand === brandItem.id);
+        const filteredBrand = brands.data.filter(brandItem => product.brand === brandItem.id);
         brandName = filteredBrand.length > 0 ? filteredBrand[0].name : null;
     }
 

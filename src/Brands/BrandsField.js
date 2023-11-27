@@ -25,7 +25,7 @@ export default function BrandsField({ value, setValue }) {
 
     const loading = open && brands.isLoading;
 
-    let allBrands = [{ name: 'Merkloos', id: undefined }].concat(brands.data.data);
+    let allBrands = [{ name: 'Merkloos', id: undefined }].concat(brands.data);
     const filter = createFilterOptions();
 
     return (
