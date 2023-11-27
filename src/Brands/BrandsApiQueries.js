@@ -23,7 +23,11 @@ export const addBrandFn = async (data) => {
 export const useBrands = () => {
     const { isError, error, isLoading, data } = useQuery({ queryKey: [brandsQueryKey], queryFn: getBrandsFn });
     const actualData = data?.data || [];
-    return {isError, error, isLoading, data: actualData};
+    const getBrand = (id) => {
+        const matches = actualData.filter((brand) => id === brand.id);
+        return matches[0] || null;
+    };
+    return {isError, error, isLoading, data: actualData, getBrand};
 };
 
 export function useBrandDeleter({ onSuccess, onError } = {}) {

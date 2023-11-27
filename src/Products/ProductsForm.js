@@ -18,6 +18,7 @@ import { useState } from 'react';
 import ScannedItemsList from '../ScannedItems/ScannedItemsList';
 import FormDialog from '../Helpers/FormDialog';
 import BrandsField from '../Brands/BrandsField';
+import { useBrands } from '../Brands/BrandsApiQueries';
 
 
 
@@ -140,12 +141,13 @@ export function ProductForm({
     const [barcodeSelectOpen, setBarcodeSelectOpen] = useState(false);
 
     const {isLoading, isError, unitTypeInfo} = useUnitType(formik.values.unit_type)
+    const brandsQuery = useBrands();
 
-    if(isLoading || isError) {
+    if(isLoading || isError || brandsQuery.isLoading || brandsQuery.isError) {
         return <Skeleton />
     }
 
-    
+
     
     return (
         <Box sx={{ p: 2, height: 1, width: 1, bgcolor: 'background.paper' }}>
@@ -166,8 +168,8 @@ export function ProductForm({
                 />
 
                 <BrandsField
-                    value={formik.values.brand}
-                    setValue={(value) => formik.setFieldValue("brand", value)}
+                    value={brandsQuery.getBrand(formik.values.brand)}
+                    setValue={(brand) => formik.setFieldValue("brand", brand.id)}
                 />
         
                 <UnitTypeSelector
