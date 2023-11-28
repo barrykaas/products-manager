@@ -55,6 +55,10 @@ function ShoppingListProductItem({ item }) {
         }
     }
 
+    const removeItem = () => {
+        removeMutation.mutate(item.id)
+    };
+
     if (isLoading || isError) {
         return <Skeleton />
     }
@@ -92,7 +96,7 @@ function ShoppingListProductItem({ item }) {
                 <ButtonGroup size="small" variant="outlined" aria-label="outlined button group">
                     <Button onClick={() => increaseQuantity()}>+</Button>
                     <Button disabled={disabledDecrease} onClick={() => decreaseQuantity()}>-</Button>
-                    <Button color="error">Remove</Button>
+                    <Button color="error" onClick={removeItem} >Verwijder</Button>
                 </ButtonGroup>
             </Box>
 
