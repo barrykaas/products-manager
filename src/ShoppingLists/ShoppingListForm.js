@@ -12,7 +12,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
 import ShoppingListItemForm from './ShoppingListItemForm';
 
-import { getPersonsFn } from "../Events/EventsApiQueries";
+import { getPersonsFn } from "../Persons/PersonsApiQueries";
 import EventController from '../Events/EventController';
 import FormDialog from '../Helpers/FormDialog';
 

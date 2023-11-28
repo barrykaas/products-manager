@@ -2,10 +2,6 @@ import axios from "axios";
 
 import apiPath from "../Api/ApiPath";
 
-export const getPersonsFn = async () => {
-    return axios.get(`${apiPath}/persons/`)
-};
-
 export const createEventFn = async (data) => {
     return axios.post(`${apiPath}/events/`, data)
 };

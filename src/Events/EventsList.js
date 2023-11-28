@@ -1,7 +1,8 @@
 import { ListItem, ListItemAvatar, Typography, ListItemText, Divider, Avatar, List, ListItemButton, Skeleton, Chip, Stack, Button, IconButton } from "@mui/material";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import React from "react";
-import { fetchEvents, getPersonsFn } from "./EventsApiQueries";
+import { fetchEvents } from "./EventsApiQueries";
+import { getPersonsFn } from "../Persons/PersonsApiQueries";
 
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';

@@ -37,7 +37,7 @@ import React from "react";
 
 import CloseIcon from '@mui/icons-material/Close';
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getPersonsFn } from "./EventsApiQueries";
+import { getPersonsFn } from "../Persons/PersonsApiQueries";
 import axios from "axios";
 
 import apiPath from "../Api/ApiPath";

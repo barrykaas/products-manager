@@ -1,6 +1,6 @@
 import { Typography, ListItemText, Divider, List, ListItemButton, Collapse, Skeleton } from "@mui/material";
 import React from "react";
-import { getPersonsFn } from "../Events/EventsApiQueries";
+import { getPersonsFn } from "../Persons/PersonsApiQueries";
 import { useQuery } from "@tanstack/react-query";
 
 

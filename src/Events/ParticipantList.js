@@ -1,7 +1,7 @@
 import { Checkbox, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Skeleton } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { getPersonsFn } from "./EventsApiQueries";
+import { getPersonsFn } from "../Persons/PersonsApiQueries";
 
 
 
