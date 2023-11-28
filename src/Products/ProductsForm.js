@@ -113,7 +113,7 @@ export function ProductForm({
         unit_weightvol: '',
         unit_price: '',
         unit_type: '',
-        barcode: '',
+        barcode: null,
     },
 }) {
     const formik = useFormik({
@@ -124,6 +124,10 @@ export function ProductForm({
                 values.unit_number = null;
             } else if(values.unit_type === 3) { // Per stuk, zonder gewicht -> Verkocht per stuk, zonder aanduiding van gewicht. 
                 values.unit_weightvol = null;
+            }
+
+            if (values.barcode === '') {
+                values.barcode = null;
             }
             console.log('Submit called');
             handleFormSubmit(values);
