@@ -17,9 +17,7 @@ import { QrCodeScanner } from '@mui/icons-material';
 import { useState } from 'react';
 import ScannedItemsList from '../ScannedItems/ScannedItemsList';
 import FormDialog from '../Helpers/FormDialog';
-import BrandsField from '../Brands/BrandsField';
-import { useBrands } from '../Brands/BrandsApiQueries';
-
+import { BrandsIdField } from '../Brands/BrandsField';
 
 
 // const validationSchema = yup.object({
@@ -110,7 +108,7 @@ export function ProductForm({
     initialValues = {
         date_added: new Date(),
         name: '',
-        brand: '',
+        brand: null,
         unit_number: '',
         unit_weightvol: '',
         unit_price: '',
@@ -141,12 +139,10 @@ export function ProductForm({
     const [barcodeSelectOpen, setBarcodeSelectOpen] = useState(false);
 
     const {isLoading, isError, unitTypeInfo} = useUnitType(formik.values.unit_type)
-    const brandsQuery = useBrands();
 
-    if(isLoading || isError || brandsQuery.isLoading || brandsQuery.isError) {
+    if(isLoading || isError) {
         return <Skeleton />
     }
-
 
     
     return (
@@ -167,9 +163,9 @@ export function ProductForm({
                     helperText={formik.touched.name && formik.errors.name}
                 />
 
-                <BrandsField
-                    value={brandsQuery.getBrand(formik.values.brand)}
-                    setValue={(brand) => formik.setFieldValue("brand", brand.id)}
+                <BrandsIdField
+                    value={formik.values.brand}
+                    setValue={(brandId) => formik.setFieldValue("brand", brandId)}
                 />
         
                 <UnitTypeSelector

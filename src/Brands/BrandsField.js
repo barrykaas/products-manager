@@ -6,6 +6,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useBrandAdder, useBrands } from './BrandsApiQueries';
 
 const fieldLabel = "Merk";
+const noBrand = {name: "Merkloos", id: undefined}
 
 export default function BrandsField({ value, setValue, disabled=false }) {
     const [open, setOpen] = useState(false);
@@ -32,7 +33,7 @@ export default function BrandsField({ value, setValue, disabled=false }) {
 
     const loading = open && brands.isLoading;
 
-    let allBrands = [{ name: 'Merkloos', id: undefined }].concat(brands.data);
+    let allBrands = [noBrand].concat(brands.data);
     const filter = createFilterOptions();
 
     return (
@@ -104,19 +105,14 @@ export default function BrandsField({ value, setValue, disabled=false }) {
 }
 
 
-// export function BrandsIdField({ value, setValue }) {
-//     // const [brandValue, setBrandValue] = useState(null);
-//     const brandsQuery = useBrands();
+export function BrandsIdField({ value, setValue, disabled=false }) {
+    const brandsQuery = useBrands();
 
-//     let disabled = false;
-//     if (brandsQuery.isLoading || brandsQuery.isError) {
-//         disabled = 'loading/error...';
-//     }
-
-//     return (
-//         <BrandsField
-//             value={brandsQuery.getBrand(value)}
-//             disabled={disabled}
-//         />
-//     );
-// }
+    return (
+        <BrandsField
+            value={value ? brandsQuery.getBrand(value) : null}
+            setValue={(brand) => setValue(brand.id)}
+            disabled={disabled}
+        />
+    );
+}
