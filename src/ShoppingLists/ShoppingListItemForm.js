@@ -9,11 +9,12 @@ import apiPath from "../Api/ApiPath";
 import FormDialog from "../Helpers/FormDialog";
 
 import ProductController from "../Products/ProductController";
+import { useBrands } from "../Brands/BrandsApiQueries";
 
 function ShoppingListProductItem({ item }) {
     const queryClient = useQueryClient()
 
-    const { isLoading, isError, data, error } = useQuery({ queryKey: ['brands'], queryFn: getBrandsFn })
+    const { isLoading, isError, data, error, getBrand } = useBrands();
 
     const quantityMutation = useMutation({
         mutationFn: async (updatedItem) => {
@@ -60,7 +61,7 @@ function ShoppingListProductItem({ item }) {
 
     const disabledDecrease = (item.product_quantity === 1)
 
-    const brand = data.data.filter(brand_item => item.product.brand === brand_item.id)[0].name
+    const brand = getBrand(item.product.brand)?.name;
 
     return (
 
