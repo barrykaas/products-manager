@@ -64,9 +64,10 @@ function ReceiptProductItem({ item }) {
     const mutateListItem = useListItemMutator();
     const deleteListItem = useListItemDeleter();
 
+    const product = item.product;
+
     const brandsQuery = useBrands();
-    const brandId = item.product.brand;
-    const brandName = brandsQuery.getBrand(brandId)?.name;
+    const brandName = brandsQuery.getBrand(product.brand)?.name;
 
     const isLoading = brandsQuery.isLoading;
     const isError = brandsQuery.isError;
@@ -109,17 +110,16 @@ function ReceiptProductItem({ item }) {
                     </Grid>
                     <Grid item xs>
                         <Typography gutterBottom variant="h6" component="div">
-                            {item.product.name}
+                            {product.name}
                         </Typography>
                     </Grid>
                     <Grid item>
                         <Typography gutterBottom variant="h6" component="div">
-                            €{item.product.unit_price}
+                            €{product.unit_price}
                         </Typography>
                     </Grid>
                 </Grid>
                 <Typography color="text.secondary" variant="body2">
-                    {/* {brand} */}
                     {brandName}
                 </Typography>
             </Box>
@@ -145,7 +145,7 @@ function ReceiptItem({ item }) {
     } else if (item.discount) {
         return <ReceiptDiscountItem item={item} />;
     } else {
-        return <div>Geen product en ook geen discount?</div>;
+        return <div>Geen product en ook geen korting?</div>;
     }
 }
 
