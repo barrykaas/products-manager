@@ -7,6 +7,7 @@ import EventController from "./Events/EventController";
 import ScannedItemsList from "./ScannedItems/ScannedItemsList";
 import BrandController from "./Brands/BrandController";
 import CategoriesController from "./Categories/CategoriesController";
+import ReceiptsController from "./Receipts/ReceiptsController";
 
 
 function CustomTabPanel(props) {
@@ -59,6 +60,7 @@ export default function MainTabBar() {
           <Tab label="Scanned items" />
           <Tab label="Brands" />
           <Tab label="Categorieën" />
+          <Tab label="Bonnetjes" />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -78,6 +80,9 @@ export default function MainTabBar() {
       </CustomTabPanel>
       <CustomTabPanel value={value} index={5}>
         <CategoriesController />
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={6}>
+        <ReceiptsController />
       </CustomTabPanel>
     </Box>
   );

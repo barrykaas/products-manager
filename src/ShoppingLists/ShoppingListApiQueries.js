@@ -18,9 +18,14 @@ export const getBrandsFn = async () => {
     return axios.get(`${apiPath}/brands/`)
 };
 
-const mutateListItemFn = async (updatedItem) => await axios.patch(`${apiPath}/listitems/${updatedItem.id}/`, updatedItem);
+const mutateListItemFn = async (updatedItem) => {
+    await axios.patch(`${apiPath}/listitems/${updatedItem.id}/`, updatedItem);
+};
 
-const deleteListItemFn = async (itemId) => await axios.delete(`${apiPath}/listitems/${itemId}/`);
+const deleteListItemFn = async (itemId) => {
+    await axios.delete(`${apiPath}/listitems/${itemId}/`);
+};
+    
 
 
 export function useListItemMutator({ onSuccess, onError } = {}) {
@@ -54,6 +59,12 @@ export function useListItemDeleter({ onSuccess, onError } = {}) {
     return removeMutation.mutate;
 }
 
+
+export function useListItems({ listId, onSuccess, onError} = {}) {
+    const queryClient = useQueryClient();
+
+    
+}
 
 // export const editShoppingListFn = async (data) => {
 //     axios.post('https://django.producten.kaas/api/lists/', data)
