@@ -1,14 +1,9 @@
-import { Avatar, Divider, List, ListItem, ListItemAvatar, FormControl, InputLabel, InputAdornment, FilledInput, TextField, ListItemText, Skeleton, Typography, Button, ButtonGroup, ListItemSecondaryAction, Grid, Box, Chip } from "@mui/material";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Divider, List, InputAdornment, FilledInput, TextField, Skeleton, Typography, Button, ButtonGroup, Grid, Box } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
-import { getBrandsFn, getShoppingListFn, useListItemMutator, useListItemDeleter } from "./ShoppingListApiQueries";
-import axios from "axios";
+
+import { getShoppingListFn, useListItemMutator, useListItemDeleter } from "./ShoppingListApiQueries";
 import ShoppingListEventLabel from "./ShoppingListEventLabel";
-
-import apiPath from "../Api/ApiPath";
-import FormDialog from "../Helpers/FormDialog";
-
-import ProductController from "../Products/ProductController";
 import { useBrands } from "../Brands/BrandsApiQueries";
 
 
@@ -48,7 +43,6 @@ function ReceiptDiscountItem({ item }) {
                                 startAdornment: <InputAdornment position="start">- €</InputAdornment>,
                             }}
                             variant="standard"
-                            // onChange={onFieldChange}
                             value={discountFieldValue}
                             onChange={(event) => setDiscountFieldValue(event.target.value)}
                         />
@@ -66,62 +60,42 @@ function ReceiptDiscountItem({ item }) {
     );
 }
 
-
 function ReceiptProductItem({ item }) {
-    const queryClient = useQueryClient()
+    const mutateListItem = useListItemMutator();
+    const deleteListItem = useListItemDeleter();
 
-    const { isLoading, isError, data, error, getBrand } = useBrands();
+    const brandsQuery = useBrands();
+    const brandId = item.product.brand;
+    const brandName = brandsQuery.getBrand(brandId)?.name;
 
-    const quantityMutation = useMutation({
-        mutationFn: async (updatedItem) => {
-            const data = await axios.patch(`${apiPath}/listitems/${item.id}/`, updatedItem)
-            return data
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['shoppinglistitems'] });
-        },
-        onError: (error, variables, context) => {
-            // An error happened!
-            console.log(`Error`)
-        },
-    });
-
-    // remove mutation
-    const removeMutation = useMutation({
-        mutationFn: async (itemId) => {
-            const data = await axios.delete(`${apiPath}/listitems/${itemId}/`)
-            return data
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['shoppinglistitems'] });
-        },
-        onError: (error, variables, context) => {
-            // An error happened!
-            console.log(`Error`)
-        },
-    });
-
-    const increaseQuantity = () => {
-        quantityMutation.mutate({ 'product_quantity': item.product_quantity + 1 })
-    }
-
-    const decreaseQuantity = () => {
-        if ((item.product_quantity - 1) > 0) {
-            quantityMutation.mutate({ 'product_quantity': item.product_quantity - 1 })
-        }
-    }
-
-    const removeItem = () => {
-        removeMutation.mutate(item.id)
-    };
+    const isLoading = brandsQuery.isLoading;
+    const isError = brandsQuery.isError;
 
     if (isLoading || isError) {
         return <Skeleton />
     }
 
-    const disabledDecrease = (item.product_quantity === 1)
+    const increaseQuantity = () => {
+        mutateListItem({
+            id: item.id,
+            product_quantity: item.product_quantity + 1
+        })
+    }
 
-    const brand = getBrand(item.product.brand)?.name;
+    const disabledDecrease = (item.product_quantity === 1)
+    const decreaseQuantity = () => {
+        if ((item.product_quantity - 1) > 0) {
+            mutateListItem({
+                id: item.id,
+                product_quantity: item.product_quantity - 1
+            })
+        }
+    }
+
+    const removeItem = () => {
+        deleteListItem(item.id);
+    };
+
 
     return (
 
@@ -145,7 +119,8 @@ function ReceiptProductItem({ item }) {
                     </Grid>
                 </Grid>
                 <Typography color="text.secondary" variant="body2">
-                    {brand}
+                    {/* {brand} */}
+                    {brandName}
                 </Typography>
             </Box>
             <Box sx={{ mt: 1, mb: 2, ml: 2 }}>
@@ -154,28 +129,15 @@ function ReceiptProductItem({ item }) {
                     <Button disabled={disabledDecrease} onClick={() => decreaseQuantity()}>-</Button>
                     <Button color="error" onClick={removeItem} >Verwijder</Button>
                 </ButtonGroup>
-                {/* <TextField
-                    label="Korting"
-                    variant="filled"
-                    size="small"
-                    hiddenLabel
-                    startAdornment={<InputAdornment position="start">€</InputAdornment>}
-                /> */}
                 <FilledInput
                     size="small"
                     label="Korting"
                     startAdornment={<InputAdornment position="start">- €</InputAdornment>}
                 />
             </Box>
-
-
         </Box>
-
-
     )
 }
-
-
 
 function ReceiptItem({ item }) {
     if (item.product) {
@@ -187,9 +149,6 @@ function ReceiptItem({ item }) {
     }
 }
 
-
-
-
 export default function ShoppingListItemForm({ id, handleAddProduct }) {
     const { isLoading, isError, data, error } = useQuery({
         queryKey: ['shoppinglistitems', id],
@@ -200,17 +159,10 @@ export default function ShoppingListItemForm({ id, handleAddProduct }) {
     });
 
 
-    const { isLoadingBrands, isErrorBrands, dataBrands, errorBrands } = useQuery({ queryKey: ['brands'], queryFn: getBrandsFn })
-
     if (isError) {
         return <p>{JSON.stringify(error)}</p>
     }
-
-    if (isErrorBrands) {
-        return <p>{JSON.stringify(errorBrands)}</p>
-    }
-
-    if (isLoading || isLoadingBrands) {
+    if (isLoading) {
         return <Skeleton />
     }
 
