@@ -1,7 +1,7 @@
 import { Avatar, Divider, List, ListItem, ListItemAvatar, FormControl, InputLabel, InputAdornment, FilledInput, TextField, ListItemText, Skeleton, Typography, Button, ButtonGroup, ListItemSecondaryAction, Grid, Box, Chip } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
-import { getBrandsFn, getShoppingListFn } from "./ShoppingListApiQueries";
+import { getBrandsFn, getShoppingListFn, useListItemMutator, useListItemDeleter } from "./ShoppingListApiQueries";
 import axios from "axios";
 import ShoppingListEventLabel from "./ShoppingListEventLabel";
 
@@ -14,30 +14,54 @@ import { useBrands } from "../Brands/BrandsApiQueries";
 
 function ReceiptDiscountItem({ item }) {
     const discount = item.discount;
+    const [discountFieldValue, setDiscountFieldValue] = useState(discount);
+    const mutateListItem = useListItemMutator();
+    const deleteListItem = useListItemDeleter();
 
-    const onFieldChange = (event) => {
-        console.log("change discount field:", event);
+    const onClickUpdate = () => {
+        const newItem = {
+            id: item.id,
+            discount: discountFieldValue
+        };
+        mutateListItem(newItem);
     };
 
+    const onClickDelete = () => {
+        deleteListItem(item.id);
+    };
+
+
     return (
-        <Box sx={{ my: 1, mx: 2 }}>
-            <Grid container alignItems="center">
-                <Grid item xs>
-                    <Typography gutterBottom variant="h6" component="div">
-                        Korting
-                    </Typography>
+        <Box>
+
+            <Box sx={{ my: 1, mx: 2 }}>
+                <Grid container alignItems="center">
+                    <Grid item xs>
+                        <Typography gutterBottom variant="h6" component="div">
+                            Korting
+                        </Typography>
+                    </Grid>
+                    <Grid item>
+                        <TextField
+                            sx={{ m: 1, width: '10ch' }}
+                            InputProps={{
+                                startAdornment: <InputAdornment position="start">- €</InputAdornment>,
+                            }}
+                            variant="standard"
+                            // onChange={onFieldChange}
+                            value={discountFieldValue}
+                            onChange={(event) => setDiscountFieldValue(event.target.value)}
+                        />
+                    </Grid>
+                    <Grid item>
+                        <Button onClick={onClickUpdate} >Update</Button>
+                    </Grid>
                 </Grid>
-                <Grid item>
-                    <TextField
-                        sx={{ m: 1, width: '10ch' }}
-                        InputProps={{
-                            startAdornment: <InputAdornment position="start">- €</InputAdornment>,
-                        }}
-                        variant="standard"
-                        onChange={onFieldChange}
-                    />
-                </Grid>
-            </Grid>
+
+                <Box sx={{ mt: 1, mb: 2, ml: 2 }}>
+                    <Button color="error" onClick={onClickDelete} >Verwijder</Button>
+                </Box>
+            </Box>
         </Box>
     );
 }
