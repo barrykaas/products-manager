@@ -1,10 +1,11 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
 import apiPath from "../Api/ApiPath";
 
 
 const listsQueryKey = 'lists';
-const receiptListType = 2;
+export const receiptListType = 2;
 
 const fetchLists = async ({ pageParam = 1, listType }) => {
     let res
@@ -28,4 +29,33 @@ export function useLists(listType) {
 
 export function useReceipts() {
     return useLists(receiptListType)
+}
+
+
+const mutateListFn = async (item) => {
+    if (item.id) {
+        await axios.patch(`${apiPath}/lists/${item.id}/`, item);
+    } else {
+        await axios.post(`${apiPath}/lists/`, item);
+    }
+};
+
+const deleteListFn = async (itemId) => {
+    await axios.delete(`${apiPath}/lists/${itemId}/`);
+};
+
+
+export function useListMutator({ onSuccess, onError } = {}) {
+    const queryClient = useQueryClient();
+
+    const mutateList = useMutation({
+        mutationFn: mutateListFn,
+        onSuccess: (...args) => {
+            queryClient.invalidateQueries({ queryKey: [listsQueryKey] });
+            if (onSuccess) onSuccess(...args);
+        },
+        onError: onError
+    });
+
+    return mutateList.mutate;
 }
