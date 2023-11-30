@@ -7,7 +7,7 @@ import EventController from "./Events/EventController";
 import ScannedItemsList from "./ScannedItems/ScannedItemsList";
 import BrandController from "./Brands/BrandController";
 import CategoriesController from "./Categories/CategoriesController";
-import ReceiptsController from "./Receipts/ReceiptsController";
+import ReceiptsController from "./Receipts/ReceiptsController/ReceiptsController";
 
 
 function CustomTabPanel(props) {
