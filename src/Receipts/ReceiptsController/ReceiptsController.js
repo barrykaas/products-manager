@@ -1,8 +1,8 @@
 import { useState } from "react";
+
 import ReceiptsAppBar from "./ReceiptsAppBar";
 import ReceiptsList from "./ReceiptsList/ReceiptsList";
-import FormDialog from "../../Helpers/FormDialog";
-import ReceiptForm from "../ReceiptForm/ReceiptForm";
+import { ReceiptFormDialog } from "../ReceiptForm/ReceiptForm";
 
 
 export default function ReceiptsController() {
@@ -18,6 +18,10 @@ export default function ReceiptsController() {
         setIsEditing(true);
     };
 
+    const handleSuccessfulCreateEdit = (newReceipt) => {
+        setInitialFormData(newReceipt);
+    };
+
 
     return (
         <>
@@ -25,13 +29,15 @@ export default function ReceiptsController() {
 
             <ReceiptsList onSelectItem={selectReceipt} />
 
-            <FormDialog
+            <ReceiptFormDialog
                 open={isEditing}
                 onClose={() => setIsEditing(false)}
-                title={initialFormData?.name || 'Nieuw bonnetje'}
-            >
-                <ReceiptForm initialValues={initialFormData} />
-            </FormDialog> 
+
+                initialValues={initialFormData}
+                onSuccessfulCreateEdit={handleSuccessfulCreateEdit}
+                onSuccessfulDelete={() => setIsEditing(false)}
+            />
+
         </>
     );
 }

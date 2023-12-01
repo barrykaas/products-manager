@@ -1,12 +1,15 @@
-import { receiptListType, useListMutator } from "../../Lists/ListsApiQueries";
-import ReceiptEditor from "./ReceiptEditor";
-import { Stack, Divider, Grid, Typography, Button, Paper, Box, TextField } from "@mui/material";
-import { DateField, DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { Stack, Button, Box, TextField } from "@mui/material";
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import * as yup from "yup";
 import { useFormik } from "formik";
 import dayjs from "dayjs";
+
+import { receiptListType, useListDeleter, useListMutator } from "../../Lists/ListsApiQueries";
+import ReceiptEditor from "./ReceiptEditor";
 import { PersonsIdField } from "../../Persons/PersonsField";
+import FormDialog from "../../Helpers/FormDialog";
+
 
 const emptyForm = {
     type: receiptListType,
@@ -31,12 +34,12 @@ const validationSchema = yup.object({
 
 export default function ReceiptForm({ initialValues = emptyForm, onSuccessfulCreateEdit }) {
     const mutateList = useListMutator({
-        onSuccess: (data, variables, context) => {
-            const newList = variables; // ?
+        onSuccess: (response) => {
+            const newList = response.data;
             onSuccessfulCreateEdit(newList);
         }
     });
-    
+
     const handleFormSubmit = mutateList;
 
     const formik = useFormik({
@@ -84,7 +87,7 @@ export default function ReceiptForm({ initialValues = emptyForm, onSuccessfulCre
                 />
 
                 <Button color="primary" variant="contained" fullWidth type="submit">
-                    Create/Edit
+                    {initialValues.id ? "Update" : "Creëer"}
                 </Button>
             </Stack>
 
@@ -93,5 +96,33 @@ export default function ReceiptForm({ initialValues = emptyForm, onSuccessfulCre
             <ReceiptEditor />
 
         </Box>
+    );
+}
+
+
+export function ReceiptFormDialog({ open, onClose, initialValues, onSuccessfulCreateEdit, onSuccessfulDelete }) {
+    const deleteList = useListDeleter({
+        onSuccess: onSuccessfulDelete
+    });
+
+    const existingReceiptId = initialValues?.id;
+    const deleteButton = (
+        <Button 
+            variant="contained"
+            color={"error"}
+            onClick={() => deleteList(existingReceiptId)}>
+            Verwijderen
+        </Button>
+    );
+
+    return (
+        <FormDialog
+            open={open}
+            onClose={onClose}
+            title={initialValues?.name || 'Nieuw bonnetje'}
+            secondaryButtons={existingReceiptId ? deleteButton : null}
+        >
+            <ReceiptForm initialValues={initialValues} onSuccessfulCreateEdit={onSuccessfulCreateEdit} />
+        </FormDialog>
     );
 }

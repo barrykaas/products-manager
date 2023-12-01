@@ -34,14 +34,14 @@ export function useReceipts() {
 
 const mutateListFn = async (item) => {
     if (item.id) {
-        await axios.patch(`${apiPath}/lists/${item.id}/`, item);
+        return await axios.patch(`${apiPath}/lists/${item.id}/`, item);
     } else {
-        await axios.post(`${apiPath}/lists/`, item);
+        return await axios.post(`${apiPath}/lists/`, item);
     }
 };
 
 const deleteListFn = async (itemId) => {
-    await axios.delete(`${apiPath}/lists/${itemId}/`);
+    return await axios.delete(`${apiPath}/lists/${itemId}/`);
 };
 
 
@@ -58,4 +58,20 @@ export function useListMutator({ onSuccess, onError } = {}) {
     });
 
     return mutateList.mutate;
+}
+
+
+export function useListDeleter({ onSuccess, onError } = {}) {
+    const queryClient = useQueryClient();
+
+    const deleteMutation = useMutation({
+        mutationFn: deleteListFn,
+        onSuccess: (...args) => {
+            queryClient.invalidateQueries({ queryKey: [listsQueryKey] });
+            if (onSuccess) onSuccess(...args);
+        },
+        onError: onError
+    });
+
+    return deleteMutation.mutate;
 }
