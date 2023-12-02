@@ -1,29 +1,51 @@
-import { Typography, Stack, Chip, Button, List, Divider } from "@mui/material";
+import { Typography, Stack, Chip, Button, List, Divider, Box } from "@mui/material";
 import { Fragment } from "react";
 
 import ReceiptItem from "./ReceiptItem";
+import { useEvent } from "../../Events/EventsApiQueries";
+import { isoToLocalDate } from "../../Helpers/dateTime";
 
 
-export default function ReceiptEventBlock({ eventId, eventItems, onAdd }) {
-    const formattedDate = "DATUM";
-    const eventName = "eventnaam";
+export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct }) {
+    const eventQuery = useEvent(eventId);
+
+    let formattedDate, eventName;
+    if (eventQuery.isLoading) {
+        eventName = "Event laden...";
+    } else if (eventQuery.isError) {
+        eventName = `ERROR event ${eventId}`;
+    } else {
+        const event = eventQuery.data;
+        eventName = event.name;
+        formattedDate = isoToLocalDate(event.event_date);
+    }
+
 
     return (
         <>
-            <Stack direction="row" spacing={1}>
-                <Typography variant="h6" component="div">
-                    {eventName}
-                </Typography>
-                <Chip label={formattedDate} variant="outlined" />
-                <div style={{ flexGrow: 1 }}></div>
-                <Button variant="outlined" size="small" onClick={onAdd}>
-                    Voeg product toe
-                </Button>
-            </Stack>
+            <Box sx={{ my: 1, mx: 2 }}>
 
+                <Stack direction="row" spacing={1}>
+                    <Typography variant="h6" component="div">
+                        {eventName}
+                    </Typography>
+
+                    {formattedDate
+                        ? <Chip label={formattedDate} variant="outlined" />
+                        : null
+                    }
+
+                    <div style={{ flexGrow: 1 }}></div>
+
+                    <Button variant="outlined" size="small" onClick={onAddProduct}>
+                        + Product
+                    </Button>
+                </Stack>
+            </Box>
+            <Divider />
             <List>
-                {eventItems.map((item) => 
-                    <Fragment id={item.id}>
+                {eventItems.map((item) =>
+                    <Fragment key={item.id}>
                         <ReceiptItem item={item} />
                         <Divider />
                     </Fragment>

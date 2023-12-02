@@ -41,8 +41,12 @@ const getListItemsFn = async ({ listId, eventId }) => {
     return await axios.get(`${apiPath}/listitems/`, { params: urlParams })
 }
 
-const mutateListItemFn = async (updatedItem) => {
-    await axios.patch(`${apiPath}/listitems/${updatedItem.id}/`, updatedItem);
+const createMutateListItemFn = async (item) => {
+    if (item.id) {
+        await axios.patch(`${apiPath}/listitems/${item.id}/`, item);
+    } else {
+        await axios.post(`${apiPath}/listitems/`, item);
+    }
 };
 
 const deleteListItemFn = async (itemId) => {
@@ -108,7 +112,7 @@ export function useListItemMutator({ onSuccess, onError } = {}) {
     const queryClient = useQueryClient();
 
     const mutateListItem = useMutation({
-        mutationFn: mutateListItemFn,
+        mutationFn: createMutateListItemFn,
         onSuccess: (...args) => {
             queryClient.invalidateQueries({ queryKey: [listItemsQueryKey] });
             if (onSuccess) onSuccess(...args);

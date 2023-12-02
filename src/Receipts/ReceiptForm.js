@@ -96,7 +96,14 @@ export default function ReceiptForm({ initialValues = emptyForm, onSuccessfulCre
 
             <Divider />
 
-            {existingReceiptId ? <ReceiptEditor receiptId={existingReceiptId} /> : null}
+            {existingReceiptId
+                ? (
+                    <Box sx={{ mt: 2}}>
+                        <ReceiptEditor receiptId={existingReceiptId} />
+                    </Box>
+                )
+                : null
+            }
 
         </Box>
     );
