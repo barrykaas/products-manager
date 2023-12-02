@@ -1,8 +1,8 @@
 import { CircularProgress, List, Button, Divider, Typography, ListItemButton, ListItemText } from "@mui/material";
 import { Fragment } from "react";
 
-import { useReceipts } from "../../../Lists/ListsApiQueries";
-import { usePersons } from "../../../Persons/PersonsApiQueries";
+import { useReceipts } from "../../Lists/ListsApiQueries";
+import { usePersons } from "../../Persons/PersonsApiQueries";
 
 
 function ReceiptsListItem({ item, onSelect }) {

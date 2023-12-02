@@ -1,11 +1,13 @@
-import { useInfiniteQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 import apiPath from "../Api/ApiPath";
 
 
 const listsQueryKey = 'lists';
+const listItemsQueryKey = 'listitems';
 export const receiptListType = 2;
+
 
 const fetchLists = async ({ pageParam = 1, listType }) => {
     let res
@@ -19,6 +21,35 @@ const fetchLists = async ({ pageParam = 1, listType }) => {
     return res.json()
 }
 
+const deleteListFn = async (itemId) => {
+    return await axios.delete(`${apiPath}/lists/${itemId}/`);
+};
+
+const mutateListFn = async (item) => {
+    if (item.id) {
+        return await axios.patch(`${apiPath}/lists/${item.id}/`, item);
+    } else {
+        return await axios.post(`${apiPath}/lists/`, item);
+    }
+};
+
+const getListItemsFn = async ({ listId, eventId }) => {
+    const urlParams = {
+        list: listId,
+        event: eventId,
+    };
+    return await axios.get(`${apiPath}/listitems/`, { params: urlParams })
+}
+
+const mutateListItemFn = async (updatedItem) => {
+    await axios.patch(`${apiPath}/listitems/${updatedItem.id}/`, updatedItem);
+};
+
+const deleteListItemFn = async (itemId) => {
+    await axios.delete(`${apiPath}/listitems/${itemId}/`);
+};
+
+
 export function useLists(listType) {
     return useInfiniteQuery({
         queryKey: [listsQueryKey],
@@ -30,20 +61,6 @@ export function useLists(listType) {
 export function useReceipts() {
     return useLists(receiptListType)
 }
-
-
-const mutateListFn = async (item) => {
-    if (item.id) {
-        return await axios.patch(`${apiPath}/lists/${item.id}/`, item);
-    } else {
-        return await axios.post(`${apiPath}/lists/`, item);
-    }
-};
-
-const deleteListFn = async (itemId) => {
-    return await axios.delete(`${apiPath}/lists/${itemId}/`);
-};
-
 
 export function useListMutator({ onSuccess, onError } = {}) {
     const queryClient = useQueryClient();
@@ -60,7 +77,6 @@ export function useListMutator({ onSuccess, onError } = {}) {
     return mutateList.mutate;
 }
 
-
 export function useListDeleter({ onSuccess, onError } = {}) {
     const queryClient = useQueryClient();
 
@@ -74,4 +90,47 @@ export function useListDeleter({ onSuccess, onError } = {}) {
     });
 
     return deleteMutation.mutate;
+}
+
+export function useListItems({ listId, eventId } = {}) {
+    const { isError, error, isLoading, data } = useQuery({
+        queryKey: [listItemsQueryKey, listId, eventId],
+        queryFn: async () => await getListItemsFn({ listId, eventId })
+    });
+
+    const actualData = data?.data || [];
+    return { isError, error, isLoading, data: actualData };
+}
+    
+
+
+export function useListItemMutator({ onSuccess, onError } = {}) {
+    const queryClient = useQueryClient();
+
+    const mutateListItem = useMutation({
+        mutationFn: mutateListItemFn,
+        onSuccess: (...args) => {
+            queryClient.invalidateQueries({ queryKey: [listItemsQueryKey] });
+            if (onSuccess) onSuccess(...args);
+        },
+        onError: onError
+    });
+
+    return mutateListItem.mutate;
+}
+
+
+export function useListItemDeleter({ onSuccess, onError } = {}) {
+    const queryClient = useQueryClient();
+
+    const removeMutation = useMutation({
+        mutationFn: deleteListItemFn,
+        onSuccess: (...args) => {
+            queryClient.invalidateQueries({ queryKey: [listItemsQueryKey] });
+            if (onSuccess) onSuccess(...args);
+        },
+        onError: onError
+    });
+
+    return removeMutation.mutate;
 }

@@ -1,14 +1,14 @@
-import { Stack, Button, Box, TextField } from "@mui/material";
+import { Stack, Button, Box, TextField, Divider } from "@mui/material";
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import * as yup from "yup";
 import { useFormik } from "formik";
 import dayjs from "dayjs";
 
-import { receiptListType, useListDeleter, useListMutator } from "../../Lists/ListsApiQueries";
-import ReceiptEditor from "./ReceiptEditor";
-import { PersonsIdField } from "../../Persons/PersonsField";
-import FormDialog from "../../Helpers/FormDialog";
+import { receiptListType, useListDeleter, useListMutator } from "../Lists/ListsApiQueries";
+import ReceiptEditor from "./ReceiptEditor/ReceiptEditor";
+import { PersonsIdField } from "../Persons/PersonsField";
+import FormDialog from "../Helpers/FormDialog";
 
 
 const emptyForm = {
@@ -33,6 +33,8 @@ const validationSchema = yup.object({
 
 
 export default function ReceiptForm({ initialValues = emptyForm, onSuccessfulCreateEdit }) {
+    const existingReceiptId = initialValues?.id;
+
     const mutateList = useListMutator({
         onSuccess: (response) => {
             const newList = response.data;
@@ -40,12 +42,13 @@ export default function ReceiptForm({ initialValues = emptyForm, onSuccessfulCre
         }
     });
 
-    const handleFormSubmit = mutateList;
-
     const formik = useFormik({
         initialValues: initialValues,
         validationSchema: validationSchema,
-        onSubmit: handleFormSubmit
+        onSubmit: (values) => {
+            if (existingReceiptId) values.id = existingReceiptId;
+            mutateList(values);
+        }
     });
 
 
@@ -87,13 +90,13 @@ export default function ReceiptForm({ initialValues = emptyForm, onSuccessfulCre
                 />
 
                 <Button color="primary" variant="contained" fullWidth type="submit">
-                    {initialValues.id ? "Update" : "Creëer"}
+                    {existingReceiptId ? "Update" : "Creëer"}
                 </Button>
             </Stack>
 
-            <Box>{JSON.stringify(formik.values)}</Box>
+            <Divider />
 
-            <ReceiptEditor />
+            {existingReceiptId ? <ReceiptEditor receiptId={existingReceiptId} /> : null}
 
         </Box>
     );
@@ -107,7 +110,7 @@ export function ReceiptFormDialog({ open, onClose, initialValues, onSuccessfulCr
 
     const existingReceiptId = initialValues?.id;
     const deleteButton = (
-        <Button 
+        <Button
             variant="contained"
             color={"error"}
             onClick={() => deleteList(existingReceiptId)}>

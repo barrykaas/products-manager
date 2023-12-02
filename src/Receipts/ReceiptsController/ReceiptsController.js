@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 import ReceiptsAppBar from "./ReceiptsAppBar";
-import ReceiptsList from "./ReceiptsList/ReceiptsList";
-import { ReceiptFormDialog } from "../ReceiptForm/ReceiptForm";
+import ReceiptsList from "./ReceiptsList";
+import { ReceiptFormDialog } from "../ReceiptForm";
 
 
 export default function ReceiptsController() {

@@ -58,14 +58,3 @@ export function useListItemDeleter({ onSuccess, onError } = {}) {
 
     return removeMutation.mutate;
 }
-
-
-export function useListItems({ listId, onSuccess, onError} = {}) {
-    const queryClient = useQueryClient();
-
-    
-}
-
-// export const editShoppingListFn = async (data) => {
-//     axios.post('https://django.producten.kaas/api/lists/', data)
-// };
