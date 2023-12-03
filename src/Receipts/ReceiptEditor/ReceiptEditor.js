@@ -54,6 +54,8 @@ export default function ReceiptEditor({ receiptId }) {
 
     const allReceiptItems = receiptItemsQuery.data;
     const events = groupByProperty(allReceiptItems, 'event');
+    const receiptTotal = allReceiptItems.reduce((total, item) => 
+        total + item.product_price - item.discount, 0);
 
     return (
         <>
@@ -70,7 +72,7 @@ export default function ReceiptEditor({ receiptId }) {
             </Grid>
 
             {/* Event blocks */}
-            <Paper sx={{ mt: 1 }} hidden={!allReceiptItems.length}>
+            <Paper sx={{ my: 1 }} hidden={!allReceiptItems.length}>
                 <List sx={{ width: '100%' }}>
                     {Object.keys(events).map((eventId) => (
                         <Fragment key={eventId}>
@@ -84,6 +86,19 @@ export default function ReceiptEditor({ receiptId }) {
                     ))}
                 </List>
             </Paper>
+
+            {/* Footer, totals */}
+            <Grid container alignItems="center">
+                <Grid item xs>
+                    <Typography variant="h5" component="h5" color="text.primary">
+                        Totaal
+                    </Typography>
+                </Grid>
+                <Grid item>
+                    € {receiptTotal}
+                </Grid>
+            </Grid>
+
 
             {/* Event picker */}
             <FormDialog

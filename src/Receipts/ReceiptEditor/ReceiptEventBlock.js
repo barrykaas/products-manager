@@ -36,9 +36,6 @@ export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, o
 
                     <div style={{ flexGrow: 1 }}></div>
 
-                    {/* <Button variant="outlined" size="small" onClick={onAddProduct}>
-                        + Product
-                    </Button> */}
                     <ButtonGroup size="small" variant="outlined" aria-label="outlined button group">
                         <Button variant="outlined" size="small" onClick={onAddProduct}>
                             + Product
