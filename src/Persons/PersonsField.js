@@ -1,6 +1,6 @@
-import { useState, Fragment } from 'react';
+import { Fragment } from 'react';
 import TextField from '@mui/material/TextField';
-import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
+import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import { usePersons } from './PersonsApiQueries';
