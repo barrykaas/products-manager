@@ -7,7 +7,6 @@ import ReceiptEventBlock from "./ReceiptEventBlock";
 import FormDialog from "../../Helpers/FormDialog";
 import ProductController from "../../Products/ProductController";
 import { useListItemMutator } from "../../Lists/ListsApiQueries";
-import EventsList from "../../Events/EventsList";
 import EventController from "../../Events/EventController";
 
 
@@ -18,6 +17,14 @@ export default function ReceiptEditor({ receiptId }) {
     const createEditListItem = useListItemMutator({
         onSuccess: () => setEventPickingProduct(null)
     });
+
+    function onAddDiscount(eventId) {
+        createEditListItem({
+            discount: 0,
+            list: receiptId,
+            event: eventId
+        })
+    }
 
     function onAddProduct(eventId) {
         setEventPickingProduct(eventId);
@@ -71,6 +78,7 @@ export default function ReceiptEditor({ receiptId }) {
                                 eventId={eventId}
                                 eventItems={events[eventId]}
                                 onAddProduct={() => onAddProduct(eventId)}
+                                onAddDiscount={() => onAddDiscount(eventId)}
                             />
                         </Fragment>
                     ))}

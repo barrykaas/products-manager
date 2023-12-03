@@ -140,7 +140,7 @@ function ReceiptProductItem({ item }) {
 export default function ReceiptItem({ item }) {
     if (item.product) {
         return <ReceiptProductItem item={item} />;
-    } else if (item.discount) {
+    } else if (item.discount || item.discount === 0) {
         return <ReceiptDiscountItem item={item} />;
     } else {
         return <div>Geen product en ook geen korting? (ID {item.id})</div>;
