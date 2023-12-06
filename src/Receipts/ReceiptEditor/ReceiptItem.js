@@ -75,18 +75,24 @@ function ReceiptProductItem({ item }) {
     }
 
     const increaseQuantity = () => {
+        const q = item.product_quantity;
+        const newAmount = (q + 1) * item.product_price / q;
         mutateListItem({
             id: item.id,
-            product_quantity: item.product_quantity + 1
+            product_quantity: q + 1,
+            product_price: newAmount
         })
     }
 
     const disabledDecrease = (item.product_quantity === 1)
     const decreaseQuantity = () => {
-        if ((item.product_quantity - 1) > 0) {
+        const q = item.product_quantity;
+        if (q > 1) {
+            const newAmount = (q - 1) * item.product_price / q;
             mutateListItem({
                 id: item.id,
-                product_quantity: item.product_quantity - 1
+                product_quantity: q - 1,
+                product_price: newAmount
             })
         }
     }
@@ -113,7 +119,7 @@ function ReceiptProductItem({ item }) {
                     </Grid>
                     <Grid item>
                         <Typography gutterBottom variant="h6" component="div">
-                            €{product.unit_price}
+                            €{item.product_price}
                         </Typography>
                     </Grid>
                 </Grid>
