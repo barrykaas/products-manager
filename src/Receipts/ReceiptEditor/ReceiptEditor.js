@@ -95,7 +95,7 @@ export default function ReceiptEditor({ receiptId }) {
                     </Typography>
                 </Grid>
                 <Grid item>
-                    € {receiptTotal}
+                    € {Math.round(100 * receiptTotal) / 100}
                 </Grid>
             </Grid>
 
