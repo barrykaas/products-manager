@@ -20,9 +20,12 @@ export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, o
         formattedDate = isoToLocalDate(event.event_date);
     }
 
+    const eventTotal = eventItems.reduce((total, item) => 
+        total + item.product_price - item.discount, 0);
 
     return (
         <>
+            {/* Header */}
             <Box sx={{ my: 1, mx: 2 }}>
                 <Stack direction="row" spacing={1}>
                     <Typography variant="h6" component="div">
@@ -49,6 +52,7 @@ export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, o
 
             <Divider />
 
+            {/* List items */}
             <List>
                 {eventItems.map((item) =>
                     <Fragment key={item.id}>
@@ -57,6 +61,20 @@ export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, o
                     </Fragment>
                 )}
             </List>
+
+            {/* Footer */}
+            <Box sx={{ my: 1, mx: 2 }}>
+                <Stack direction="row" spacing={1}>
+                    <Typography component="div">
+                        Totaal van <em>{eventName}</em>
+                    </Typography>
+                    <div style={{ flexGrow: 1 }}></div>
+                    <Typography variant="h6" component="div">
+                        € {Math.round(100 * eventTotal) / 100}
+                    </Typography>
+                </Stack>
+            </Box>
+            <Divider />
         </>
     );
 }
