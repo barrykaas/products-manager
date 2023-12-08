@@ -1,9 +1,10 @@
-import { Box, Button, Grid, InputAdornment, Skeleton, TextField, Typography } from "@mui/material";
+import { Box, Button, Grid, InputAdornment, Skeleton, Stack, TextField, Typography } from "@mui/material";
 import { useListItemDeleter, useListItemMutator } from "../ShoppingListApiQueries";
-import { useState } from "react";
+import { useBrands } from "../../Brands/BrandsApiQueries";
 
 
-function ReceiptProductDiscreteItem({ item }) {
+
+export default function ReceiptProductScalarItem({ item }) {
     const mutateListItem = useListItemMutator();
     const deleteListItem = useListItemDeleter();
 

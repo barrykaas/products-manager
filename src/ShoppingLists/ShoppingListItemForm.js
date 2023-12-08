@@ -5,15 +5,23 @@ import React, { useState } from "react";
 import { getShoppingListFn, useListItemMutator, useListItemDeleter } from "./ShoppingListApiQueries";
 import ShoppingListEventLabel from "./ShoppingListEventLabel";
 import { useBrands } from "../Brands/BrandsApiQueries";
-import ReceiptDiscountItem from "./Receipt/ReceiptProductDiscreteItem";
+import ReceiptDiscountItem from "./Receipt/ReceiptDiscountItem";
 import ReceiptProductDiscreteItem from "./Receipt/ReceiptProductDiscreteItem";
+import useUnitTypeInfo from "../UnitTypes/UnitTypeInfo";
+import ReceiptProductScalarItem from "./Receipt/ReceiptProductScalarItem";
+
 
 function ReceiptProductItem({ item }) {
+    const { isLoading, isError, unitTypeInfo, error } = useUnitTypeInfo();
 
-    if (item.product.unit_type === 5) {
+    if (isLoading || isError) {
+        return <Skeleton />
+    }
+
+    if (unitTypeInfo(item.product.unit_type).discrete === true) {
         return <ReceiptProductDiscreteItem item={item} />;
     } else {
-        return <div>Geen stukproduct?</div>;
+        return <ReceiptProductScalarItem item={item} />;
     }
 }
 

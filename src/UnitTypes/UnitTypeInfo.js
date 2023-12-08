@@ -1,7 +1,6 @@
 import { useUnitTypes } from "./UnitTypeQueries";
 
-
-function useUnitTypeInfo() {
+export default function useUnitTypeInfo() {
 
     const { isLoading, isError, data, error } = useUnitTypes();
 
@@ -20,7 +19,4 @@ function useUnitTypeInfo() {
     }
 
     return { isLoading, isError, unitTypeInfo, error };
-}
-
-
-export default useHumanReadableProduct;
+};
