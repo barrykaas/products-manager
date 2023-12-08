@@ -19,53 +19,6 @@ import ScannedItemsList from '../ScannedItems/ScannedItemsList';
 import FormDialog from '../Helpers/FormDialog';
 import { BrandsIdField } from '../Brands/BrandsField';
 
-
-// const validationSchema = yup.object({
-//     date_added: yup
-//         .date('Enter transaction date')
-//         .required('Transaction date is required'),
-//     name: yup
-//         .string('Enter name')
-//         .required('Name is required'),
-//     unit_number: yup
-//         .number('Enter unit number')
-//         .required('Unit number is required'),
-//     unit_weightvol: yup
-//         .number('Enter unit weight/volume')
-//         .required('Unit weight/volume is required'),
-//     unit_price: yup
-//         .number('Enter unit price')
-//         .required('Unit price is required'),
-//     unit_type: yup
-//         .number('Select unit type')
-//         .required('Unit type is required')
-// });
-
-
-// const validationSchema = yup.object({
-//     date_added: yup
-//         .date('Enter transaction date')
-//         .required('Transaction date is required'),
-//     name: yup
-//         .string('Enter name')
-//         .required('Name is required'),
-//     unit_number: yup
-//         .number('Enter unit number')
-//         .required('Unit number is required'),
-//     unit_weightvol: yup
-//         .mixed() // Use the mixed() type to allow number or null
-//         .nullable() // Allow null values
-//         .typeError('Unit weight/volume must be a number or null') // Custom error message for non-number values
-//         .when('unit_type', {is: 3, then: yup.number().required('Unit weight/volume is required'), otherwise: yup.string().nullable()}),
-//     unit_price: yup
-//         .number('Enter unit price')
-//         .required('Unit price is required'),
-//     unit_type: yup
-//         .number('Select unit type')
-//         .required('Unit type is required')
-// });
-
-
 const validationSchema = yup.object({
     date_added: yup
         .date('Enter transaction date')

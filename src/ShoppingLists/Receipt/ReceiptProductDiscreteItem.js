@@ -54,17 +54,18 @@ export default function ReceiptProductDiscreteItem({ item }) {
                     </Grid>
                 </Grid> */}
 
+               
                 <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Chip label={item.product_quantity}  size="small"/>
-                        {/* <Typography gutterBottom variant="overline" component="div">
+                    <Chip label={item.product_quantity} size="small" />
+                    {/* <Typography gutterBottom variant="overline" component="div">
                             {`${item.product_quantity}`}
                         </Typography> */}
-                        <Typography gutterBottom variant="h6" component="div">
-                            {product.name}
-                        </Typography>
-                        <Typography gutterBottom variant="h6" component="div">
-                            €{product.unit_price}
-                        </Typography>
+                    <Typography gutterBottom variant="h6" component="div">
+                        {product.name}
+                    </Typography>
+                    <Typography gutterBottom variant="h6" component="div">
+                        €{product.unit_price}
+                    </Typography>
                 </Stack>
                 <Typography color="text.secondary" variant="body2">
                     {brandName}

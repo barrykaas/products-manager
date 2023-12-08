@@ -1,6 +1,7 @@
-import { Box, Button, Grid, InputAdornment, Skeleton, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, Chip, Grid, InputAdornment, InputBase, Skeleton, Stack, TextField, Typography } from "@mui/material";
 import { useListItemDeleter, useListItemMutator } from "../ShoppingListApiQueries";
 import { useBrands } from "../../Brands/BrandsApiQueries";
+import useUnitTypeInfo from "../../UnitTypes/UnitTypeInfo";
 
 
 
@@ -16,7 +17,9 @@ export default function ReceiptProductScalarItem({ item }) {
     const isLoading = brandsQuery.isLoading;
     const isError = brandsQuery.isError;
 
-    if (isLoading || isError) {
+    const { isLoading: isLoadingUnitTypes, isError: isErrorUnitTypes, unitTypeInfo } = useUnitTypeInfo();
+
+    if (isLoading || isError || isLoadingUnitTypes || isErrorUnitTypes) {
         return <Skeleton />
     }
 
@@ -41,35 +44,140 @@ export default function ReceiptProductScalarItem({ item }) {
         deleteListItem(item.id);
     };
 
+    const unitType = unitTypeInfo(product.unit_type);
+
+    const amountLabel = `${item.product_quantity} ${unitType.physical_unit}`
+
     return (
 
         <Box>
             <Box sx={{ my: 1, mx: 2 }}>
-                <Grid container alignItems="center">
-                    <Grid item xs={0.5}>
-                        <Typography gutterBottom variant="overline" component="div">
-                            {item.product_quantity}x
-                            {product.unit_type}
-                        </Typography>
+                <Stack direction="row" alignItems="center" justifyContent="space-between"  >
+                    <Grid container spacing={1} direction="row" item>
+                        <Grid item sx={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-end" }}>
+
+                            <Typography variant="h6" component="div" gutterBottom sx={{ m: 0 }}>
+                                {product.name}
+                            </Typography>
+
+
+                        </Grid>
+                        <Grid item sx={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-end" }}>
+                            {/* <Box sx={{ bgcolor: 'primary.main', mt: 'auto' }}> */}
+                            <Typography color="text.secondary" variant="body2" sx={{ m: 0.5 }}>
+                                {brandName}
+                            </Typography>
+                            {/* </Box> */}
+
+                        </Grid>
                     </Grid>
-                    <Grid item xs>
-                        <Typography gutterBottom variant="h6" component="div">
-                            {product.name}
-                        </Typography>
-                    </Grid>
-                    <Grid item>
-                        <Typography gutterBottom variant="h6" component="div">
-                            €{product.unit_price}
-                        </Typography>
-                    </Grid>
-                </Grid>
-                <Typography color="text.secondary" variant="body2">
-                    {brandName}
-                </Typography>
+
+                    <Typography gutterBottom variant="h6" component="div">
+                        €{product.unit_price}
+                    </Typography>
+
+
+
+                </Stack>
+
             </Box>
             <Box sx={{ mt: 1, mb: 2, ml: 2 }}>
-
                 <Stack
+                    direction="row"
+                    spacing={2}
+                    >
+                <TextField
+                    // fullWidth
+                    // disabled={unitTypeInfo === null || formik.values.unit_type === 3}
+                    sx={{ width: '100px' }}
+                    size="small"
+                    id="unit_weightvol"
+                    name="unit_weightvol"
+                    label="Gewicht"
+                    variant="standard"
+                    // value={formik.values.unit_type === 3 ? '' : formik.values.unit_weightvol}
+                    //value={item.product_quantity}
+                    type="number"
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    // onChange={formik.handleChange}
+                    InputProps={{
+                        endAdornment: <InputAdornment position="start">{unitType.physical_unit}</InputAdornment>,
+                        disableUnderline: true
+                    }}
+                // error={
+                //     formik.touched.unit_weightvol &&
+                //     Boolean(formik.errors.unit_weightvol)
+                // }
+                // helperText={
+                //     formik.touched.unit_weightvol && formik.errors.unit_weightvol
+                // }
+                />
+
+                <TextField
+                    // fullWidth
+                    // disabled={unitTypeInfo === null || formik.values.unit_type === 3}
+                    sx={{ width: '100px' }}
+                    size="small"
+                    id="unit_weightvol"
+                    name="unit_weightvol"
+                    label="Prijs per kilo"
+                    variant="standard"
+                    // value={formik.values.unit_type === 3 ? '' : formik.values.unit_weightvol}
+                    //value={item.product_quantity}
+                    type="number"
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    // onChange={formik.handleChange}
+                    InputProps={{
+                        startAdornment: <InputAdornment position="start">€</InputAdornment>,
+                        disableUnderline: true
+                    }}
+
+                    
+                // error={
+                //     formik.touched.unit_weightvol &&
+                //     Boolean(formik.errors.unit_weightvol)
+                // }
+                // helperText={
+                //     formik.touched.unit_weightvol && formik.errors.unit_weightvol
+                // }
+                />
+
+<TextField
+                    // fullWidth
+                    // disabled={unitTypeInfo === null || formik.values.unit_type === 3}
+                    sx={{ width: '100px' }}
+                    size="small"
+                    id="unit_weightvol"
+                    name="unit_weightvol"
+                    label="Totaal prijs"
+                    variant="standard"
+                    // value={formik.values.unit_type === 3 ? '' : formik.values.unit_weightvol}
+                    //value={item.product_quantity}
+                    type="number"
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    // onChange={formik.handleChange}
+                    InputProps={{
+                        startAdornment: <InputAdornment position="start">€</InputAdornment>,
+                        disableUnderline: true
+                    }}
+
+                    
+                // error={
+                //     formik.touched.unit_weightvol &&
+                //     Boolean(formik.errors.unit_weightvol)
+                // }
+                // helperText={
+                //     formik.touched.unit_weightvol && formik.errors.unit_weightvol
+                // }
+                />
+                
+                {/* <Stack
                     direction="row"
                     spacing={2}
                 >
@@ -81,8 +189,8 @@ export default function ReceiptProductScalarItem({ item }) {
                         label="Korting"
                         startAdornment={<InputAdornment position="start">- €</InputAdornment>}
                     />
-                </Stack>
-
+                </Stack> */}
+</Stack>
 
             </Box>
         </Box>
