@@ -125,7 +125,7 @@ export default function ReceiptProductScalarItem({ item }) {
                     label="Prijs per kilo"
                     variant="standard"
                     // value={formik.values.unit_type === 3 ? '' : formik.values.unit_weightvol}
-                    //value={item.product_quantity}
+                    value={product.unit_price.toFixed(2)}
                     type="number"
                     InputLabelProps={{
                         shrink: true,
@@ -157,7 +157,7 @@ export default function ReceiptProductScalarItem({ item }) {
                     variant="standard"
                     // value={formik.values.unit_type === 3 ? '' : formik.values.unit_weightvol}
                     //value={item.product_quantity}
-                    type="number"
+                    disabled
                     InputLabelProps={{
                         shrink: true,
                     }}
