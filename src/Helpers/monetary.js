@@ -1,3 +1,4 @@
 export function formatPrice(price) {
-    return `€ ${Math.round(100 * price) / 100}`
+    const digits = (price % 1 == 0) ? 0 : 2;
+    return `€ ${price.toFixed(digits)}`;
 }
