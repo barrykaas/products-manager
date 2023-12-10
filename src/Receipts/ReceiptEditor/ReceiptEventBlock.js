@@ -1,9 +1,10 @@
-import { Typography, Stack, Chip, Button, List, Divider, Box, ButtonGroup } from "@mui/material";
+import { Typography, Grid, Stack, Chip, Button, List, Divider, ButtonGroup, Paper } from "@mui/material";
 import { Fragment } from "react";
 
 import ReceiptItem from "./ReceiptItem";
 import { useEvent } from "../../Events/EventsApiQueries";
 import { isoToLocalDate } from "../../Helpers/dateTime";
+import { formatPrice } from "../../Helpers/monetary";
 
 
 export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, onAddDiscount }) {
@@ -20,61 +21,77 @@ export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, o
         formattedDate = isoToLocalDate(event.event_date);
     }
 
-    const eventTotal = eventItems.reduce((total, item) => 
+    const eventTotal = eventItems.reduce((total, item) =>
         total + item.product_price - item.discount, 0);
 
     return (
-        <>
-            {/* Header */}
-            <Box sx={{ my: 1, mx: 2 }}>
-                <Stack direction="row" spacing={1}>
-                    <Typography variant="h6" component="div">
-                        {eventName}
-                    </Typography>
+        <Paper>
+            <Stack>
+
+                {/* Header */}
+                <Grid container spacing={2} sx={{ p: 2 }}>
+                    <Grid item>
+                        <Typography variant="h6" component="div">
+                            {eventName}
+                        </Typography>
+                    </Grid>
 
                     {formattedDate
-                        ? <Chip label={formattedDate} variant="outlined" />
-                        : null
+                        ? (
+                            <Grid item>
+                                <Chip label={formattedDate} variant="outlined" />
+                            </Grid>
+                        ) : null
                     }
 
-                    <div style={{ flexGrow: 1 }}></div>
+                    <Grid item>
+                        <ButtonGroup size="small" variant="outlined" aria-label="outlined button group">
+                            <Button variant="outlined" size="small" onClick={onAddProduct}>
+                                + Product
+                            </Button>
+                            <Button variant="outlined" size="small" onClick={onAddDiscount} color="warning">
+                                + Korting
+                            </Button>
+                        </ButtonGroup>
+                    </Grid>
+                </Grid>
 
-                    <ButtonGroup size="small" variant="outlined" aria-label="outlined button group">
-                        <Button variant="outlined" size="small" onClick={onAddProduct}>
+                <Divider />
+
+                {/* List items */}
+                <List>
+                    {eventItems.map((item) =>
+                        <Fragment key={item.id}>
+                            <ReceiptItem item={item} />
+                            <Divider />
+                        </Fragment>
+                    )}
+                </List>
+
+
+                {/* Footer */}
+                <Stack 
+                    sx={{ p: 1, pb: 2 }}
+                    direction="row" alignItems="center" justifyContent="space-evenly"
+                >
+                        <Button variant="outlined" onClick={onAddProduct}>
                             + Product
                         </Button>
-                        <Button variant="outlined" size="small" onClick={onAddDiscount}>
+                        <Button variant="outlined" onClick={onAddDiscount} color="warning">
                             + Korting
                         </Button>
-                    </ButtonGroup>
                 </Stack>
-            </Box>
-
-            <Divider />
-
-            {/* List items */}
-            <List>
-                {eventItems.map((item) =>
-                    <Fragment key={item.id}>
-                        <ReceiptItem item={item} />
-                        <Divider />
-                    </Fragment>
-                )}
-            </List>
-
-            {/* Footer */}
-            <Box sx={{ my: 1, mx: 2 }}>
-                <Stack direction="row" spacing={1}>
+                <Stack direction="row" spacing={1} sx={{ px: 2, py: 1 }}>
                     <Typography component="div">
                         Totaal van <em>{eventName}</em>
                     </Typography>
                     <div style={{ flexGrow: 1 }}></div>
-                    <Typography variant="h6" component="div">
-                        € {Math.round(100 * eventTotal) / 100}
+                    <Typography variant="h6" component="div" sx={{ "white-space": "nowrap" }}>
+                        {formatPrice(eventTotal)}
                     </Typography>
                 </Stack>
-            </Box>
-            <Divider />
-        </>
+
+            </Stack>
+        </Paper>
     );
 }

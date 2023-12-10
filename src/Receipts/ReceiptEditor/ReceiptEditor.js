@@ -1,4 +1,4 @@
-import { List, Paper, Grid, Typography, Button } from "@mui/material";
+import { Grid, Typography, Button, Stack } from "@mui/material";
 import { Fragment, useState } from "react";
 
 import groupByProperty from "../../Helpers/groupBy";
@@ -8,6 +8,7 @@ import FormDialog from "../../Helpers/FormDialog";
 import ProductController from "../../Products/ProductController";
 import { useListItemMutator } from "../../Lists/ListsApiQueries";
 import EventController from "../../Events/EventController";
+import { formatPrice } from "../../Helpers/monetary";
 
 
 export default function ReceiptEditor({ receiptId }) {
@@ -54,7 +55,7 @@ export default function ReceiptEditor({ receiptId }) {
 
     const allReceiptItems = receiptItemsQuery.data;
     const events = groupByProperty(allReceiptItems, 'event');
-    const receiptTotal = allReceiptItems.reduce((total, item) => 
+    const receiptTotal = allReceiptItems.reduce((total, item) =>
         total + item.product_price - item.discount, 0);
 
     return (
@@ -72,33 +73,32 @@ export default function ReceiptEditor({ receiptId }) {
             </Grid>
 
             {/* Event blocks */}
-            <Paper sx={{ my: 1 }} hidden={!allReceiptItems.length}>
-                <List sx={{ width: '100%' }}>
-                    {Object.keys(events).map((eventId) => (
-                        <Fragment key={eventId}>
-                            <ReceiptEventBlock
-                                eventId={eventId}
-                                eventItems={events[eventId]}
-                                onAddProduct={() => onAddProduct(eventId)}
-                                onAddDiscount={() => onAddDiscount(eventId)}
-                            />
-                        </Fragment>
-                    ))}
-                </List>
-            </Paper>
+            <Stack spacing={1} sx={{ my: 1, width: '100%' }}>
+                {Object.keys(events).map((eventId) => (
+                    <Fragment key={eventId}>
+                        <ReceiptEventBlock
+                            eventId={eventId}
+                            eventItems={events[eventId]}
+                            onAddProduct={() => onAddProduct(eventId)}
+                            onAddDiscount={() => onAddDiscount(eventId)}
+                        />
+                    </Fragment>
+                ))}
+            </Stack>
 
             {/* Footer, totals */}
             <Grid container alignItems="center">
                 <Grid item xs>
-                    <Typography variant="h5" component="h5" color="text.primary">
+                    <Typography variant="h6" component="h5" color="text.primary">
                         Totaal
                     </Typography>
                 </Grid>
                 <Grid item>
-                    € {Math.round(100 * receiptTotal) / 100}
+                    <Typography variant="h6" component="h5" color="text.primary">
+                        {formatPrice(receiptTotal)}
+                    </Typography>
                 </Grid>
             </Grid>
-
 
             {/* Event picker */}
             <FormDialog

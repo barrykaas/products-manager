@@ -53,7 +53,7 @@ export default function ReceiptForm({ initialValues = emptyForm, onSuccessfulCre
 
 
     return (
-        <Box sx={{ p: 2, height: 1, width: 1, bgcolor: 'background.paper' }}>
+        <Box sx={{ p: 2, width: 1, bgcolor: 'background.paper' }}>
             <Stack component="form" spacing={2} onSubmit={formik.handleSubmit}>
                 <TextField
                     fullWidth
