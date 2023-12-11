@@ -5,10 +5,10 @@ import React, { useState } from "react";
 import { getShoppingListFn, useListItemMutator, useListItemDeleter } from "./ShoppingListApiQueries";
 import ShoppingListEventLabel from "./ShoppingListEventLabel";
 import { useBrands } from "../Brands/BrandsApiQueries";
-import ReceiptDiscountItem from "./Receipt/ReceiptDiscountItem";
-import ReceiptProductDiscreteItem from "./Receipt/ReceiptProductDiscreteItem";
+import ReceiptDiscountItem from "../Receipts/ReceiptEditor/ReceiptDiscountItem";
+import ReceiptProductDiscreteItem from "../Receipts/ReceiptEditor/ReceiptProductDiscreteItem";
 import useUnitTypeInfo from "../UnitTypes/UnitTypeInfo";
-import ReceiptProductScalarItem from "./Receipt/ReceiptProductScalarItem";
+import ReceiptProductScalarItem from "../Receipts/ReceiptEditor/ReceiptProductScalarItem";
 
 
 function ReceiptProductItem({ item }) {
@@ -25,7 +25,7 @@ function ReceiptProductItem({ item }) {
     }
 }
 
-function ReceiptItem({ item }) {
+export function ReceiptItem({ item }) {
     if (item.product) {
         return <ReceiptProductItem item={item} />;
     } else if (item.discount) {
