@@ -1,5 +1,5 @@
 import { Box, Grid, InputAdornment, Skeleton, Stack, TextField, Typography } from "@mui/material";
-import { useListItemDeleter, useListItemMutator } from "../../ShoppingLists/ShoppingListApiQueries";
+import { useListItemDeleter, useListItemMutator } from "../../Lists/ListsApiQueries";
 import { useBrands } from "../../Brands/BrandsApiQueries";
 import useUnitTypeInfo from "../../UnitTypes/UnitTypeInfo";
 

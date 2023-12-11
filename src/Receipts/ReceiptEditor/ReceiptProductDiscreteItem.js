@@ -1,11 +1,12 @@
 import { Box, Button, Chip, InputAdornment, Skeleton, Stack, TextField, Typography } from "@mui/material";
-import { useListItemDeleter, useListItemMutator } from "../../ShoppingLists/ShoppingListApiQueries";
+import { useListItemDeleter, useListItemMutator } from "../../Lists/ListsApiQueries";
 import { useBrands } from "../../Brands/BrandsApiQueries";
 import { formatPrice } from "../../Helpers/monetary";
 
 
 
 export default function ReceiptProductDiscreteItem({ item }) {
+    console.log(item)
     const mutateListItem = useListItemMutator();
     const deleteListItem = useListItemDeleter();
 
@@ -25,17 +26,15 @@ export default function ReceiptProductDiscreteItem({ item }) {
         mutateListItem({
             id: item.id,
             product_quantity: item.product_quantity + 1
-        })
+        });
     }
 
     const disabledDecrease = (item.product_quantity === 1)
     const decreaseQuantity = () => {
-        if ((item.product_quantity - 1) > 0) {
-            mutateListItem({
-                id: item.id,
-                product_quantity: item.product_quantity - 1
-            })
-        }
+        mutateListItem({
+            id: item.id,
+            product_quantity: item.product_quantity - 1
+        });
     }
 
     const removeItem = () => {
@@ -78,8 +77,8 @@ export default function ReceiptProductDiscreteItem({ item }) {
                     direction="row"
                     spacing={2}
                 >
-                    <Button size="small" variant="contained" onClick={() => increaseQuantity()}>+</Button>
-                    <Button size="small" variant="contained" disabled={disabledDecrease} onClick={() => decreaseQuantity()}>-</Button>
+                    <Button size="small" variant="contained" onClick={increaseQuantity}>+</Button>
+                    <Button size="small" variant="contained" disabled={disabledDecrease} onClick={decreaseQuantity}>-</Button>
                     <Button size="small" variant="contained" color="error" onClick={removeItem} >Verwijder</Button>
                     <TextField
                         size="small"

@@ -54,17 +54,16 @@ export default function MainTabBar() {
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }} >
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" variant="scrollable" scrollButtons="auto">
-          <Tab label="Shopping lists" />
+          <Tab label="Bonnetjes" />
           <Tab label="Product list" />
           <Tab label="Events" />
           <Tab label="Scanned items" />
           <Tab label="Brands" />
           <Tab label="Categorieën" />
-          <Tab label="Bonnetjes" />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
-        <ShoppingsListsController />
+        <ReceiptsController />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
         <ProductController />
@@ -80,9 +79,6 @@ export default function MainTabBar() {
       </CustomTabPanel>
       <CustomTabPanel value={value} index={5}>
         <CategoriesController />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={6}>
-        <ReceiptsController />
       </CustomTabPanel>
     </Box>
   );
