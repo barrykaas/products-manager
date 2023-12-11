@@ -1,6 +1,7 @@
 import { Box, Button, Grid, InputAdornment, TextField, Typography } from "@mui/material";
-import { useListItemDeleter, useListItemMutator } from "../ShoppingListApiQueries";
+import { useListItemDeleter, useListItemMutator } from "../../ShoppingLists/ShoppingListApiQueries";
 import { useState } from "react";
+
 
 export default function ReceiptDiscountItem({ item }) {
     const discount = item.discount;

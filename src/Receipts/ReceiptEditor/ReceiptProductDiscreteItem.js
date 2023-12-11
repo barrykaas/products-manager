@@ -1,6 +1,7 @@
-import { Box, Button, Chip, Grid, InputAdornment, Skeleton, Stack, TextField, Typography } from "@mui/material";
-import { useListItemDeleter, useListItemMutator } from "../ShoppingListApiQueries";
+import { Box, Button, Chip, InputAdornment, Skeleton, Stack, TextField, Typography } from "@mui/material";
+import { useListItemDeleter, useListItemMutator } from "../../ShoppingLists/ShoppingListApiQueries";
 import { useBrands } from "../../Brands/BrandsApiQueries";
+import { formatPrice } from "../../Helpers/monetary";
 
 
 
@@ -64,7 +65,7 @@ export default function ReceiptProductDiscreteItem({ item }) {
                         {product.name}
                     </Typography>
                     <Typography gutterBottom variant="h6" component="div">
-                        €{product.unit_price}
+                        {formatPrice(item.product_price)}
                     </Typography>
                 </Stack>
                 <Typography color="text.secondary" variant="body2">
