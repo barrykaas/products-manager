@@ -1,5 +1,5 @@
 import { Box, Button, Grid, InputAdornment, TextField, Typography } from "@mui/material";
-import { useListItemDeleter, useListItemMutator } from "../../ShoppingLists/ShoppingListApiQueries";
+import { useListItemDeleter, useListItemMutator } from "../../Lists/ListsApiQueries";
 import { useState } from "react";
 
 
