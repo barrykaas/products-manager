@@ -87,18 +87,16 @@ export default function ReceiptEditor({ receiptId }) {
             </Stack>
 
             {/* Footer, totals */}
-            <Grid container alignItems="center">
-                <Grid item xs>
+            <Stack direction="row" alignItems="center" justifyContent="space-between"
+                sx={{ px: 2 }}
+            >
                     <Typography variant="h6" component="h5" color="text.primary">
                         Totaal
                     </Typography>
-                </Grid>
-                <Grid item>
                     <Typography variant="h6" component="h5" color="text.primary">
                         {formatPrice(receiptTotal)}
                     </Typography>
-                </Grid>
-            </Grid>
+            </Stack>
 
             {/* Event picker */}
             <FormDialog

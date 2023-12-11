@@ -2,6 +2,7 @@ import { Box, Grid, InputAdornment, Skeleton, Stack, TextField, Typography } fro
 import { useListItemDeleter, useListItemMutator } from "../../Lists/ListsApiQueries";
 import { useBrands } from "../../Brands/BrandsApiQueries";
 import useUnitTypeInfo from "../../UnitTypes/UnitTypeInfo";
+import { formatPrice } from "../../Helpers/monetary";
 
 
 
@@ -72,8 +73,8 @@ export default function ReceiptProductScalarItem({ item }) {
                         </Grid>
                     </Grid>
 
-                    <Typography gutterBottom variant="h6" component="div">
-                        €{product.unit_price}
+                    <Typography gutterBottom variant="h6" component="div" sx={{ "white-space": "nowrap" }}>
+                        {formatPrice(item.product_price)}
                     </Typography>
 
 
