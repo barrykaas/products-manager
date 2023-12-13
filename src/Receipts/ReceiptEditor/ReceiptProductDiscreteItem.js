@@ -1,12 +1,10 @@
-import { Box, Button, Chip, InputAdornment, Skeleton, Stack, TextField, Typography, Grid, Divider, IconButton } from "@mui/material";
+import { Box, InputAdornment, Skeleton, Stack, TextField, Typography, IconButton } from "@mui/material";
 import { AddCircle, Close, Delete, RemoveCircle } from "@mui/icons-material";
 
 import { useListItemDeleter, useListItemMutator } from "../../Lists/ListsApiQueries";
 import { useBrands } from "../../Brands/BrandsApiQueries";
 import { formatPrice } from "../../Helpers/monetary";
-import LiveTextField from "../../Helpers/LiveTextField";
-import { useRef, useState } from "react";
-
+import { useState } from "react";
 
 
 export default function ReceiptProductDiscreteItem({ item }) {
