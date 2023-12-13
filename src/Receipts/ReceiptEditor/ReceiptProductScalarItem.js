@@ -86,99 +86,99 @@ export default function ReceiptProductScalarItem({ item }) {
                 <Stack
                     direction="row"
                     spacing={2}
-                    >
-                <TextField
-                    // fullWidth
-                    // disabled={unitTypeInfo === null || formik.values.unit_type === 3}
-                    sx={{ width: '100px' }}
-                    size="small"
-                    id="unit_weightvol"
-                    name="unit_weightvol"
-                    label="Gewicht"
-                    variant="standard"
-                    // value={formik.values.unit_type === 3 ? '' : formik.values.unit_weightvol}
-                    //value={item.product_quantity}
-                    type="number"
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    // onChange={formik.handleChange}
-                    InputProps={{
-                        endAdornment: <InputAdornment position="start">{unitType.physical_unit}</InputAdornment>,
-                        disableUnderline: true
-                    }}
-                // error={
-                //     formik.touched.unit_weightvol &&
-                //     Boolean(formik.errors.unit_weightvol)
-                // }
-                // helperText={
-                //     formik.touched.unit_weightvol && formik.errors.unit_weightvol
-                // }
-                />
+                >
+                    <TextField
+                        // fullWidth
+                        // disabled={unitTypeInfo === null || formik.values.unit_type === 3}
+                        sx={{ width: '100px' }}
+                        size="small"
+                        id="unit_weightvol"
+                        name="unit_weightvol"
+                        label="Gewicht"
+                        variant="standard"
+                        // value={formik.values.unit_type === 3 ? '' : formik.values.unit_weightvol}
+                        //value={item.product_quantity}
+                        type="number"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        // onChange={formik.handleChange}
+                        InputProps={{
+                            endAdornment: <InputAdornment position="start">{unitType.physical_unit}</InputAdornment>,
+                            disableUnderline: true
+                        }}
+                    // error={
+                    //     formik.touched.unit_weightvol &&
+                    //     Boolean(formik.errors.unit_weightvol)
+                    // }
+                    // helperText={
+                    //     formik.touched.unit_weightvol && formik.errors.unit_weightvol
+                    // }
+                    />
 
-                <TextField
-                    // fullWidth
-                    // disabled={unitTypeInfo === null || formik.values.unit_type === 3}
-                    sx={{ width: '100px' }}
-                    size="small"
-                    id="unit_weightvol"
-                    name="unit_weightvol"
-                    label="Prijs per kilo"
-                    variant="standard"
-                    // value={formik.values.unit_type === 3 ? '' : formik.values.unit_weightvol}
-                    value={product.unit_price.toFixed(2)}
-                    type="number"
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    // onChange={formik.handleChange}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start">€</InputAdornment>,
-                        disableUnderline: true
-                    }}
+                    <TextField
+                        // fullWidth
+                        // disabled={unitTypeInfo === null || formik.values.unit_type === 3}
+                        sx={{ width: '100px' }}
+                        size="small"
+                        id="unit_weightvol"
+                        name="unit_weightvol"
+                        label="Prijs per kilo"
+                        variant="standard"
+                        // value={formik.values.unit_type === 3 ? '' : formik.values.unit_weightvol}
+                        value={product.unit_price.toFixed(2)}
+                        type="number"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        // onChange={formik.handleChange}
+                        InputProps={{
+                            startAdornment: <InputAdornment position="start">€</InputAdornment>,
+                            disableUnderline: true
+                        }}
 
-                    
-                // error={
-                //     formik.touched.unit_weightvol &&
-                //     Boolean(formik.errors.unit_weightvol)
-                // }
-                // helperText={
-                //     formik.touched.unit_weightvol && formik.errors.unit_weightvol
-                // }
-                />
 
-<TextField
-                    // fullWidth
-                    // disabled={unitTypeInfo === null || formik.values.unit_type === 3}
-                    sx={{ width: '100px' }}
-                    size="small"
-                    id="unit_weightvol"
-                    name="unit_weightvol"
-                    label="Totaal prijs"
-                    variant="standard"
-                    // value={formik.values.unit_type === 3 ? '' : formik.values.unit_weightvol}
-                    //value={item.product_quantity}
-                    disabled
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    // onChange={formik.handleChange}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start">€</InputAdornment>,
-                        disableUnderline: true
-                    }}
+                    // error={
+                    //     formik.touched.unit_weightvol &&
+                    //     Boolean(formik.errors.unit_weightvol)
+                    // }
+                    // helperText={
+                    //     formik.touched.unit_weightvol && formik.errors.unit_weightvol
+                    // }
+                    />
 
-                    
-                // error={
-                //     formik.touched.unit_weightvol &&
-                //     Boolean(formik.errors.unit_weightvol)
-                // }
-                // helperText={
-                //     formik.touched.unit_weightvol && formik.errors.unit_weightvol
-                // }
-                />
-                
-                {/* <Stack
+                    <TextField
+                        // fullWidth
+                        // disabled={unitTypeInfo === null || formik.values.unit_type === 3}
+                        sx={{ width: '100px' }}
+                        size="small"
+                        id="unit_weightvol"
+                        name="unit_weightvol"
+                        label="Totaal prijs"
+                        variant="standard"
+                        // value={formik.values.unit_type === 3 ? '' : formik.values.unit_weightvol}
+                        //value={item.product_quantity}
+                        disabled
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        // onChange={formik.handleChange}
+                        InputProps={{
+                            startAdornment: <InputAdornment position="start">€</InputAdornment>,
+                            disableUnderline: true
+                        }}
+
+
+                    // error={
+                    //     formik.touched.unit_weightvol &&
+                    //     Boolean(formik.errors.unit_weightvol)
+                    // }
+                    // helperText={
+                    //     formik.touched.unit_weightvol && formik.errors.unit_weightvol
+                    // }
+                    />
+
+                    {/* <Stack
                     direction="row"
                     spacing={2}
                 >
@@ -191,7 +191,7 @@ export default function ReceiptProductScalarItem({ item }) {
                         startAdornment={<InputAdornment position="start">- €</InputAdornment>}
                     />
                 </Stack> */}
-</Stack>
+                </Stack>
 
             </Box>
         </Box>

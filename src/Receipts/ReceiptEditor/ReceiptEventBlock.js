@@ -22,7 +22,7 @@ export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, o
     }
 
     const eventTotal = eventItems.reduce((total, item) =>
-        total + item.product_price - item.discount, 0);
+        total + item.product_quantity * item.product_price - item.discount, 0);
 
     return (
         <Paper>

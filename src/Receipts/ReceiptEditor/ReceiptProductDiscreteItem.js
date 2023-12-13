@@ -6,7 +6,6 @@ import { formatPrice } from "../../Helpers/monetary";
 
 
 export default function ReceiptProductDiscreteItem({ item }) {
-    console.log(item)
     const mutateListItem = useListItemMutator();
     const deleteListItem = useListItemDeleter();
 
@@ -41,6 +40,8 @@ export default function ReceiptProductDiscreteItem({ item }) {
         deleteListItem(item.id);
     };
 
+    const amount = item.product_quantity * item.product_price;
+
     return (
 
         <Box>
@@ -64,7 +65,7 @@ export default function ReceiptProductDiscreteItem({ item }) {
                         {product.name}
                     </Typography>
                     <Typography gutterBottom variant="h6" component="div">
-                        {formatPrice(item.product_price)}
+                        {formatPrice(amount)}
                     </Typography>
                 </Stack>
                 <Typography color="text.secondary" variant="body2">
