@@ -9,7 +9,7 @@ export default function ReceiptDiscountItem({ item }) {
     const mutateListItem = useListItemMutator();
     const deleteListItem = useListItemDeleter();
 
-    const onClickUpdate = () => {
+    const onUpdate = () => {
         const newItem = {
             id: item.id,
             discount: discountFieldValue
@@ -32,6 +32,7 @@ export default function ReceiptDiscountItem({ item }) {
                             Korting
                         </Typography>
                     </Grid>
+
                     <Grid item>
                         <TextField
                             sx={{ m: 1, width: '10ch' }}
@@ -41,11 +42,10 @@ export default function ReceiptDiscountItem({ item }) {
                             variant="standard"
                             value={discountFieldValue}
                             onChange={(event) => setDiscountFieldValue(event.target.value)}
+                            onBlur={onUpdate}
                         />
                     </Grid>
-                    <Grid item>
-                        <Button onClick={onClickUpdate} >Update</Button>
-                    </Grid>
+
                     <Grid>
                         <Button color="error" onClick={onClickDelete} >Verwijder</Button>
                     </Grid>
