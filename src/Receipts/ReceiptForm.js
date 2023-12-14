@@ -53,8 +53,10 @@ export default function ReceiptForm({ initialValues = emptyForm, onSuccessfulCre
 
 
     return (
-        <Box sx={{ p: 2, width: 1, bgcolor: 'background.paper' }}>
-            <Stack component="form" spacing={2} onSubmit={formik.handleSubmit}>
+        <Box sx={{ width: 1, bgcolor: 'background.paper' }}>
+            <Stack
+                sx={{ p: 2 }}
+                component="form" spacing={2} onSubmit={formik.handleSubmit}>
                 <TextField
                     fullWidth
                     id="name"
@@ -98,9 +100,7 @@ export default function ReceiptForm({ initialValues = emptyForm, onSuccessfulCre
 
             {existingReceiptId
                 ? (
-                    <Box sx={{ mt: 2}}>
-                        <ReceiptEditor receiptId={existingReceiptId} />
-                    </Box>
+                    <ReceiptEditor receiptId={existingReceiptId} />
                 )
                 : null
             }

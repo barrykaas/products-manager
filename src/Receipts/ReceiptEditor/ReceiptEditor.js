@@ -1,4 +1,4 @@
-import { Grid, Typography, Button, Stack } from "@mui/material";
+import { Grid, Typography, Button, Stack, Box } from "@mui/material";
 import { Fragment, useState } from "react";
 
 import groupByProperty from "../../Helpers/groupBy";
@@ -60,43 +60,45 @@ export default function ReceiptEditor({ receiptId }) {
 
     return (
         <>
-            {/* Header, add event */}
-            <Grid container alignItems="center">
-                <Grid item xs>
+            <Box sx={{ py: 2 }}>
+                {/* Header, add event */}
+                <Stack sx={{ px: 2 }}
+                    direction="row" alignItems="center" justifyContent="space-between">
                     <Typography variant="h5" component="h5" color="text.primary">
                         Producten
                     </Typography>
-                </Grid>
-                <Grid item>
                     <Button onClick={() => setIsPickingEvent(true)}>Add event</Button>
-                </Grid>
-            </Grid>
+                </Stack>
 
-            {/* Event blocks */}
-            <Stack spacing={1} sx={{ my: 1, width: '100%' }}>
-                {Object.keys(events).map((eventId) => (
-                    <Fragment key={eventId}>
-                        <ReceiptEventBlock
-                            eventId={eventId}
-                            eventItems={events[eventId]}
-                            onAddProduct={() => onAddProduct(eventId)}
-                            onAddDiscount={() => onAddDiscount(eventId)}
-                        />
-                    </Fragment>
-                ))}
-            </Stack>
+                {/* Event blocks */}
+                <Stack sx={{ mx: 1, my: 2 }}
+                    spacing={1}
+                >
+                    {Object.keys(events).map((eventId) => (
+                        <Fragment key={eventId}>
+                            <ReceiptEventBlock
+                                eventId={eventId}
+                                eventItems={events[eventId]}
+                                onAddProduct={() => onAddProduct(eventId)}
+                                onAddDiscount={() => onAddDiscount(eventId)}
+                            />
+                        </Fragment>
+                    ))}
+                </Stack>
 
-            {/* Footer, totals */}
-            <Stack direction="row" alignItems="center" justifyContent="space-between"
-                sx={{ px: 2 }}
-            >
+                {/* Footer, totals */}
+                <Stack sx={{ px: 3 }}
+                    direction="row" alignItems="center" justifyContent="space-between"
+                >
                     <Typography variant="h6" component="h5" color="text.primary">
                         Totaal
                     </Typography>
                     <Typography variant="h6" component="h5" color="text.primary">
                         {formatPrice(receiptTotal)}
                     </Typography>
-            </Stack>
+                </Stack>
+            </Box>
+
 
             {/* Event picker */}
             <FormDialog

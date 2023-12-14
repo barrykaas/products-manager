@@ -47,8 +47,6 @@ export default function ReceiptProductDiscreteItem({ item }) {
 
     const onBlurQuantity = (event) => {
         const newQuantity = event.target.value;
-        // setQuantityField(newQuantity);
-        // console.log(newQuantity, event);
         mutateListItem({
             id: item.id,
             product_quantity: newQuantity
@@ -71,77 +69,93 @@ export default function ReceiptProductDiscreteItem({ item }) {
     const amount = item.product_quantity * item.product_price;
 
     return (
-        <>
-            <Box>
+        <Box>
+            <Stack sx={{ py: 1 }}>
                 <Stack
-                    sx={{ px: 2, py: 1 }}
+                    sx={{ px: 2 }}
                     direction="row" alignItems="center" justifyContent="space-between"
                 >
-                    <Stack>
-                        <Box>
-                            <Typography gutterBottom display="inline" variant="h6" component="div">
-                                {product.name}
-                            </Typography>
-                            <Typography display="inline" color="text.secondary" variant="body2">
-                                {brandName}
-                            </Typography>
-                        </Box>
-
-                        <Stack spacing={1} direction="row" alignItems="center">
-                            <IconButton onClick={onDelete}>
-                                <Delete />
-                            </IconButton>
-
-                            <TextField
-                                value={quantityField}
-                                onChange={(e) => setQuantityField(e.target.value)}
-                                onBlur={onBlurQuantity}
-                                sx={{ width: '100px' }}
-                                label="Aantal"
-                                variant="standard"
-                                InputLabelProps={{ shrink: true }}
-                                InputProps={{
-                                    startAdornment:
-                                        <IconButton
-                                            onClick={decreaseQuantity}
-                                            disabled={disabledDecrease}
-                                        >
-                                            <RemoveCircle />
-                                        </IconButton>,
-                                    endAdornment:
-                                        <IconButton onClick={increaseQuantity}>
-                                            <AddCircle />
-                                        </IconButton>,
-                                    disableUnderline: true
-                                }}
-                            />
-
-                            <Close />
-
-                            <TextField
-                                value={unitPriceField}
-                                onChange={(e) => setUnitPriceField(e.target.value)}
-                                onBlur={onBlurUnitPrice}
-                                sx={{ width: '100px' }}
-                                label="Prijs p. st. / kg"
-                                variant="standard"
-                                InputLabelProps={{ shrink: true }}
-                                InputProps={{
-                                    disableUnderline: true,
-                                    startAdornment: <InputAdornment position="start">€</InputAdornment>
-                                }}
-                            />
-                        </Stack>
-                    </Stack>
-
-                    <Typography
+                    <Box>
+                        <Typography gutterBottom display="inline" variant="h6" component="div">
+                            {product.name}
+                        </Typography>
+                        <Typography display="inline" color="text.secondary" variant="body2">
+                            {brandName}
+                        </Typography>
+                    </Box>
+                    {/* <Typography
                         sx={{ "white-space": "nowrap" }}
                         gutterBottom variant="h6" component="div"
                     >
                         {formatPrice(amount)}
-                    </Typography>
+                    </Typography> */}
+
+                    <IconButton onClick={onDelete} color="error">
+                        <Delete />
+                    </IconButton>
                 </Stack>
-            </Box>
-        </>
+
+                <Stack
+                    sx={{ pl: 2, pr: 0 }}
+                    direction="row" alignItems="center" justifyContent="space-between"
+                >
+                    <TextField
+                        value={quantityField}
+                        onChange={(e) => setQuantityField(e.target.value)}
+                        onBlur={onBlurQuantity}
+                        sx={{ width: '100px' }}
+                        label="Aantal"
+                        variant="standard"
+                        InputLabelProps={{ shrink: true }}
+                        InputProps={{
+                            startAdornment:
+                                <IconButton
+                                    onClick={decreaseQuantity}
+                                    disabled={disabledDecrease}
+                                >
+                                    <RemoveCircle />
+                                </IconButton>,
+                            endAdornment:
+                                <IconButton onClick={increaseQuantity}>
+                                    <AddCircle />
+                                </IconButton>,
+                            disableUnderline: true
+                        }}
+                    />
+
+                    <Close />
+
+                    <TextField
+                        value={unitPriceField}
+                        onChange={(e) => setUnitPriceField(e.target.value)}
+                        onBlur={onBlurUnitPrice}
+                        sx={{ width: '60px' }}
+                        label="Per stuk"
+                        variant="standard"
+                        InputLabelProps={{ shrink: true }}
+                        InputProps={{
+                            disableUnderline: true,
+                            startAdornment: <InputAdornment position="start">€</InputAdornment>
+                        }}
+                    />
+
+                    <Typography variant="h4">=</Typography>
+
+                    <TextField
+                        value={amount}
+                        // onChange={(e) => setUnitPriceField(e.target.value)}
+                        // onBlur={onBlurUnitPrice}
+                        sx={{ width: '80px' }}
+                        label="Bedrag"
+                        variant="standard"
+                        InputLabelProps={{ shrink: true }}
+                        InputProps={{
+                            disableUnderline: true,
+                            startAdornment: <InputAdornment position="start">€</InputAdornment>
+                        }}
+                    />
+                </Stack>
+            </Stack>
+        </Box>
     )
 }

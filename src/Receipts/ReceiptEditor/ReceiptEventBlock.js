@@ -27,7 +27,6 @@ export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, o
     return (
         <Paper>
             <Stack>
-
                 {/* Header */}
                 <Grid container spacing={2} sx={{ p: 2 }}>
                     <Grid item>
@@ -67,7 +66,6 @@ export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, o
                         </Fragment>
                     )}
                 </List>
-
 
                 {/* Footer */}
                 <Stack 
