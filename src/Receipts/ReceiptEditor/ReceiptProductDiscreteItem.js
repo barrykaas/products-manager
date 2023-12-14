@@ -1,17 +1,21 @@
-import { Box, InputAdornment, Skeleton, Stack, TextField, Typography, IconButton } from "@mui/material";
+import { Box, Grid, InputAdornment, Skeleton, Stack, TextField, Typography, IconButton } from "@mui/material";
 import { AddCircle, Close, Delete, RemoveCircle } from "@mui/icons-material";
+import { useState } from "react";
 
 import { useListItemDeleter, useListItemMutator } from "../../Lists/ListsApiQueries";
 import { useBrands } from "../../Brands/BrandsApiQueries";
 import { formatPrice } from "../../Helpers/monetary";
-import { useState } from "react";
 
 
 export default function ReceiptProductDiscreteItem({ item }) {
     const mutateListItem = useListItemMutator();
     const deleteListItem = useListItemDeleter();
     const [quantityField, setQuantityField] = useState(item.product_quantity);
-    const [unitPriceField, setUnitPriceField] = useState(item.product_price);
+    const [unitPriceField, setUnitPriceField] = useState(formatPrice(item.product_price));
+    const [amountField, setAmountField] = useState(
+        formatPrice(item.product_quantity * item.product_price)
+    );
+    const [recentField, setRecentField] = useState("unitPrice");
 
     const product = item.product;
 
@@ -25,70 +29,108 @@ export default function ReceiptProductDiscreteItem({ item }) {
         return <Skeleton />
     }
 
+    const onDelete = () => {
+        deleteListItem(item.id);
+    };
+
     // Quantity handlers
     const increaseQuantity = () => {
-        const newQ = item.product_quantity + 1;
-        setQuantityField(newQ);
+        const newQuantity = item.product_quantity + 1;
+        setQuantityField(newQuantity);
+        let unitPrice = unitPriceField;
+        if (recentField === "unitPrice") {
+            setAmountField(formatPrice(newQuantity * unitPriceField));
+        } else {
+            unitPrice = amountField / newQuantity;
+            setUnitPriceField(formatPrice(unitPrice));
+        }
         mutateListItem({
             id: item.id,
-            product_quantity: newQ
+            product_quantity: newQuantity,
+            product_price: unitPrice
         });
     }
 
     const disabledDecrease = (item.product_quantity <= 1)
     const decreaseQuantity = () => {
-        const newQ = item.product_quantity - 1;
-        setQuantityField(newQ);
+        const newQuantity = item.product_quantity - 1;
+        setQuantityField(newQuantity);
+        let unitPrice = unitPriceField;
+        if (recentField === "unitPrice") {
+            setAmountField(formatPrice(newQuantity * unitPriceField));
+        } else {
+            unitPrice = amountField / newQuantity;
+            setUnitPriceField(formatPrice(unitPrice));
+        }
         mutateListItem({
             id: item.id,
-            product_quantity: newQ
+            product_quantity: newQuantity,
+            product_price: unitPrice
         });
     }
 
     const onBlurQuantity = (event) => {
         const newQuantity = event.target.value;
+        setQuantityField(newQuantity);
+        let unitPrice = unitPriceField;
+        if (recentField === "unitPrice") {
+            setAmountField(formatPrice(newQuantity * unitPriceField));
+        } else {
+            unitPrice = amountField / newQuantity;
+            setUnitPriceField(formatPrice(unitPrice));
+        }
         mutateListItem({
             id: item.id,
-            product_quantity: newQuantity
+            product_quantity: newQuantity,
+            product_price: unitPrice
         });
     };
 
     // Unit price handlers
     const onBlurUnitPrice = (event) => {
+        setRecentField("unitPrice");
+        setUnitPriceField(formatPrice(unitPriceField));
         const newPrice = event.target.value;
+        setAmountField(formatPrice(quantityField * newPrice));
         mutateListItem({
             id: item.id,
             product_price: newPrice
         });
     };
 
-    const onDelete = () => {
-        deleteListItem(item.id);
+    // Amount handlers
+    const onBlurAmount = (event) => {
+        setRecentField("amount");
+        setAmountField(formatPrice(amountField))
+        const newAmount = event.target.value;
+        const newUnitPrice = newAmount / quantityField;
+        setUnitPriceField(formatPrice(newUnitPrice));
+        mutateListItem({
+            id: item.id,
+            product_price: newUnitPrice
+        });
     };
 
-    const amount = item.product_quantity * item.product_price;
 
     return (
         <Box>
-            <Stack sx={{ py: 1 }}>
+            <Stack sx={{ py: 1 }} spacing={1}>
                 <Stack
                     sx={{ px: 2 }}
                     direction="row" alignItems="center" justifyContent="space-between"
                 >
-                    <Box>
-                        <Typography gutterBottom display="inline" variant="h6" component="div">
-                            {product.name}
-                        </Typography>
-                        <Typography display="inline" color="text.secondary" variant="body2">
-                            {brandName}
-                        </Typography>
-                    </Box>
-                    {/* <Typography
-                        sx={{ "white-space": "nowrap" }}
-                        gutterBottom variant="h6" component="div"
-                    >
-                        {formatPrice(amount)}
-                    </Typography> */}
+                    <Grid container alignItems="baseline" spacing={1}>
+                        <Grid item>
+                            <Typography display="inline" variant="h6" component="div" noWrap>
+                                {product.name}
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                            <Typography display="inline" color="text.secondary" variant="body2">
+                                {brandName}
+                            </Typography>
+                        </Grid>
+                    </Grid>
 
                     <IconButton onClick={onDelete} color="error">
                         <Delete />
@@ -142,9 +184,9 @@ export default function ReceiptProductDiscreteItem({ item }) {
                     <Typography variant="h4">=</Typography>
 
                     <TextField
-                        value={amount}
-                        // onChange={(e) => setUnitPriceField(e.target.value)}
-                        // onBlur={onBlurUnitPrice}
+                        value={amountField}
+                        onChange={(e) => setAmountField(e.target.value)}
+                        onBlur={onBlurAmount}
                         sx={{ width: '80px' }}
                         label="Bedrag"
                         variant="standard"
