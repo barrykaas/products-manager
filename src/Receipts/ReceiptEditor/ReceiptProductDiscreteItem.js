@@ -145,6 +145,7 @@ export default function ReceiptProductDiscreteItem({ item }) {
                         value={quantityField}
                         onChange={(e) => setQuantityField(e.target.value)}
                         onBlur={onBlurQuantity}
+                        onFocus={(event) => event.target.select()}
                         sx={{ width: '100px' }}
                         label="Aantal"
                         variant="standard"
@@ -171,6 +172,7 @@ export default function ReceiptProductDiscreteItem({ item }) {
                         value={unitPriceField}
                         onChange={(e) => setUnitPriceField(e.target.value)}
                         onBlur={onBlurUnitPrice}
+                        onFocus={(event) => event.target.select()}
                         sx={{ width: '60px' }}
                         label="Per stuk"
                         variant="standard"
@@ -187,6 +189,7 @@ export default function ReceiptProductDiscreteItem({ item }) {
                         value={amountField}
                         onChange={(e) => setAmountField(e.target.value)}
                         onBlur={onBlurAmount}
+                        onFocus={(event) => event.target.select()}
                         sx={{ width: '80px' }}
                         label="Bedrag"
                         variant="standard"
