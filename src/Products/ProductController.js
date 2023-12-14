@@ -1,19 +1,13 @@
 import React, { useState } from 'react';
-import { Button, Alert, Snackbar, TextField, IconButton, InputAdornment, Paper } from '@mui/material';
-import { ProductAppBar, ProductAppBarClosable } from './ProductsAppBar';
-// import ProductsForm from '../Products/ProductsForm';
-
-//import ButtonAppBar from './MyAppBar'
-
-
-import FormDialog from '../Helpers/FormDialog';
+import { Button, Alert, Snackbar, Box } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useConfirm } from 'material-ui-confirm';
+
+import FormDialog from '../Helpers/FormDialog';
+import { ProductAppBar } from './ProductsAppBar';
 import ProductsList from './ProductsList';
 import { ProductCreateForm, ProductEditForm } from './ProductsForm';
-import { Search } from '@mui/icons-material';
-
 import apiPath from '../Api/ApiPath';
 
 
@@ -37,6 +31,8 @@ function ProductController({ handleSelectedProduct, onClose }) {
         setCurrentProduct(product);
         setEditOpen(true);
     };
+
+    handleSelectedProduct = handleSelectedProduct || handleEditProduct;
 
     const handleAddProduct = () => {
         setCreateOpen(true);
@@ -80,33 +76,26 @@ function ProductController({ handleSelectedProduct, onClose }) {
     };
 
     return (
-        <>
+        <Box height={1}>
             <Snackbar open={messageOpen} autoHideDuration={1500} onClose={() => setMessageOpen(false)}>
                 <Alert severity={messageState ? "success" : "error"} sx={{ width: "100%" }}>
                     {messageText}
                 </Alert>
             </Snackbar>
 
-
-            {onClose ? (
-                <ProductAppBarClosable onClose={onClose} title={"Producten"} onAdd={handleAddProduct} />
-            ) : (
-                <ProductAppBar title={"Producten"} onAdd={handleAddProduct} />
-            )}
-
-            <Paper sx={{m:1, p:1}}>
-                <TextField
-                id="standard-search"
-                label="Zoek"
-                type="search"
-                variant="standard"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                fullWidth
+            <ProductAppBar
+                title={onClose ? "Kies product" : "Producten"}
+                onAdd={handleAddProduct}
+                onClose={onClose}
+                searchQuery={searchQuery}
+                onSearchQueryChange={(e) => setSearchQuery(e.target.value)}
             />
-            </Paper>
 
-            <ProductsList handleEdit={handleEditProduct} handleSelectedProduct={handleSelectedProduct} searchQuery={searchQuery}/>
+            <ProductsList
+                handleEdit={handleEditProduct}
+                handleSelectedProduct={handleSelectedProduct}
+                searchQuery={searchQuery}
+            />
 
             <FormDialog title={"Producten"} open={createOpen} onClose={() => setCreateOpen(false)}>
                 <ProductCreateForm didSuccesfullyCreate={didSuccessfullyCreate} />
@@ -128,7 +117,7 @@ function ProductController({ handleSelectedProduct, onClose }) {
             ) : (
                 <></>
             )}
-        </>
+        </Box>
     );
 }
 

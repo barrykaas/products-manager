@@ -1,4 +1,4 @@
-import { Button, CircularProgress, Divider, List } from "@mui/material";
+import { Box, Button, CircularProgress, Divider, List, Stack } from "@mui/material";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import React from "react";
 
@@ -7,7 +7,7 @@ import { ProductListItem } from "./ProductListItem";
 
 
 export default function ProductsList({ handleEdit, handleSelectedProduct, searchQuery }) {
-  console.log("searchQuery before useInfiniteQuery:", searchQuery);
+  // console.log("searchQuery before useInfiniteQuery:", searchQuery);
   const {
     data,
     isFetching,
@@ -28,7 +28,7 @@ export default function ProductsList({ handleEdit, handleSelectedProduct, search
   const productsData = data.pages.flatMap((page) => page.results);
 
   return (
-    <>
+    <Stack height={1}>
       <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
         {productsData.map((item) => (
           <React.Fragment key={item.id}>
@@ -41,7 +41,14 @@ export default function ProductsList({ handleEdit, handleSelectedProduct, search
           </React.Fragment>
         ))}
       </List>
-      <Button disabled={!hasNextPage || isFetchingNextPage} onClick={() => fetchNextPage()}>Load more</Button>
-    </>
+
+      <Button
+        fullWidth
+        disabled={!hasNextPage || isFetchingNextPage}
+        onClick={() => fetchNextPage()}
+      >Laad meer</Button>
+
+      <Box sx={{ flexGrow: 1 }} />
+    </Stack>
   );
 };
