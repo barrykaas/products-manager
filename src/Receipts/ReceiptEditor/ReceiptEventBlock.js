@@ -4,7 +4,7 @@ import { Fragment } from "react";
 import ReceiptItem from "./ReceiptItem";
 import { useEvent } from "../../Events/EventsApiQueries";
 import { isoToLocalDate } from "../../Helpers/dateTime";
-import { formatPrice } from "../../Helpers/monetary";
+import { formatEuro } from "../../Helpers/monetary";
 
 
 export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, onAddDiscount }) {
@@ -85,7 +85,7 @@ export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, o
                     </Typography>
                     <div style={{ flexGrow: 1 }}></div>
                     <Typography variant="h6" component="div" sx={{ "white-space": "nowrap" }}>
-                        {formatPrice(eventTotal)}
+                        {formatEuro(eventTotal)}
                     </Typography>
                 </Stack>
 

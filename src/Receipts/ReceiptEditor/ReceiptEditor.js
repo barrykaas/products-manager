@@ -8,7 +8,7 @@ import FormDialog from "../../Helpers/FormDialog";
 import ProductController from "../../Products/ProductController";
 import { useListItemMutator } from "../../Lists/ListsApiQueries";
 import EventController from "../../Events/EventController";
-import { formatPrice } from "../../Helpers/monetary";
+import { formatEuro } from "../../Helpers/monetary";
 
 
 export default function ReceiptEditor({ receiptId }) {
@@ -94,7 +94,7 @@ export default function ReceiptEditor({ receiptId }) {
                         Totaal
                     </Typography>
                     <Typography variant="h6" component="h5" color="text.primary">
-                        {formatPrice(receiptTotal)}
+                        {formatEuro(receiptTotal)}
                     </Typography>
                 </Stack>
             </Box>
