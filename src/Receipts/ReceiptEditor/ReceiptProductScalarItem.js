@@ -1,14 +1,31 @@
-import { Box, Grid, InputAdornment, Skeleton, Stack, TextField, Typography } from "@mui/material";
+import { Box, Grid, InputAdornment, Skeleton, Stack, TextField, Typography, IconButton } from "@mui/material";
+import { Close, Delete } from "@mui/icons-material";
+import { useState } from "react";
+
 import { useListItemDeleter, useListItemMutator } from "../../Lists/ListsApiQueries";
 import { useBrands } from "../../Brands/BrandsApiQueries";
-import useUnitTypeInfo from "../../UnitTypes/UnitTypeInfo";
 import { formatPrice } from "../../Helpers/monetary";
+import { moveToFront } from "../../Helpers/arrays";
 
 
+function formatWeight(weight) {
+    return Number(weight).toFixed(3);
+}
 
 export default function ReceiptProductScalarItem({ item }) {
     const mutateListItem = useListItemMutator();
     const deleteListItem = useListItemDeleter();
+    const [quantityField, setQuantityField] = useState(formatWeight(item.product_quantity));
+    const [unitPriceField, setUnitPriceField] = useState(formatPrice(item.product_price));
+    const [amountField, setAmountField] = useState(
+        formatPrice(item.product_quantity * item.product_price)
+    );
+    const [recentFields, setRecentFields] = useState(["unitPrice", "quantity", "amount"]);
+    const setMostRecent = (field) => {
+        const newOrder = moveToFront(recentFields, field);
+        setRecentFields(newOrder);
+        return newOrder;
+    };
 
     const product = item.product;
 
@@ -18,182 +35,159 @@ export default function ReceiptProductScalarItem({ item }) {
     const isLoading = brandsQuery.isLoading;
     const isError = brandsQuery.isError;
 
-    const { isLoading: isLoadingUnitTypes, isError: isErrorUnitTypes, unitTypeInfo } = useUnitTypeInfo();
-
-    if (isLoading || isError || isLoadingUnitTypes || isErrorUnitTypes) {
+    if (isLoading || isError) {
         return <Skeleton />
     }
 
-    const increaseQuantity = () => {
-        mutateListItem({
-            id: item.id,
-            product_quantity: item.product_quantity + 1
-        })
-    }
-
-    const disabledDecrease = (item.product_quantity === 1)
-    const decreaseQuantity = () => {
-        if ((item.product_quantity - 1) > 0) {
-            mutateListItem({
-                id: item.id,
-                product_quantity: item.product_quantity - 1
-            })
-        }
-    }
-
-    const removeItem = () => {
+    const onDelete = () => {
         deleteListItem(item.id);
     };
 
-    const unitType = unitTypeInfo(product.unit_type);
+    // Quantity handlers
+    const onBlurQuantity = (event) => {
+        const newRecentFields = setMostRecent("quantity");
+        const oldestField = newRecentFields[-1];
 
-    const amountLabel = `${item.product_quantity} ${unitType.physical_unit}`
+        const newQuantity = Number(event.target.value);
+        setQuantityField(newQuantity.toFixed(3));
+        let unitPrice = unitPriceField;
+        if (oldestField === "unitPrice") {
+            unitPrice = amountField / newQuantity;
+            setUnitPriceField(formatPrice(unitPrice));
+        } else {
+            setAmountField(formatPrice(newQuantity * unitPriceField));
+        }
+        mutateListItem({
+            id: item.id,
+            product_quantity: newQuantity,
+            product_price: unitPrice
+        });
+    };
+
+    // Unit price handlers
+    const onBlurUnitPrice = (event) => {
+        const newRecentFields = setMostRecent("unitPrice");
+        const oldestField = newRecentFields[-1];
+
+        const newUnitPrice = event.target.value;
+        setUnitPriceField(formatPrice(newUnitPrice));
+        let quantity = quantityField;
+        if (oldestField === "quantity") {
+            quantity = amountField / newUnitPrice;
+            setQuantityField(quantity);
+        } else {
+            setAmountField(formatPrice(quantity * newUnitPrice));
+        }
+        mutateListItem({
+            id: item.id,
+            product_quantity: quantity,
+            product_price: newUnitPrice
+        });
+    };
+
+    // Amount handlers
+    const onBlurAmount = (event) => {
+        const newRecentFields = setMostRecent("amount");
+        const oldestField = newRecentFields[-1];
+
+        const newAmount = event.target.value;
+        setAmountField(formatPrice(newAmount));
+        let quantity = quantityField;
+        let unitPrice = unitPriceField
+        if (oldestField === "quantity") {
+            quantity = newAmount / unitPrice;
+            setQuantityField(quantity);
+        } else {
+            unitPrice = newAmount / quantity;
+            setUnitPriceField(formatPrice(unitPrice));
+        }
+        mutateListItem({
+            id: item.id,
+            product_quantity: quantity,
+            product_price: unitPrice
+        });
+    };
+
 
     return (
-
         <Box>
-            <Box sx={{ my: 1, mx: 2 }}>
-                <Stack direction="row" alignItems="center" justifyContent="space-between"  >
-                    <Grid container spacing={1} direction="row" item>
-                        <Grid item sx={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-end" }}>
-
-                            <Typography variant="h6" component="div" gutterBottom sx={{ m: 0 }}>
+            <Stack sx={{ py: 1 }} spacing={1}>
+                <Stack
+                    sx={{ px: 2 }}
+                    direction="row" alignItems="center" justifyContent="space-between"
+                >
+                    <Grid container alignItems="baseline" spacing={1}>
+                        <Grid item>
+                            <Typography display="inline" variant="h6" component="div" noWrap>
                                 {product.name}
                             </Typography>
-
-
                         </Grid>
-                        <Grid item sx={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-end" }}>
-                            {/* <Box sx={{ bgcolor: 'primary.main', mt: 'auto' }}> */}
-                            <Typography color="text.secondary" variant="body2" sx={{ m: 0.5 }}>
+                        <Grid item>
+                            <Typography display="inline" color="text.secondary" variant="body2">
                                 {brandName}
                             </Typography>
-                            {/* </Box> */}
-
                         </Grid>
                     </Grid>
 
-                    <Typography gutterBottom variant="h6" component="div" sx={{ "white-space": "nowrap" }}>
-                        {formatPrice(item.product_price)}
-                    </Typography>
-
-
-
+                    <IconButton onClick={onDelete} color="error">
+                        <Delete />
+                    </IconButton>
                 </Stack>
 
-            </Box>
-            <Box sx={{ mt: 1, mb: 2, ml: 2 }}>
                 <Stack
-                    direction="row"
-                    spacing={2}
+                    sx={{ pl: 2, pr: 0 }}
+                    direction="row" alignItems="center" justifyContent="space-between"
                 >
                     <TextField
-                        // fullWidth
-                        // disabled={unitTypeInfo === null || formik.values.unit_type === 3}
-                        sx={{ width: '100px' }}
-                        size="small"
-                        id="unit_weightvol"
-                        name="unit_weightvol"
+                        value={quantityField}
+                        onChange={(e) => setQuantityField(e.target.value)}
+                        onBlur={onBlurQuantity}
+                        onFocus={(event) => event.target.select()}
+                        sx={{ width: '80px' }}
                         label="Gewicht"
                         variant="standard"
-                        // value={formik.values.unit_type === 3 ? '' : formik.values.unit_weightvol}
-                        //value={item.product_quantity}
-                        type="number"
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        // onChange={formik.handleChange}
+                        InputLabelProps={{ shrink: true }}
                         InputProps={{
-                            endAdornment: <InputAdornment position="start">{unitType.physical_unit}</InputAdornment>,
+                            endAdornment: <InputAdornment position="end">kg</InputAdornment>,
                             disableUnderline: true
                         }}
-                    // error={
-                    //     formik.touched.unit_weightvol &&
-                    //     Boolean(formik.errors.unit_weightvol)
-                    // }
-                    // helperText={
-                    //     formik.touched.unit_weightvol && formik.errors.unit_weightvol
-                    // }
                     />
 
+                    <Close />
+
                     <TextField
-                        // fullWidth
-                        // disabled={unitTypeInfo === null || formik.values.unit_type === 3}
-                        sx={{ width: '100px' }}
-                        size="small"
-                        id="unit_weightvol"
-                        name="unit_weightvol"
-                        label="Prijs per kilo"
+                        value={unitPriceField}
+                        onChange={(e) => setUnitPriceField(e.target.value)}
+                        onBlur={onBlurUnitPrice}
+                        onFocus={(event) => event.target.select()}
+                        sx={{ width: '60px' }}
+                        label="Per kg"
                         variant="standard"
-                        // value={formik.values.unit_type === 3 ? '' : formik.values.unit_weightvol}
-                        value={product.unit_price.toFixed(2)}
-                        type="number"
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        // onChange={formik.handleChange}
+                        InputLabelProps={{ shrink: true }}
                         InputProps={{
-                            startAdornment: <InputAdornment position="start">€</InputAdornment>,
-                            disableUnderline: true
+                            disableUnderline: true,
+                            startAdornment: <InputAdornment position="start">€</InputAdornment>
                         }}
-
-
-                    // error={
-                    //     formik.touched.unit_weightvol &&
-                    //     Boolean(formik.errors.unit_weightvol)
-                    // }
-                    // helperText={
-                    //     formik.touched.unit_weightvol && formik.errors.unit_weightvol
-                    // }
                     />
 
+                    <Typography variant="h4">=</Typography>
+
                     <TextField
-                        // fullWidth
-                        // disabled={unitTypeInfo === null || formik.values.unit_type === 3}
-                        sx={{ width: '100px' }}
-                        size="small"
-                        id="unit_weightvol"
-                        name="unit_weightvol"
-                        label="Totaal prijs"
+                        value={amountField}
+                        onChange={(e) => setAmountField(e.target.value)}
+                        onBlur={onBlurAmount}
+                        onFocus={(event) => event.target.select()}
+                        sx={{ width: '80px' }}
+                        label="Bedrag"
                         variant="standard"
-                        // value={formik.values.unit_type === 3 ? '' : formik.values.unit_weightvol}
-                        //value={item.product_quantity}
-                        disabled
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        // onChange={formik.handleChange}
+                        InputLabelProps={{ shrink: true }}
                         InputProps={{
-                            startAdornment: <InputAdornment position="start">€</InputAdornment>,
-                            disableUnderline: true
+                            disableUnderline: true,
+                            startAdornment: <InputAdornment position="start">€</InputAdornment>
                         }}
-
-
-                    // error={
-                    //     formik.touched.unit_weightvol &&
-                    //     Boolean(formik.errors.unit_weightvol)
-                    // }
-                    // helperText={
-                    //     formik.touched.unit_weightvol && formik.errors.unit_weightvol
-                    // }
                     />
-
-                    {/* <Stack
-                    direction="row"
-                    spacing={2}
-                >
-                    <Button size="small" variant="contained" onClick={() => increaseQuantity()}>+</Button>
-                    <Button size="small" variant="contained" disabled={disabledDecrease} onClick={() => decreaseQuantity()}>-</Button>
-                    <Button size="small" variant="contained" color="error" onClick={removeItem} >Verwijder</Button>
-                    <TextField
-                        size="small"
-                        label="Korting"
-                        startAdornment={<InputAdornment position="start">- €</InputAdornment>}
-                    />
-                </Stack> */}
                 </Stack>
-
-            </Box>
+            </Stack>
         </Box>
     )
 }
