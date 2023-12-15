@@ -24,7 +24,10 @@ export default function ReceiptProductScalarItem({ item }) {
     const setMostRecent = (field) => {
         const newOrder = moveToFront(recentFields, field);
         setRecentFields(newOrder);
-        return newOrder;
+        console.log(field, newOrder, newOrder[newOrder.length - 1]);
+        // return newOrder, newOrder[length(newOrder) - 1];
+        // return newOrder;
+        return newOrder[newOrder.length - 1];
     };
 
     const product = item.product;
@@ -45,16 +48,14 @@ export default function ReceiptProductScalarItem({ item }) {
 
     // Quantity handlers
     const onBlurQuantity = (event) => {
-        const newRecentFields = setMostRecent("quantity");
-        const oldestField = newRecentFields[-1];
-
+        const oldestField = setMostRecent("quantity");
         const newQuantity = Number(event.target.value);
         setQuantityField(newQuantity.toFixed(3));
         let unitPrice = unitPriceField;
         if (oldestField === "unitPrice") {
             unitPrice = amountField / newQuantity;
             setUnitPriceField(formatPrice(unitPrice));
-        } else {
+        } else { // amount
             setAmountField(formatPrice(newQuantity * unitPriceField));
         }
         mutateListItem({
@@ -66,16 +67,14 @@ export default function ReceiptProductScalarItem({ item }) {
 
     // Unit price handlers
     const onBlurUnitPrice = (event) => {
-        const newRecentFields = setMostRecent("unitPrice");
-        const oldestField = newRecentFields[-1];
-
+        const oldestField = setMostRecent("unitPrice");
         const newUnitPrice = event.target.value;
         setUnitPriceField(formatPrice(newUnitPrice));
         let quantity = quantityField;
         if (oldestField === "quantity") {
             quantity = amountField / newUnitPrice;
             setQuantityField(quantity);
-        } else {
+        } else { // amount
             setAmountField(formatPrice(quantity * newUnitPrice));
         }
         mutateListItem({
@@ -87,9 +86,7 @@ export default function ReceiptProductScalarItem({ item }) {
 
     // Amount handlers
     const onBlurAmount = (event) => {
-        const newRecentFields = setMostRecent("amount");
-        const oldestField = newRecentFields[-1];
-
+        const oldestField = setMostRecent("amount");
         const newAmount = event.target.value;
         setAmountField(formatPrice(newAmount));
         let quantity = quantityField;
@@ -97,7 +94,7 @@ export default function ReceiptProductScalarItem({ item }) {
         if (oldestField === "quantity") {
             quantity = newAmount / unitPrice;
             setQuantityField(quantity);
-        } else {
+        } else { // unitPrice
             unitPrice = newAmount / quantity;
             setUnitPriceField(formatPrice(unitPrice));
         }
