@@ -1,6 +1,7 @@
 import { Box, Button, Grid, InputAdornment, TextField, Typography } from "@mui/material";
 import { useListItemDeleter, useListItemMutator } from "../../Lists/ListsApiQueries";
 import { useState } from "react";
+import { formatPrice } from "../../Helpers/monetary";
 
 
 export default function ReceiptDiscountItem({ item }) {
@@ -10,6 +11,7 @@ export default function ReceiptDiscountItem({ item }) {
     const deleteListItem = useListItemDeleter();
 
     const onUpdate = () => {
+        setDiscountFieldValue(formatPrice(discountFieldValue));
         const newItem = {
             id: item.id,
             discount: discountFieldValue
@@ -43,6 +45,7 @@ export default function ReceiptDiscountItem({ item }) {
                             value={discountFieldValue}
                             onChange={(event) => setDiscountFieldValue(event.target.value)}
                             onBlur={onUpdate}
+                            onFocus={(event) => event.target.select()}
                         />
                     </Grid>
 
