@@ -15,8 +15,10 @@ function formatWeight(weight) {
 export default function ReceiptProductScalarItem({ item }) {
     const mutateListItem = useListItemMutator();
     const deleteListItem = useListItemDeleter();
-    const [quantityField, setQuantityField] = useState(formatWeight(item.product_quantity));
-    const [unitPriceField, setUnitPriceField] = useState(formatPrice(item.product_price));
+    const [quantityField, setQuantityField] = useState(
+        formatWeight(item.product_quantity / 1000));
+    const [unitPriceField, setUnitPriceField] = useState(
+        formatPrice(item.product_price * 1000));
     const [amountField, setAmountField] = useState(
         formatPrice(item.product_quantity * item.product_price)
     );
@@ -25,8 +27,6 @@ export default function ReceiptProductScalarItem({ item }) {
         const newOrder = moveToFront(recentFields, field);
         setRecentFields(newOrder);
         console.log(field, newOrder, newOrder[newOrder.length - 1]);
-        // return newOrder, newOrder[length(newOrder) - 1];
-        // return newOrder;
         return newOrder[newOrder.length - 1];
     };
 
@@ -60,8 +60,8 @@ export default function ReceiptProductScalarItem({ item }) {
         }
         mutateListItem({
             id: item.id,
-            product_quantity: newQuantity,
-            product_price: unitPrice
+            product_quantity: newQuantity * 1000,
+            product_price: unitPrice / 1000
         });
     };
 
@@ -79,8 +79,8 @@ export default function ReceiptProductScalarItem({ item }) {
         }
         mutateListItem({
             id: item.id,
-            product_quantity: quantity,
-            product_price: newUnitPrice
+            product_quantity: quantity * 1000,
+            product_price: newUnitPrice / 1000
         });
     };
 
@@ -100,8 +100,8 @@ export default function ReceiptProductScalarItem({ item }) {
         }
         mutateListItem({
             id: item.id,
-            product_quantity: quantity,
-            product_price: unitPrice
+            product_quantity: quantity * 1000,
+            product_price: unitPrice / 1000
         });
     };
 
