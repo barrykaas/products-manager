@@ -121,7 +121,7 @@ export default function ReceiptProductDiscreteItem({ item }) {
                 >
                     <Grid container alignItems="baseline" spacing={1}>
                         <Grid item>
-                            <Typography display="inline" variant="h6" component="div" noWrap>
+                            <Typography display="inline" variant="h6" component="div">
                                 {product.name}
                             </Typography>
                         </Grid>

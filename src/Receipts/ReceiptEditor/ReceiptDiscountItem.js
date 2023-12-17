@@ -6,7 +6,7 @@ import { formatPrice } from "../../Helpers/monetary";
 
 export default function ReceiptDiscountItem({ item }) {
     const discount = item.discount;
-    const [discountFieldValue, setDiscountFieldValue] = useState(discount);
+    const [discountFieldValue, setDiscountFieldValue] = useState(formatPrice(discount));
     const mutateListItem = useListItemMutator();
     const deleteListItem = useListItemDeleter();
 
