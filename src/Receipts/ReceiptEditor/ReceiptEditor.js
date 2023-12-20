@@ -1,4 +1,4 @@
-import { Grid, Typography, Button, Stack, Box } from "@mui/material";
+import { Typography, Button, Stack, Box, Tooltip } from "@mui/material";
 import { Fragment, useState } from "react";
 
 import groupByProperty from "../../Helpers/groupBy";
@@ -64,9 +64,13 @@ export default function ReceiptEditor({ receiptId }) {
                 {/* Header, add event */}
                 <Stack sx={{ px: 2 }}
                     direction="row" alignItems="center" justifyContent="space-between">
-                    <Typography variant="h5" component="h5" color="text.primary">
-                        Producten
-                    </Typography>
+                    <Tooltip arrow title={
+                        <Typography variant="caption" fontFamily="monospace">List ID: {receiptId}</Typography>
+                    }>
+                        <Typography variant="h5" component="h5" color="text.primary">
+                            Producten
+                        </Typography>
+                    </Tooltip>
                     <Button onClick={() => setIsPickingEvent(true)}>Add event</Button>
                 </Stack>
 
@@ -119,7 +123,7 @@ export default function ReceiptEditor({ receiptId }) {
                 open={eventPickingProduct}
             >
                 <ProductController
-                onClose={() => setEventPickingProduct(null)}
+                    onClose={() => setEventPickingProduct(null)}
                     handleSelectedProduct={handleSelectedProduct}
                 />
             </FormDialog>

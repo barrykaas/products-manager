@@ -1,4 +1,4 @@
-import { Typography, Grid, Stack, Chip, Button, List, Divider, ButtonGroup, Paper } from "@mui/material";
+import { Typography, Grid, Stack, Chip, Button, List, Divider, ButtonGroup, Paper, Tooltip } from "@mui/material";
 import { Fragment } from "react";
 
 import ReceiptItem from "./ReceiptItem";
@@ -30,9 +30,15 @@ export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, o
                 {/* Header */}
                 <Grid container spacing={2} sx={{ p: 2 }}>
                     <Grid item>
-                        <Typography variant="h6" component="div">
-                            {eventName}
-                        </Typography>
+                        <Tooltip arrow title={
+                            <Typography variant="caption" fontFamily="monospace">
+                                ID: {eventId}
+                            </Typography>
+                        }>
+                            <Typography variant="h6" component="div">
+                                {eventName}
+                            </Typography>
+                        </Tooltip>
                     </Grid>
 
                     {formattedDate
@@ -68,16 +74,16 @@ export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, o
                 </List>
 
                 {/* Footer */}
-                <Stack 
+                <Stack
                     sx={{ p: 1, pb: 2 }}
                     direction="row" alignItems="center" justifyContent="space-evenly"
                 >
-                        <Button variant="outlined" onClick={onAddProduct}>
-                            + Product
-                        </Button>
-                        <Button variant="outlined" onClick={onAddDiscount} color="warning">
-                            + Korting
-                        </Button>
+                    <Button variant="outlined" onClick={onAddProduct}>
+                        + Product
+                    </Button>
+                    <Button variant="outlined" onClick={onAddDiscount} color="warning">
+                        + Korting
+                    </Button>
                 </Stack>
                 <Stack direction="row" spacing={1} sx={{ px: 2, py: 1 }}>
                     <Typography component="div">
