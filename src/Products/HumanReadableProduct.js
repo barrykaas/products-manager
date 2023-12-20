@@ -2,7 +2,7 @@ import { formatProductQuantity } from "../Helpers/productQuantity";
 import { useUnitTypes } from "../UnitTypes/UnitTypeQueries";
 
 
-function useHumanReadableProduct() {
+export default function useHumanReadableProduct() {
 
     const { isLoading, isError, data, error } = useUnitTypes();
 
@@ -10,7 +10,7 @@ function useHumanReadableProduct() {
         return { isLoading, isError, formatProductDescription: () => '', error };
     }
 
-    const unitTypes = data;
+    const unitTypes = data || [];
 
     function formatProductDescription(product) {
         const unitType = unitTypes.find((type) => type.id === product.unit_type);
@@ -27,6 +27,3 @@ function useHumanReadableProduct() {
 
     return { isLoading, isError, formatProductDescription, error };
 }
-
-
-export default useHumanReadableProduct;

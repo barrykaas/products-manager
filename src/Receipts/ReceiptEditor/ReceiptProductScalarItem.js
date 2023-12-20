@@ -6,6 +6,7 @@ import { useListItemDeleter, useListItemMutator } from "../../Lists/ListsApiQuer
 import { useBrands } from "../../Brands/BrandsApiQueries";
 import { formatPrice } from "../../Helpers/monetary";
 import { moveToFront } from "../../Helpers/arrays";
+import ProductTooltip from "../../Products/ProductTooltip";
 
 
 function formatWeight(weight) {
@@ -115,9 +116,11 @@ export default function ReceiptProductScalarItem({ item }) {
                 >
                     <Grid container alignItems="baseline" spacing={1}>
                         <Grid item>
-                            <Typography display="inline" variant="h6" component="div" noWrap>
-                                {product.name}
-                            </Typography>
+                            <ProductTooltip product={product}>
+                                <Typography display="inline" variant="h6" component="div" noWrap>
+                                    {product.name}
+                                </Typography>
+                            </ProductTooltip>
                         </Grid>
                         <Grid item>
                             <Typography display="inline" color="text.secondary" variant="body2">

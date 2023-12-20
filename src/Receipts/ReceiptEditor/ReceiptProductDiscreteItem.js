@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useListItemDeleter, useListItemMutator } from "../../Lists/ListsApiQueries";
 import { useBrands } from "../../Brands/BrandsApiQueries";
 import { formatPrice } from "../../Helpers/monetary";
+import ProductTooltip from "../../Products/ProductTooltip";
 
 
 export default function ReceiptProductDiscreteItem({ item }) {
@@ -121,9 +122,11 @@ export default function ReceiptProductDiscreteItem({ item }) {
                 >
                     <Grid container alignItems="baseline" spacing={1}>
                         <Grid item>
-                            <Typography display="inline" variant="h6" component="div">
-                                {product.name}
-                            </Typography>
+                            <ProductTooltip product={product}>
+                                <Typography display="inline" variant="h6" component="div" >
+                                    {product.name}
+                                </Typography>
+                            </ProductTooltip>
                         </Grid>
                         <Grid item>
                             <Typography display="inline" color="text.secondary" variant="body2">
