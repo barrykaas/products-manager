@@ -1,4 +1,4 @@
-import { Box, ListItem, ListItemText, ListItemButton } from "@mui/material";
+import { ListItem, ListItemText, ListItemButton, Typography } from "@mui/material";
 
 
 export function BarcodeListItem({ barcode, secondary, onSelect }) {
@@ -7,7 +7,7 @@ export function BarcodeListItem({ barcode, secondary, onSelect }) {
             <ListItemButton onClick={onSelect}>
                 <ListItemText
                     primary={
-                        <Box sx={{ display: 'inline', fontFamily: 'Monospace' }}>{barcode}</Box>
+                        <Typography fontFamily='monospace'>{barcode}</Typography>
                     }
                     secondary={secondary}
                 />

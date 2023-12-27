@@ -15,7 +15,7 @@ import UnitTypeSelector, { useUnitType } from './ProductUnitTypeSelector';
 import apiPath from '../Api/ApiPath';
 import { QrCodeScanner } from '@mui/icons-material';
 import { useState } from 'react';
-import ScannedItemsList from '../ScannedItems/ScannedItemsList';
+import ScannedItemsController from '../ScannedItems/ScannedItemsController';
 import FormDialog from '../Helpers/FormDialog';
 import { BrandsIdField } from '../Brands/BrandsField';
 
@@ -73,9 +73,9 @@ export function ProductForm({
         initialValues: initialValues,
         validationSchema: validationSchema,
         onSubmit: (values) => {
-            if(values.unit_type === 2) { // Per gewicht -> Verkocht voor een prijs per kilo (met eventueel een vast aantal per verpakking)
+            if (values.unit_type === 2) { // Per gewicht -> Verkocht voor een prijs per kilo (met eventueel een vast aantal per verpakking)
                 values.unit_number = null;
-            } else if(values.unit_type === 3) { // Per stuk, zonder gewicht -> Verkocht per stuk, zonder aanduiding van gewicht. 
+            } else if (values.unit_type === 3) { // Per stuk, zonder gewicht -> Verkocht per stuk, zonder aanduiding van gewicht. 
                 values.unit_weightvol = null;
             }
 
@@ -87,25 +87,24 @@ export function ProductForm({
         },
     });
 
-    function handleSelectBarcode(barcode) {
-        console.log(`selected ${barcode}`);
-        formik.setFieldValue('barcode', barcode);
+    function handleSelectBarcode(barcodeItem) {
+        formik.setFieldValue('barcode', barcodeItem.barcode);
         setBarcodeSelectOpen(false);
     }
 
     const [barcodeSelectOpen, setBarcodeSelectOpen] = useState(false);
 
-    const {isLoading, isError, unitTypeInfo} = useUnitType(formik.values.unit_type)
+    const { isLoading, isError, unitTypeInfo } = useUnitType(formik.values.unit_type)
 
-    if(isLoading || isError) {
+    if (isLoading || isError) {
         return <Skeleton />
     }
 
-    
+
     return (
         <Box sx={{ p: 2, height: 1, width: 1, bgcolor: 'background.paper' }}>
-            <FormDialog title={"Producten"} open={barcodeSelectOpen} onClose={() => setBarcodeSelectOpen(false)}>
-                <ScannedItemsList disableKnownProducts={true} selectBarcode={handleSelectBarcode} />
+            <FormDialog hasToolbar={false} title={"Producten"} open={barcodeSelectOpen} onClose={() => setBarcodeSelectOpen(false)}>
+                <ScannedItemsController onClose={() => setBarcodeSelectOpen(false)} disableKnownProducts selectBarcode={handleSelectBarcode} />
             </FormDialog>
 
             <Stack component="form" spacing={2} onSubmit={formik.handleSubmit}>
@@ -124,7 +123,7 @@ export function ProductForm({
                     value={formik.values.brand}
                     setValue={(brandId) => formik.setFieldValue("brand", brandId)}
                 />
-        
+
                 <UnitTypeSelector
                     name="unit_type"
                     label="Eenheid"
@@ -158,7 +157,7 @@ export function ProductForm({
                     onChange={formik.handleChange}
                     InputProps={{
                         endAdornment: <InputAdornment position="start">{unitTypeInfo}</InputAdornment>,
-                      }}
+                    }}
                     error={
                         formik.touched.unit_weightvol &&
                         Boolean(formik.errors.unit_weightvol)
@@ -178,7 +177,7 @@ export function ProductForm({
                     helperText={formik.touched.unit_price && formik.errors.unit_price}
                     InputProps={{
                         startAdornment: <InputAdornment position="start">€</InputAdornment>,
-                      }}
+                    }}
                 />
                 <TextField
                     fullWidth
@@ -195,19 +194,19 @@ export function ProductForm({
                     }
                     InputProps={{
                         endAdornment: <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          edge="end"
-                            onClick={() => setBarcodeSelectOpen(true)}
-                        >
-                          <QrCodeScanner />
-                        </IconButton>
-                      </InputAdornment>
+                            <IconButton
+                                aria-label="toggle password visibility"
+                                edge="end"
+                                onClick={() => setBarcodeSelectOpen(true)}
+                            >
+                                <QrCodeScanner />
+                            </IconButton>
+                        </InputAdornment>
                     }}
                 />
 
 
-                
+
 
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={'en-gb'}>
                     <DatePicker
