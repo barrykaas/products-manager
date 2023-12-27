@@ -7,7 +7,6 @@ import { ProductListItem } from "./ProductListItem";
 
 
 export default function ProductsList({ handleEdit, handleSelectedProduct, searchQuery }) {
-  // console.log("searchQuery before useInfiniteQuery:", searchQuery);
   const {
     data,
     isFetching,
@@ -21,11 +20,7 @@ export default function ProductsList({ handleEdit, handleSelectedProduct, search
 
   });
 
-  if (isFetching) {
-    return <CircularProgress />
-  }
-
-  const productsData = data.pages.flatMap((page) => page.results);
+  const productsData = data?.pages.flatMap((page) => page.results) || [];
 
   return (
     <Stack height={1}>
@@ -42,13 +37,15 @@ export default function ProductsList({ handleEdit, handleSelectedProduct, search
         ))}
       </List>
 
-      <Button
-        fullWidth
-        disabled={!hasNextPage || isFetchingNextPage}
-        onClick={() => fetchNextPage()}
-      >Laad meer</Button>
-
-      <Box sx={{ flexGrow: 1 }} />
+      {
+        isFetching
+          ? <CircularProgress />
+          : (<Button
+            fullWidth
+            disabled={!hasNextPage || isFetchingNextPage}
+            onClick={() => fetchNextPage()}
+          >Laad meer</Button>)
+      }
     </Stack>
   );
 };

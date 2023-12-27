@@ -54,11 +54,7 @@ export default function ReceiptsList({ onSelectItem }) {
     fetchNextPage
   } = useReceipts();
 
-  if (isFetching) {
-    return <CircularProgress />
-  }
-
-  const allReceipts = data.pages.flatMap((page) => page.results);
+  const allReceipts = data?.pages.flatMap((page) => page.results) || [];
 
   return (
     <>
@@ -73,7 +69,15 @@ export default function ReceiptsList({ onSelectItem }) {
           </Fragment>
         ))}
       </List>
-      <Button disabled={!hasNextPage || isFetchingNextPage} onClick={fetchNextPage}>Laad meer</Button>
+      {
+        isFetching
+          ? <CircularProgress />
+          : (<Button
+            fullWidth
+            disabled={!hasNextPage || isFetchingNextPage}
+            onClick={() => fetchNextPage()}
+          >Laad meer</Button>)
+      }
     </>
   );
 }

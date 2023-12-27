@@ -30,7 +30,7 @@ export default function ScannedItemsList({ selectBarcode, disableKnownProducts =
     fetchNextPage
   } = useScannedItems(disableKnownProducts);
 
-  const scannedItemsData = data ? data.pages.flatMap((page) => page.results) : [];
+  const scannedItemsData = data?.pages.flatMap((page) => page.results) || [];
 
   return (
     <Stack sx={{ display: 'flex', height: '100%' }}>
