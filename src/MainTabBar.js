@@ -54,7 +54,7 @@ export default function MainTabBar() {
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }} >
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" variant="scrollable" scrollButtons="auto">
           <Tab label="Bonnetjes" />
-          <Tab label="Product list" />
+          <Tab label="Producten" />
           <Tab label="Events" />
           <Tab label="Gescand" />
           <Tab label="Brands" />

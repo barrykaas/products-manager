@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
-import { Button, Alert, Snackbar, Box } from '@mui/material';
+import { Alert, Snackbar, Box } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useConfirm } from 'material-ui-confirm';
 
-import FormDialog from '../Helpers/FormDialog';
 import { ProductAppBar } from './ProductsAppBar';
 import ProductsList from './ProductsList';
-import { ProductCreateForm, ProductEditForm } from './ProductsForm';
+import { ProductFormDialog } from './ProductsForm';
 import apiPath from '../Api/ApiPath';
 
 
-function ProductController({ handleSelectedProduct, onClose }) {
+export default function ProductController({ handleSelectedProduct, onClose }) {
     const queryClient = useQueryClient();
 
     const [currentProduct, setCurrentProduct] = useState(null);
@@ -35,13 +34,8 @@ function ProductController({ handleSelectedProduct, onClose }) {
     handleSelectedProduct = handleSelectedProduct || handleEditProduct;
 
     const handleAddProduct = () => {
-        setCreateOpen(true);
-    };
-
-    const didSuccessfullyCreate = (message) => {
-        setCreateOpen(false);
-        setMessageOpen(true);
-        setMessageText(message);
+        setCurrentProduct({});
+        setEditOpen(true);
     };
 
     const didSuccessfullyEdit = (message) => {
@@ -66,15 +60,6 @@ function ProductController({ handleSelectedProduct, onClose }) {
         },
     });
 
-    const handleRemoveClick = (product) => {
-        confirm({ description: `Verwijderen van ${product.name}` })
-            .then(() => {
-                deleteProductMutation.mutate(product.id);
-                didSuccessfullyEdit("Verwijderd!");
-            })
-            .catch(() => { });
-    };
-
     return (
         <Box height={1}>
             <Snackbar open={messageOpen} autoHideDuration={1500} onClose={() => setMessageOpen(false)}>
@@ -97,28 +82,12 @@ function ProductController({ handleSelectedProduct, onClose }) {
                 searchQuery={searchQuery}
             />
 
-            <FormDialog title={"Producten"} open={createOpen} onClose={() => setCreateOpen(false)}>
-                <ProductCreateForm didSuccesfullyCreate={didSuccessfullyCreate} />
-            </FormDialog>
-
-            {currentProduct ? (
-                <FormDialog
-                    title={"Producten"}
-                    open={editOpen}
-                    onClose={() => setEditOpen(false)}
-                    secondaryButtons={
-                        <Button variant="contained" color={"error"} onClick={() => handleRemoveClick(currentProduct)}>
-                            Verwijderen
-                        </Button>
-                    }
-                >
-                    <ProductEditForm didSuccessfullyEdit={didSuccessfullyEdit} item={currentProduct} />
-                </FormDialog>
-            ) : (
-                <></>
-            )}
+            <ProductFormDialog
+                open={editOpen}
+                onClose={() => setEditOpen(false)}
+                initialValues={currentProduct}
+                onSuccessfulCreateEdit={() => didSuccessfullyEdit("Gelukt!")}
+            />
         </Box>
     );
 }
-
-export default ProductController;

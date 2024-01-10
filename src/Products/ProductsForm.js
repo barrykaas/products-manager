@@ -119,7 +119,7 @@ export function ProductForm({
                     fullWidth
                     id="name"
                     name="name"
-                    label="Name"
+                    label="Naam"
                     value={formik.values.name}
                     onChange={formik.handleChange}
                     error={formik.touched.name && Boolean(formik.errors.name)}
@@ -156,7 +156,7 @@ export function ProductForm({
                     disabled={unitType === null || formik.values.unit_type === 3}
                     id="unit_weightvol"
                     name="unit_weightvol"
-                    label="Unit weight/volume"
+                    label="Gewicht/volume"
                     value={formik.values.unit_type === 3 ? '' : formik.values.unit_weightvol}
                     onChange={formik.handleChange}
                     InputProps={{
@@ -174,7 +174,7 @@ export function ProductForm({
                     fullWidth
                     id="unit_price"
                     name="unit_price"
-                    label="Unit price"
+                    label="Prijs"
                     value={formik.values.unit_price}
                     onChange={formik.handleChange}
                     error={formik.touched.unit_price && Boolean(formik.errors.unit_price)}
