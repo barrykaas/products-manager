@@ -1,23 +1,25 @@
-import { Box, Button, IconButton, InputAdornment, Skeleton, Stack, TextField, Tooltip } from '@mui/material';
+import { Box, Button, IconButton, InputAdornment, Skeleton, Stack, TextField } from '@mui/material';
 import { useFormik } from 'formik';
 
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
+import { QrCodeScanner } from '@mui/icons-material';
+import { useConfirm } from 'material-ui-confirm';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
 import * as yup from 'yup';
 
-import { createProductFn } from './ProductsApiQueries';
-import UnitTypeSelector, { useUnitType } from './ProductUnitTypeSelector';
 
+import { createProductFn, useProductDeleter, useProductMutator } from './ProductsApiQueries';
 import apiPath from '../Api/ApiPath';
-import { QrCodeScanner } from '@mui/icons-material';
-import { useState } from 'react';
 import ScannedItemsController from '../ScannedItems/ScannedItemsController';
 import FormDialog from '../Helpers/FormDialog';
 import { BrandsIdField } from '../Brands/BrandsField';
+import { UnitTypeIdField } from '../UnitTypes/UnitTypeField';
+import { useUnitTypes } from '../UnitTypes/UnitTypeQueries';
 
 const validationSchema = yup.object({
     date_added: yup
@@ -53,12 +55,12 @@ const validationSchema = yup.object({
     barcode: yup.string().nullable(),
 });
 
-
-
 export function ProductForm({
     handleFormSubmit,
     listTypes,
-    initialValues = {
+    initialValues = {},
+}) {
+    const emptyForm = {
         date_added: new Date(),
         name: '',
         brand: null,
@@ -67,8 +69,13 @@ export function ProductForm({
         unit_price: '',
         unit_type: '',
         barcode: null,
-    },
-}) {
+    };
+
+    initialValues = {
+        ...emptyForm,
+        ...initialValues
+    };
+
     const formik = useFormik({
         initialValues: initialValues,
         validationSchema: validationSchema,
@@ -82,7 +89,6 @@ export function ProductForm({
             if (values.barcode === '') {
                 values.barcode = null;
             }
-            console.log('Submit called');
             handleFormSubmit(values);
         },
     });
@@ -94,7 +100,8 @@ export function ProductForm({
 
     const [barcodeSelectOpen, setBarcodeSelectOpen] = useState(false);
 
-    const { isLoading, isError, unitTypeInfo } = useUnitType(formik.values.unit_type)
+    const { isLoading, isError, getUnitType } = useUnitTypes();
+    const unitType = getUnitType(formik.values.unit_type);
 
     if (isLoading || isError) {
         return <Skeleton />
@@ -124,12 +131,9 @@ export function ProductForm({
                     setValue={(brandId) => formik.setFieldValue("brand", brandId)}
                 />
 
-                <UnitTypeSelector
-                    name="unit_type"
-                    label="Eenheid"
+                <UnitTypeIdField
                     value={formik.values.unit_type}
-                    onChange={formik.handleChange}
-                    formik={formik}
+                    setValue={(unitTypeId) => formik.setFieldValue("unit_type", unitTypeId)}
                 />
 
                 <TextField
@@ -149,14 +153,14 @@ export function ProductForm({
                 />
                 <TextField
                     fullWidth
-                    disabled={unitTypeInfo === null || formik.values.unit_type === 3}
+                    disabled={unitType === null || formik.values.unit_type === 3}
                     id="unit_weightvol"
                     name="unit_weightvol"
                     label="Unit weight/volume"
                     value={formik.values.unit_type === 3 ? '' : formik.values.unit_weightvol}
                     onChange={formik.handleChange}
                     InputProps={{
-                        endAdornment: <InputAdornment position="start">{unitTypeInfo}</InputAdornment>,
+                        endAdornment: <InputAdornment position="start">{unitType?.physical_unit}</InputAdornment>,
                     }}
                     error={
                         formik.touched.unit_weightvol &&
@@ -204,9 +208,6 @@ export function ProductForm({
                         </InputAdornment>
                     }}
                 />
-
-
-
 
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={'en-gb'}>
                     <DatePicker
@@ -272,4 +273,51 @@ export function ProductEditForm({ didSuccessfullyEdit, item }) {
 
     return (<ProductForm handleFormSubmit={(updatedItem) => { mutation.mutate(updatedItem) }}
         initialValues={item} />)
+}
+
+
+export function ProductFormDialog({ initialValues = {}, onSuccessfulCreateEdit, open, onClose }) {
+    const existingProductId = initialValues?.id;
+    const confirmDelete = useConfirm();
+
+    const mutateProduct = useProductMutator({
+        onSuccess: (response) => {
+            const newProduct = response.data;
+            onSuccessfulCreateEdit(newProduct);
+        }
+    });
+
+    const deleteProduct = useProductDeleter({
+        onSuccess: onClose
+    });
+
+    const onDelete = () => {
+        confirmDelete({ description: `Verwijderen van ${initialValues?.name}` })
+            .then(() => {
+                deleteProduct(initialValues?.id);
+            })
+            .catch(() => { });
+    };
+
+    const handleFormSubmit = (item) => {
+        if (existingProductId) item.id = existingProductId;
+        mutateProduct(item);
+    };
+
+    return (
+        <FormDialog
+            title={existingProductId ? "Product bewerken" : "Nieuw product"}
+            open={open}
+            onClose={onClose}
+            secondaryButtons={
+                existingProductId ? (
+                    <Button variant="contained" color={"error"} onClick={onDelete}>
+                        Verwijderen
+                    </Button>
+                ) : null
+            }
+        >
+            <ProductForm initialValues={initialValues} handleFormSubmit={handleFormSubmit} />
+        </FormDialog>
+    );
 }

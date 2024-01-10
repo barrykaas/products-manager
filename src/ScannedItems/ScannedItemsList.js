@@ -16,7 +16,7 @@ function ScannedItemsListItem({ item, onSelect }) {
   }
 
   return (
-    <ProductListItem product={product} showBarcode />
+    <ProductListItem product={product} showBarcode onSelect={onSelect} />
   );
 }
 
