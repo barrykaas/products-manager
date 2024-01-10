@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import apiPath from "../Api/ApiPath";
-import { productsQueryKey } from "../Products/ProductsApiQueries";
 
 export const scannedItemsQueryKey = "scanneditems";
 
@@ -21,7 +20,7 @@ export const getBarcodeProduct = async (barcode) => {
 
 export function useScannedItems(onlyUnkown = false) {
     return useInfiniteQuery({
-        queryKey: [scannedItemsQueryKey, productsQueryKey],
+        queryKey: [scannedItemsQueryKey],
         queryFn: ({ pageParam = 1 }) => fetchScannedItems({ pageParam, onlyUnkown }),
         getNextPageParam: (lastPage, allPages) => lastPage.next,
     });

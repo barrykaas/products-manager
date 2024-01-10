@@ -31,7 +31,7 @@ function FormDialog({ open, onClose, title, secondaryButtons, hasToolbar = true,
             >
               <CloseIcon />
             </IconButton>
-            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div" noWrap>
               {title}
             </Typography>
             {secondaryButtons}

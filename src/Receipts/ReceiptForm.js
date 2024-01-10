@@ -129,7 +129,7 @@ export function ReceiptFormDialog({ open, onClose, initialValues, onSuccessfulCr
         <FormDialog
             open={open}
             onClose={onClose}
-            title={initialValues?.name || 'Nieuw bonnetje'}
+            title={initialValues?.name ? "Bon bewerken" : 'Nieuw bonnetje'}
             secondaryButtons={existingReceiptId ? deleteButton : null}
         >
             <ReceiptForm initialValues={initialValues} onSuccessfulCreateEdit={onSuccessfulCreateEdit} />

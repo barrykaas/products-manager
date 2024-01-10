@@ -9,10 +9,12 @@ import ProductController from "../../Products/ProductController";
 import { useListItemMutator } from "../../Lists/ListsApiQueries";
 import EventController from "../../Events/EventController";
 import { formatEuro } from "../../Helpers/monetary";
+import { useUnitTypes } from "../../UnitTypes/UnitTypeQueries";
 
 
 export default function ReceiptEditor({ receiptId }) {
     const receiptItemsQuery = useListItems({ listId: receiptId });
+    const { getUnitType } = useUnitTypes();
     const [eventPickingProduct, setEventPickingProduct] = useState(null);
     const [isPickingEvent, setIsPickingEvent] = useState(false);
     const createEditListItem = useListItemMutator({
@@ -37,10 +39,18 @@ export default function ReceiptEditor({ receiptId }) {
     }
 
     function handleSelectedProduct(product) {
+        let quantity, price;
+        if (getUnitType(product.unit_type)?.discrete) {
+            quantity = 1; price = product.unit_price;
+        } else {
+            quantity = product.unit_weightvol;
+            price = product.unit_price / quantity;
+        }
+
         createEditListItem({
             product_id: product.id,
-            product_quantity: 1,
-            product_price: product.unit_price,
+            product_quantity: quantity,
+            product_price: price,
             list: receiptId,
             event: eventPickingProduct
         })
@@ -76,7 +86,7 @@ export default function ReceiptEditor({ receiptId }) {
 
                 {/* Event blocks */}
                 <Stack sx={{ mx: 1, my: 2 }}
-                    spacing={1}
+                    spacing={2}
                 >
                     {Object.keys(events).map((eventId) => (
                         <Fragment key={eventId}>
