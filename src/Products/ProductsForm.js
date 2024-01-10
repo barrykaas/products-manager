@@ -5,7 +5,7 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { QrCodeScanner } from '@mui/icons-material';
+import { AddCircle, QrCodeScanner, RemoveCircle } from '@mui/icons-material';
 import { useConfirm } from 'material-ui-confirm';
 import axios from 'axios';
 import dayjs from 'dayjs';
@@ -20,6 +20,7 @@ import FormDialog from '../Helpers/FormDialog';
 import { BrandsIdField } from '../Brands/BrandsField';
 import { UnitTypeIdField } from '../UnitTypes/UnitTypeField';
 import { useUnitTypes } from '../UnitTypes/UnitTypeQueries';
+
 
 const validationSchema = yup.object({
     date_added: yup
@@ -57,7 +58,6 @@ const validationSchema = yup.object({
 
 export function ProductForm({
     handleFormSubmit,
-    listTypes,
     initialValues = {},
 }) {
     const emptyForm = {
@@ -107,6 +107,13 @@ export function ProductForm({
         return <Skeleton />
     }
 
+    const unitNumberDisabled = formik.values.unit_type === 2;
+    const decrementUnitNumber = () => formik.setFieldValue('unit_number',
+        formik.values.unit_number - 1
+    );
+    const incrementUnitNumber = () => formik.setFieldValue('unit_number',
+        formik.values.unit_number + 1
+    );
 
     return (
         <Box sx={{ p: 2, height: 1, width: 1, bgcolor: 'background.paper' }}>
@@ -142,21 +149,38 @@ export function ProductForm({
                     name="unit_number"
                     label="Aantal"
                     value={formik.values.unit_type === 2 ? '' : formik.values.unit_number}
-                    disabled={formik.values.unit_type === 2}
+                    disabled={unitNumberDisabled}
                     onChange={formik.handleChange}
+                    onFocus={(event) => event.target.select()}
                     error={
                         formik.touched.unit_number && Boolean(formik.errors.unit_number)
                     }
                     helperText={
                         formik.touched.unit_number && formik.errors.unit_number
                     }
+                    InputProps={{
+                        startAdornment:
+                            <IconButton
+                                onClick={decrementUnitNumber}
+                                disabled={unitNumberDisabled || formik.values.unit_number <= 1}
+                            >
+                                <RemoveCircle />
+                            </IconButton>,
+                        endAdornment:
+                            <IconButton
+                                onClick={incrementUnitNumber}
+                                disabled={unitNumberDisabled}
+                            >
+                                <AddCircle />
+                            </IconButton>,
+                    }}
                 />
                 <TextField
                     fullWidth
                     disabled={unitType === null || formik.values.unit_type === 3}
                     id="unit_weightvol"
                     name="unit_weightvol"
-                    label="Gewicht/volume"
+                    label="Gewicht/inhoud"
                     value={formik.values.unit_type === 3 ? '' : formik.values.unit_weightvol}
                     onChange={formik.handleChange}
                     InputProps={{
