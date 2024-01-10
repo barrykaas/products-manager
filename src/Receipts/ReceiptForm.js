@@ -9,6 +9,7 @@ import { receiptListType, useListDeleter, useListMutator } from "../Lists/ListsA
 import ReceiptEditor from "./ReceiptEditor/ReceiptEditor";
 import { PersonsIdField } from "../Persons/PersonsField";
 import FormDialog from "../Helpers/FormDialog";
+import { MarketIdField } from "../Markets/MarketField";
 
 
 const emptyForm = {
@@ -16,6 +17,7 @@ const emptyForm = {
     transaction_date: new Date(),
 
     name: null,
+    market: null,
     payer: null,
 };
 
@@ -26,6 +28,9 @@ const validationSchema = yup.object({
     name: yup
         .string('Enter name')
         .required('Name is required'),
+    market: yup
+        .number()
+        .nullable(true),
     payer: yup
         .number()
         .nullable(true)
@@ -67,6 +72,12 @@ export default function ReceiptForm({ initialValues = emptyForm, onSuccessfulCre
                     error={formik.touched.name && Boolean(formik.errors.name)}
                     helperText={formik.touched.name && formik.errors.name}
                 />
+
+                <MarketIdField
+                    value={formik.values.market}
+                    setValue={(marketId) => formik.setFieldValue("market", marketId)}
+                />
+
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={'en-gb'}>
                     <DatePicker
                         id="transaction_date"

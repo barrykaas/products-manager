@@ -3,10 +3,12 @@ import { Fragment } from "react";
 
 import { useReceipts } from "../../Lists/ListsApiQueries";
 import { usePersons } from "../../Persons/PersonsApiQueries";
+import { useMarkets } from "../../Markets/MarketsApiQueries";
 
 
 function ReceiptsListItem({ item, onSelect }) {
   const personsQuery = usePersons();
+  const { getMarket } = useMarkets();
 
   const receiptName = item.name;
 
@@ -24,6 +26,8 @@ function ReceiptsListItem({ item, onSelect }) {
   const receiptDate = new Date(item.transaction_date);
   const formattedDate = receiptDate.toLocaleDateString();
 
+  const secondaryInfo = [payer, getMarket(item.market)?.name, formattedDate];
+
   return (
     <ListItemButton alignItems="flex-start" onClick={onSelect}>
       <ListItemText
@@ -38,7 +42,7 @@ function ReceiptsListItem({ item, onSelect }) {
             >
 
             </Typography>
-            {payer + " - " + formattedDate}
+            {secondaryInfo.filter((e) => Boolean(e)).join(" - ")}
           </>
         }
       />
