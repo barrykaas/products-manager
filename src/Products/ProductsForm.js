@@ -64,10 +64,10 @@ export function ProductForm({
         date_added: new Date(),
         name: '',
         brand: null,
-        unit_number: '',
+        unit_number: 1,
         unit_weightvol: '',
         unit_price: '',
-        unit_type: '',
+        unit_type: 5, // per stuk met gewicht
         barcode: null,
     };
 
