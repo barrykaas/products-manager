@@ -3,6 +3,7 @@ import EditIcon from '@mui/icons-material/Edit';
 
 import { useBrands } from "../Brands/BrandsApiQueries";
 import useHumanReadableProduct from "./HumanReadableProduct";
+import { formatEuro } from "../Helpers/monetary";
 
 
 export function ProductListItem({ product, onSelect, onEdit, disabled = false, showBarcode = false }) {
@@ -66,7 +67,8 @@ export function DrawProductListItem({ name, brand, unitPrice, quantity, barcode,
                                 {brand ? brand : 'merkloos'}
 
                             </Typography>
-                            {unitPrice ? ` - €${unitPrice.toFixed(2)} - ` : " - "}
+                            {" - "}
+                            {unitPrice ? formatEuro(unitPrice) + " - " : null}
                             <Typography
                                 sx={{ display: 'inline' }}
                                 component="span"

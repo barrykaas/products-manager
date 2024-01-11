@@ -11,7 +11,7 @@ export function formatProductQuantity({ unit, volume, pieces }) {
 
     if (pieces && volume) {
         if (pieces === 1) {
-            return piecesStr + ' van ' + volumeStr;
+            return volumeStr;
         } else {
             return piecesStr + ', totaal ' + volumeStr;
         }
