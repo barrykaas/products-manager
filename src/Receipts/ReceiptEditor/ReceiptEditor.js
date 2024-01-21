@@ -66,7 +66,7 @@ export default function ReceiptEditor({ receiptId }) {
     const allReceiptItems = receiptItemsQuery.data;
     const events = groupByProperty(allReceiptItems, 'event');
     const receiptTotal = allReceiptItems.reduce((total, item) =>
-        total + item.product_quantity * item.product_price - item.discount, 0);
+        total + item.amount, 0);
 
     return (
         <>

@@ -1,9 +1,9 @@
 export function formatPrice(price) {
-    if (!price) {
+    if (!price && price !== 0) {
         return '?';
     }
     price = Number(price);
-    const digits = (price % 1 == 0) ? 0 : 2;
+    const digits = (price % 1 === 0) ? 0 : 2;
     return `${price.toFixed(digits)}`;
 }
 

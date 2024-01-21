@@ -4,6 +4,7 @@ import { Fragment } from "react";
 import { useReceipts } from "../../Lists/ListsApiQueries";
 import { usePersons } from "../../Persons/PersonsApiQueries";
 import { useMarkets } from "../../Markets/MarketsApiQueries";
+import { formatEuro } from "../../Helpers/monetary";
 
 
 function ReceiptsListItem({ item, onSelect }) {
@@ -25,8 +26,16 @@ function ReceiptsListItem({ item, onSelect }) {
 
   const receiptDate = new Date(item.transaction_date);
   const formattedDate = receiptDate.toLocaleDateString();
+  const receiptTotal = item.items.reduce((s, i) => s + i.amount, 0);
 
-  const secondaryInfo = [payer, getMarket(item.market)?.name, formattedDate];
+  const secondaryInfo = [
+    payer,
+    getMarket(item.market)?.name,
+    `${new Set(item.items.map(i => i.event)).size} events`,
+    `${item.items.length} items`,
+    formatEuro(receiptTotal),
+    formattedDate,
+  ];
 
   return (
     <ListItemButton alignItems="flex-start" onClick={onSelect}>

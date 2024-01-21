@@ -21,8 +21,7 @@ export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, o
         formattedDate = isoToLocalDate(event.event_date);
     }
 
-    const eventTotal = eventItems.reduce((total, item) =>
-        total + item.product_quantity * item.product_price - item.discount, 0);
+    const eventTotal = eventItems.reduce((s, i) => s + i.amount, 0);
 
     return (
         <Paper>
