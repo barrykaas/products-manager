@@ -5,6 +5,7 @@ import ReceiptItem from "./ReceiptItem";
 import { useEvent } from "../../Events/EventsApiQueries";
 import { isoToLocalDate } from "../../Helpers/dateTime";
 import { formatEuro } from "../../Helpers/monetary";
+import PersonAvatar from "../../Persons/Avatars";
 
 
 export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, onAddDiscount }) {
@@ -22,12 +23,13 @@ export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, o
     }
 
     const eventTotal = eventItems.reduce((s, i) => s + i.amount, 0);
+    const participantIds = eventQuery.data?.event_participants || [];
 
     return (
         <Paper>
             <Stack>
                 {/* Header */}
-                <Grid container spacing={2} sx={{ p: 2 }}>
+                <Grid container spacing={2} sx={{ p: 2 }} alignItems="center">
                     <Grid item>
                         <Tooltip arrow title={
                             <Typography variant="caption" fontFamily="monospace">
@@ -47,6 +49,16 @@ export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, o
                             </Grid>
                         ) : null
                     }
+
+                    <Grid item>
+                        <Stack direction="row" spacing={0.5}>
+                            {participantIds.map(parId =>
+                                <Fragment key={parId}>
+                                    <PersonAvatar personId={parId} sx={{ width: 30, height: 30 }} />
+                                </Fragment>
+                            )}
+                        </Stack>
+                    </Grid>
 
                     <Grid item>
                         <ButtonGroup size="small" variant="outlined" aria-label="outlined button group">
