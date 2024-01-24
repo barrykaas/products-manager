@@ -73,7 +73,6 @@ export default function EventsList({ handleEditEvent, handleSelectedEvent }) {
         fetchNextPage
     } = useEvents();
 
-    console.log("events data", data?.pages);
     const allEvents = data?.pages.flatMap((page) => page.results) || [];
 
     return (

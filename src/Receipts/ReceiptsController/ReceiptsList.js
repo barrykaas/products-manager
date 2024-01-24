@@ -1,10 +1,11 @@
-import { CircularProgress, List, Button, Divider, Typography, ListItemButton, ListItemText } from "@mui/material";
+import { Divider, Typography, ListItemButton, ListItemText } from "@mui/material";
 import { Fragment } from "react";
 
 import { useReceipts } from "../../Lists/ListsApiQueries";
 import { usePersons } from "../../Persons/PersonsApiQueries";
 import { useMarkets } from "../../Markets/MarketsApiQueries";
 import { formatEuro } from "../../Helpers/monetary";
+import InfiniteList from "../../Helpers/InfiniteList";
 
 
 function ReceiptsListItem({ item, onSelect }) {
@@ -64,33 +65,25 @@ export default function ReceiptsList({ onSelectItem }) {
     isFetching,
     hasNextPage,
     isFetchingNextPage,
+    isError,
+    error,
     fetchNextPage
   } = useReceipts();
 
   const allReceipts = data?.pages.flatMap((page) => page.results) || [];
 
   return (
-    <>
-      <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-        {allReceipts.map((item) => (
-          <Fragment key={item.id}>
-            <ReceiptsListItem
-              item={item}
-              onSelect={() => onSelectItem(item)}
-            />
-            <Divider component="li" />
-          </Fragment>
-        ))}
-      </List>
-      {
-        isFetching
-          ? <CircularProgress />
-          : (<Button
-            fullWidth
-            disabled={!hasNextPage || isFetchingNextPage}
-            onClick={() => fetchNextPage()}
-          >Laad meer</Button>)
-      }
-    </>
+    <InfiniteList onMore={fetchNextPage} hasMore={hasNextPage}
+      isLoading={isFetching || isFetchingNextPage}
+      error={isError ? error : null}
+    >
+      {allReceipts.map((item) => (
+        <Fragment key={item.id}>
+          <ReceiptsListItem item={item}
+            onSelect={() => onSelectItem(item)} />
+          <Divider component="li" />
+        </Fragment>
+      ))}
+    </InfiniteList>
   );
 }

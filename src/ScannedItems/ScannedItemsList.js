@@ -24,6 +24,8 @@ function ScannedItemsListItem({ item, onSelect }) {
 
 export default function ScannedItemsList({ selectBarcode, disableKnownProducts = false }) {
   const {
+    isError,
+    error,
     data,
     isFetching,
     hasNextPage,
@@ -36,6 +38,7 @@ export default function ScannedItemsList({ selectBarcode, disableKnownProducts =
   return (
     <InfiniteList onMore={fetchNextPage} hasMore={hasNextPage}
       isLoading={isFetching || isFetchingNextPage}
+      error={isError ? error : null}
     >
       {scannedItemsData.map((item) => (
         <Fragment key={item.id}>

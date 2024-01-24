@@ -1,10 +1,10 @@
-import { Stack, List, CircularProgress, Button } from "@mui/material";
+import { Stack, List, CircularProgress, Button, Box } from "@mui/material";
 
 
 export default function InfiniteList({ onMore, hasMore, isLoading, error, children }) {
     if (error) {
       return (<div>
-        {JSON.stringify(error)}
+        Error: {JSON.stringify(error)}
       </div>);
     }
 
@@ -21,6 +21,7 @@ export default function InfiniteList({ onMore, hasMore, isLoading, error, childr
                 onClick={onMore}
                 >Meer laden</Button>)
           }
+          <Box height="200px" />
         </Stack>
       );
 }
