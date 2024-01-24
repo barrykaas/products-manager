@@ -1,9 +1,10 @@
-import { Box, Button, CircularProgress, Divider, List, Stack } from "@mui/material";
-import { Fragment, useState } from "react";
+import { Divider } from "@mui/material";
+import { Fragment } from "react";
 
 import { useScannedItems } from './ScannedItemsApiQueries';
 import { BarcodeListItem } from "./BarcodeListItem";
 import { ProductListItem } from '../Products/ProductListItem';
+import InfiniteList from "../Helpers/InfiniteList";
 
 
 function ScannedItemsListItem({ item, onSelect }) {
@@ -33,23 +34,15 @@ export default function ScannedItemsList({ selectBarcode, disableKnownProducts =
   const scannedItemsData = data?.pages.flatMap((page) => page.results) || [];
 
   return (
-    <Stack sx={{ display: 'flex', height: '100%' }}>
-      <List sx={{ p: 0, width: 1, bgcolor: 'background.paper' }}>
-        {scannedItemsData.map((item) => (
-          <Fragment key={item.id}>
-            <ScannedItemsListItem item={item} onSelect={() => selectBarcode(item)} />
-            <Divider component="li" />
-          </Fragment>
-        ))}
-      </List>
-      {
-        isFetchingNextPage || isFetching
-          ? <CircularProgress />
-          : (<Button
-            disabled={!hasNextPage || isFetchingNextPage}
-            onClick={() => fetchNextPage()}
-            >Meer laden</Button>)
-      }
-    </Stack>
+    <InfiniteList onMore={fetchNextPage} hasMore={hasNextPage}
+      isLoading={isFetching || isFetchingNextPage}
+    >
+      {scannedItemsData.map((item) => (
+        <Fragment key={item.id}>
+          <ScannedItemsListItem item={item} onSelect={() => selectBarcode(item)} />
+          <Divider component="li" />
+        </Fragment>
+      ))}
+    </InfiniteList>
   );
 };

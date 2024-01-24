@@ -1,14 +1,14 @@
-import { ListItem, ListItemAvatar, Typography, ListItemText, Divider, Avatar, List, ListItemButton, Skeleton, Chip, Stack, Button, IconButton } from "@mui/material";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import React from "react";
-import { fetchEvents } from "./EventsApiQueries";
+import { ListItem, Typography, ListItemText, Divider, ListItemButton, Skeleton, IconButton } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
+import { Fragment } from "react";
+import { useEvents } from "./EventsApiQueries";
 import { getPersonsFn } from "../Persons/PersonsApiQueries";
 
-import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
+import InfiniteList from "../Helpers/InfiniteList";
 
 
-function EventsListItem({ item, handleEdit, handleSelectedEvent }) {
+function EventsListItem({ item, onEdit, onSelect }) {
     const { isLoading, isError, data, error } = useQuery({ queryKey: ['persons'], queryFn: getPersonsFn })
 
     function getDate() {
@@ -21,81 +21,74 @@ function EventsListItem({ item, handleEdit, handleSelectedEvent }) {
         return <Skeleton />
     }
 
+    const secondaryAction = onEdit ?
+        <IconButton aria-label="comment" onClick={onEdit}>
+            <EditIcon />
+        </IconButton>
+        : null;
+
     const eventParticipantPersons = data.data.filter(person => item.event_participants.includes(person.id));
 
-    return (<ListItem alignItems="flex-start" secondaryAction={
-        <IconButton aria-label="comment" onClick={() => handleEdit(item)}>
-          <EditIcon/>
-        </IconButton>
-      } disablePadding>
-        <ListItemButton onClick={handleSelectedEvent}>
-        <ListItemText
-            primary={item.name}
-            
-            secondary={
-                <>
-                    {/* <Stack direction="row" spacing={1}>
+    return (<ListItem alignItems="flex-start" secondaryAction={secondaryAction} disablePadding>
+        <ListItemButton onClick={onSelect}>
+            <ListItemText
+                primary={item.name}
+
+                secondary={
+                    <>
+                        {/* <Stack direction="row" spacing={1}>
                         {eventParticipantPersons.map((person) => {
                             return <Chip color={"warning"} size="small" key={person.id} label={`${person.name}`} />
                         })}
                         <Chip size="small" label={getDate()} color="primary" />
                     </Stack> */}
-                    <Typography
-                        sx={{ display: 'inline' }}
-                        component="span"
-                        variant="body2"
-                        color="text.primary"
-                    >{getDate()}</Typography>
+                        <Typography
+                            sx={{ display: 'inline' }}
+                            component="span"
+                            variant="body2"
+                            color="text.primary"
+                        >{getDate()}</Typography>
 
-                    
-                    {eventParticipantPersons.map((person, index) => {
-                        return index === 0 ? " - " + person.name : `, ${person.name}`;
-                    }).join('')}
-                    
-                </>
-            }
-        />
+
+                        {eventParticipantPersons.map((person, index) => {
+                            return index === 0 ? " - " + person.name : `, ${person.name}`;
+                        }).join('')}
+
+                    </>
+                }
+            />
         </ListItemButton>
 
     </ListItem>);
 }
 
-export default function EventsList({ handleEdit, handleSelectedEvent }) {
-
+export default function EventsList({ handleEditEvent, handleSelectedEvent }) {
     const {
         data,
         isFetching,
+        hasNextPage,
+        isFetchingNextPage,
         isError,
-        error
-    } = useInfiniteQuery({
-        queryKey: ['events'],
-        queryFn: fetchEvents,
-        getNextPageParam: (lastPage, pages) => lastPage['next'],
-    })
+        error,
+        fetchNextPage
+    } = useEvents();
 
-    console.log("data", data);
-
-    if (isError) {
-        console.log(error);
-        return <Skeleton />
-    }
-
-    if (isFetching) {
-        return <Skeleton />
-    }
-
-    const eventsdata = data.pages.flatMap((page) => (page.results));
+    console.log("events data", data?.pages);
+    const allEvents = data?.pages.flatMap((page) => page.results) || [];
 
     return (
-        <>
-            <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                {eventsdata.map((item) => (
-                    <React.Fragment key={item.id}>
-                        <EventsListItem item={item} handleEdit={handleEdit} handleSelectedEvent={() => handleSelectedEvent(item)} />
-                        <Divider component="li" />
-                    </React.Fragment>
-                ))}
-            </List>
-        </>
+        <InfiniteList onMore={fetchNextPage} hasMore={hasNextPage}
+            isLoading={isFetching || isFetchingNextPage}
+            error={isError ? error : null}
+        >
+            {allEvents.map((item) => (
+                <Fragment key={item.id}>
+                    <EventsListItem item={item}
+                    onSelect={() => handleSelectedEvent(item)}
+                    onEdit={() => handleEditEvent(item)} />
+                    <Divider component="li" />
+                </Fragment>
+            ))}
+        </InfiniteList>
     );
 };

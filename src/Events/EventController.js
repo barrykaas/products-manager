@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Alert, Snackbar } from '@mui/material';
-import {EventAppBar, EventAppBarClosable} from './EventAppBar';
+import { EventAppBar, EventAppBarClosable } from './EventAppBar';
 import EventsList from './EventsList';
-import ParticipantsPicker from './ParticipantsController';
-// import ProductsForm from '../Products/ProductsForm';
-
-//import ButtonAppBar from './MyAppBar'
-
-
 import FormDialog from '../Helpers/FormDialog';
 import { EventCreateForm, EventEditForm } from './EventForm';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -16,7 +10,7 @@ import { useConfirm } from 'material-ui-confirm';
 
 import apiPath from '../Api/ApiPath';
 
-function EventController({handleSelectedEvent, onClose}) {
+function EventController({ handleSelectedEvent, onClose }) {
     const queryClient = useQueryClient()
 
     const [currentEvent, setCurrentEvent] = useState(null);
@@ -56,16 +50,16 @@ function EventController({handleSelectedEvent, onClose}) {
 
     const deleteParticipantMutation = useMutation({
         mutationFn: async (itemId) => {
-             const data = await axios.delete(`${apiPath}/events/${itemId}/`)
-             return data
+            const data = await axios.delete(`${apiPath}/events/${itemId}/`)
+            return data
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ['events']});
+            queryClient.invalidateQueries({ queryKey: ['events'] });
         },
         onError: (error, variables, context) => {
             // An error happened!
             console.log(`Error`)
-          },
+        },
     });
 
     const handleRemoveClick = (event) => {
@@ -75,10 +69,11 @@ function EventController({handleSelectedEvent, onClose}) {
                 didSuccesfullyEdit("Verwijderd!")
             })
             .catch(() => {
-                
+
             });
     }
 
+    handleSelectedEvent = handleSelectedEvent ?? handleEditParticipants;
 
     return (
         <>
@@ -87,24 +82,24 @@ function EventController({handleSelectedEvent, onClose}) {
                     {messageText}
                 </Alert>
             </Snackbar>
-            {onClose ? 
-            <EventAppBarClosable onClose={onClose} title={"Events"} onAdd={handleAddEvent} /> :
-            <EventAppBar title={"Events"} onAdd={handleAddEvent} /> 
+            {onClose ?
+                <EventAppBarClosable onClose={onClose} title={"Events"} onAdd={handleAddEvent} /> :
+                <EventAppBar title={"Events"} onAdd={handleAddEvent} />
             }
-            <EventsList handleEdit={handleEditParticipants} handleSelectedEvent={handleSelectedEvent} />
+            <EventsList handleEditEvent={handleEditParticipants} handleSelectedEvent={handleSelectedEvent} />
 
             <FormDialog title={"Events"} open={createOpen} onClose={() => setCreateOpen(false)}>
                 <EventCreateForm didSuccesfullyCreate={didSuccesfullyCreate} />
             </FormDialog>
 
-            {currentEvent ? 
-            <FormDialog title={"Events"} open={editOpen} onClose={() => setEditOpen(false)} secondaryButtons={
-                <Button variant="contained" color={"error"} onClick={() => handleRemoveClick(currentEvent)} >Remove</Button>
-            }>
-                <EventEditForm didSuccesfullyEdit={didSuccesfullyEdit} item={currentEvent}/>
-            </FormDialog>
-            : <></>
-        }
+            {currentEvent ?
+                <FormDialog title={"Events"} open={editOpen} onClose={() => setEditOpen(false)} secondaryButtons={
+                    <Button variant="contained" color={"error"} onClick={() => handleRemoveClick(currentEvent)} >Remove</Button>
+                }>
+                    <EventEditForm didSuccesfullyEdit={didSuccesfullyEdit} item={currentEvent} />
+                </FormDialog>
+                : <></>
+            }
 
         </>
     );

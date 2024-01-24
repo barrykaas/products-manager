@@ -31,7 +31,7 @@ export default function ProductController({ handleSelectedProduct, onClose }) {
         setEditOpen(true);
     };
 
-    handleSelectedProduct = handleSelectedProduct || handleEditProduct;
+    handleSelectedProduct = handleSelectedProduct ?? handleEditProduct;
 
     const handleAddProduct = () => {
         setCurrentProduct({});
