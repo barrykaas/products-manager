@@ -9,13 +9,13 @@ export default function InfiniteList({ onMore, hasMore, isLoading, error, childr
     }
 
     return (
-        <Stack sx={{ display: 'flex', height: '100%' }}>
+        <Stack sx={{ display: 'flex', height: '100%' }} alignItems='center'>
           <List sx={{ p: 0, width: 1, bgcolor: 'background.paper' }}>
             {children}
           </List>
           {
             isLoading
-              ? <CircularProgress />
+              ? <CircularProgress sx={{ m: 1 }} />
               : (<Button
                 disabled={!hasMore}
                 onClick={onMore}
