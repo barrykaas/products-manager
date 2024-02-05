@@ -1,22 +1,20 @@
-import axios from "axios";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
-import apiPath from "../Api/ApiPath";
+
+import ax from "../Api/axios";
+
 
 export const scannedItemsQueryKey = "scanneditems";
 
-export const fetchScannedItems = async ({ pageParam = 1, onlyUnkown = false }) => {
+const fetchScannedItems = async ({ pageParam = 1, onlyUnkown = false }) => {
     let res
     if (pageParam === 1) {
-        res = await fetch(`${apiPath}/scanneditems/?page=1&filterknown=${onlyUnkown}`)
+        res = await ax.get(`scanneditems/?page=1&filterknown=${onlyUnkown}`);
     } else {
-        res = await fetch(pageParam)
+        res = await ax.get(pageParam);
     }
-    return res.json()
-}
-
-export const getBarcodeProduct = async (barcode) => {
-    return axios.get(`${apiPath}/products/?barcode=${barcode}`)
+    return res.data;
 };
+
 
 export function useScannedItems(onlyUnkown = false) {
     return useInfiniteQuery({

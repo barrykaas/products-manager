@@ -1,13 +1,12 @@
-import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 
-import apiPath from "../Api/ApiPath";
+import ax from "../Api/axios";
 
 
 const personsQueryKey = 'persons';
 
 export const getPersonsFn = async () => {
-    return axios.get(`${apiPath}/persons/`);
+    return await ax.get('persons/');
 };
 
 export const usePersons = () => {

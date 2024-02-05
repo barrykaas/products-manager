@@ -1,12 +1,11 @@
-import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 
-import apiPath from "../Api/ApiPath";
+import ax from "../Api/axios";
 
 const queryKey = "unittypes";
 
 export const getUnitTypesFn = async () => {
-    return axios.get(`${apiPath}/unittypes/`);
+    return await ax.get('unittypes/');
 };
 
 

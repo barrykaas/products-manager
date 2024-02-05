@@ -1,13 +1,12 @@
-import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 
-import apiPath from "../Api/ApiPath";
+import ax from "../Api/axios";
 
 
 const marketsQueryKey = 'markets';
 
 export const getMarketsFn = async () => {
-    return axios.get(`${apiPath}/markets/`);
+    return await ax.get('markets/');
 };
 
 export const useMarkets = () => {

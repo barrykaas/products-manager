@@ -1,61 +1,43 @@
-import axios from "axios";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
 
-import apiPath from "../Api/ApiPath";
+import ax from "../Api/axios";
 import { scannedItemsQueryKey } from "../ScannedItems/ScannedItemsApiQueries";
+
 
 export const productsQueryKey = "products";
 
-export const getPersonsFn = async () => {
-    return axios.get(`${apiPath}/persons/`)
-};
-
-export const getUnitTypesFn = async () => {
-    return axios.get(`${apiPath}/unittypes/`);
-};
-
-export const createProductFn = async (data) => {
-    return axios.post(`${apiPath}/products/`, data)
-};
-
 const mutateProductFn = async (item) => {
     if (item.id) {
-        return await axios.patch(`${apiPath}/products/${item.id}/`, item);
+        return await ax.patch(`products/${item.id}/`, item);
     } else {
-        return await axios.post(`${apiPath}/products/`, item);
+        return await ax.post('products/', item);
     }
 };
 
 const deleteProductFn = async (itemId) => {
-    return await axios.delete(`${apiPath}/products/${itemId}/`);
+    return await ax.delete(`products/${itemId}/`);
 };
 
+const fetchProductsAndSearchFn = async (pageParam = 0, searchQuery) => {
+    const urlParams = {};
+    if (searchQuery) urlParams.search = searchQuery;
 
-
-export const fetchProducts = async ({ pageParam = 0 }) => {
     let res
-    if(pageParam === 0) {
-        res = await fetch(`${apiPath}/products/?page=1`)
+    if (pageParam === 0) {
+        res = await ax.get('products/', { params: urlParams });
     } else {
-        res = await fetch(pageParam)
+        res = await ax.get(pageParam);
     }
-    return res.json()
+    return res.data;
 }
 
-export const fetchProductsAndSearchFn = async (pageParam = 0, searchQuery) => {
-    console.log("searchQuery", searchQuery, pageParam);
 
-    if (searchQuery === "" || searchQuery === undefined) {
-        return fetchProducts({ pageParam });
-    }
-
-    let res
-    if(pageParam === 0) {
-        res = await fetch(`${apiPath}/products/?page=1&search=${searchQuery}`)
-    } else {
-        res = await fetch(pageParam)
-    }
-    return res.json()
+export function useProducts(searchQuery) {
+    return useInfiniteQuery({
+        queryKey: ['products', searchQuery],
+        queryFn: ({ pageParam = 0 }) => fetchProductsAndSearchFn(pageParam, searchQuery),
+        getNextPageParam: (lastPage, pages) => lastPage.next,
+    });
 }
 
 export function useProductMutator({ onSuccess, onError } = {}) {

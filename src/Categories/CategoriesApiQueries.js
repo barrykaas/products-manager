@@ -1,19 +1,19 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 
-import apiPath from "../Api/ApiPath";
+import ax from "../Api/axios";
 
 
 const queryKey = 'categories';
 
-export const fetchCategories = async ({ pageParam = 1, parentId }) => {
+const fetchCategories = async ({ pageParam = 1, parentId }) => {
     let res
     const parentFilter = parentId ? `parent_id=${parentId}` : 'parent_id__isnull=true';
     if(pageParam === 1) {
-        res = await fetch(`${apiPath}/categories/?page=1&${parentFilter}`)
+        res = await ax.get(`categories/?page=1&${parentFilter}`);
     } else {
-        res = await fetch(pageParam)
+        res = await ax.get(pageParam);
     }
-    return res.json()
+    return res.data;
 }
 
 export function useCategories(parentId) {

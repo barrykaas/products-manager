@@ -1,7 +1,6 @@
 import { useInfiniteQuery, useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
 
-import apiPath from "../Api/ApiPath";
+import ax from "../Api/axios";
 
 
 const listsQueryKey = 'lists';
@@ -10,26 +9,26 @@ export const receiptListType = 2;
 
 
 const fetchLists = async ({ pageParam = 1, listType }) => {
-    let res
-    const listTypeParam = listType ? `&type=${listType}` : '';
+    let res;
+    const urlParams = listType ? { type: listType } : null;
 
     if (pageParam === 1) {
-        res = await fetch(`${apiPath}/lists/?page=1${listTypeParam}`)
+        res = await ax.get('lists/', { params: urlParams });
     } else {
-        res = await fetch(pageParam)
+        res = await ax.get(pageParam);
     }
-    return res.json()
+    return res.data;
 }
 
 const deleteListFn = async (itemId) => {
-    return await axios.delete(`${apiPath}/lists/${itemId}/`);
+    return await ax.delete(`lists/${itemId}/`);
 };
 
 const mutateListFn = async (item) => {
     if (item.id) {
-        return await axios.patch(`${apiPath}/lists/${item.id}/`, item);
+        return await ax.patch(`lists/${item.id}/`, item);
     } else {
-        return await axios.post(`${apiPath}/lists/`, item);
+        return await ax.post('lists/', item);
     }
 };
 
@@ -38,19 +37,19 @@ const getListItemsFn = async ({ listId, eventId }) => {
         list: listId,
         event: eventId,
     };
-    return await axios.get(`${apiPath}/listitems/`, { params: urlParams })
+    return await ax.get('listitems/', { params: urlParams })
 }
 
 const createMutateListItemFn = async (item) => {
     if (item.id) {
-        await axios.patch(`${apiPath}/listitems/${item.id}/`, item);
+        await ax.patch(`listitems/${item.id}/`, item);
     } else {
-        await axios.post(`${apiPath}/listitems/`, item);
+        await ax.post('listitems/', item);
     }
 };
 
 const deleteListItemFn = async (itemId) => {
-    await axios.delete(`${apiPath}/listitems/${itemId}/`);
+    await ax.delete(`listitems/${itemId}/`);
 };
 
 

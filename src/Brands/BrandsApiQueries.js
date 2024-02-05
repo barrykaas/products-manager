@@ -1,22 +1,20 @@
-import axios from "axios";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 
-import apiPath from "../Api/ApiPath";
-
+import ax from "../Api/axios";
 
 export const brandsQueryKey = "brands";
 
 export const getBrandsFn = async () => {
-    return axios.get(`${apiPath}/brands/`)
+    return ax.get('brands/');
 };
 
 export const deleteBrandFn = async (itemId) => {
-    const data = await axios.delete(`${apiPath}/brands/${itemId}/`);
+    const data = await ax.delete(`brands/${itemId}/`);
     return data;
 };
 
 export const addBrandFn = async (data) => {
-    return axios.post(`${apiPath}/brands/`, data);
+    return ax.post('brands/', data);
 };
 
 

@@ -1,27 +1,21 @@
 import { Divider } from "@mui/material";
-import { useInfiniteQuery } from "@tanstack/react-query";
 import React from "react";
 
-import { fetchProductsAndSearchFn } from './ProductsApiQueries';
+import { useProducts } from './ProductsApiQueries';
 import { ProductListItem } from "./ProductListItem";
 import InfiniteList from "../Helpers/InfiniteList";
 
 
 export default function ProductsList({ handleEdit, handleSelectedProduct, searchQuery }) {
   const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
     isError,
     error,
-    data,
-    isFetching,
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage
-  } = useInfiniteQuery({
-    queryKey: ['products', searchQuery],
-    queryFn: ({ pageParam = 0 }) => fetchProductsAndSearchFn(pageParam, searchQuery),
-    getNextPageParam: (lastPage, pages) => lastPage['next'],
-
-  });
+  } = useProducts(searchQuery);
 
   const productsData = data?.pages.flatMap((page) => page.results) || [];
 

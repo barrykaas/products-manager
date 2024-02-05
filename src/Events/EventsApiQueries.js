@@ -1,28 +1,26 @@
-import axios from "axios";
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 
-import apiPath from "../Api/ApiPath";
+import ax from "../Api/axios";
 
 
 const eventsQueryKey = 'events';
 
 export const createEventFn = async (data) => {
-    return axios.post(`${apiPath}/events/`, data)
+    return await ax.post('events/', data)
 };
 
 export const fetchEvents = async ({ pageParam = 1 }) => {
     let res;
     if (pageParam === 1) {
-        res = await axios.get(`${apiPath}/events/`);
+        res = await ax.get('events/');
     } else {
-        console.log("EVENTS else");
-        res = await axios.get(pageParam);
+        res = await ax.get(pageParam);
     }
     return res.data;
 }
 
 const getEventFn = async (id) => {
-    return await axios.get(`${apiPath}/events/${id}`);
+    return await ax.get(`events/${id}/`);
 };
 
 export function useEvent(id) {

@@ -1,20 +1,16 @@
 import { Box, Button, IconButton, InputAdornment, Skeleton, Stack, TextField } from '@mui/material';
 import { useFormik } from 'formik';
-
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { AddCircle, QrCodeScanner, RemoveCircle } from '@mui/icons-material';
 import { useConfirm } from 'material-ui-confirm';
-import axios from 'axios';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
 import * as yup from 'yup';
 
 
-import { createProductFn, useProductDeleter, useProductMutator } from './ProductsApiQueries';
-import apiPath from '../Api/ApiPath';
+import { useProductDeleter, useProductMutator } from './ProductsApiQueries';
 import ScannedItemsController from '../ScannedItems/ScannedItemsController';
 import FormDialog from '../Helpers/FormDialog';
 import { BrandsIdField } from '../Brands/BrandsField';
@@ -259,45 +255,6 @@ export function ProductForm({
         </Box>
     );
 };
-export function ProductCreateForm({ didSuccesfullyCreate }) {
-    const queryClient = useQueryClient()
-
-    const mutation = useMutation({
-        mutationFn: createProductFn,
-        onSuccess: ({ data }) => {
-            queryClient.invalidateQueries({ queryKey: ['products'] });
-            didSuccesfullyCreate("Toegevoegd!");
-        },
-        onError: (error, variables, context) => {
-            // An error happened!
-            console.log(`Error`)
-        },
-    });
-
-    return (<ProductForm handleFormSubmit={(data) => { mutation.mutate(data) }} />)
-}
-
-export function ProductEditForm({ didSuccessfullyEdit, item }) {
-    const queryClient = useQueryClient()
-
-    const mutation = useMutation({
-        mutationFn: async (updatedItem) => {
-            console.log(updatedItem);
-            return axios.patch(`${apiPath}/products/${item.id}/`, updatedItem)
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['products'] });
-            didSuccessfullyEdit("Aangepast!");
-        },
-        onError: (error, variables, context) => {
-            // An error happened!
-            console.log(`Error`)
-        },
-    });
-
-    return (<ProductForm handleFormSubmit={(updatedItem) => { mutation.mutate(updatedItem) }}
-        initialValues={item} />)
-}
 
 
 export function ProductFormDialog({ initialValues = {}, onSuccessfulCreateEdit, open, onClose }) {
