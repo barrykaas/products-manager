@@ -8,7 +8,7 @@ export const scannedItemsQueryKey = "scanneditems";
 const fetchScannedItems = async ({ pageParam = 1, onlyUnkown = false }) => {
     let res
     if (pageParam === 1) {
-        res = await ax.get(`scanneditems/?page=1&filterknown=${onlyUnkown}`);
+        res = await ax.get('scanneditems/', { params: { filterknown: onlyUnkown } });
     } else {
         res = await ax.get(pageParam);
     }
