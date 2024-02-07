@@ -93,7 +93,7 @@ export default function ReceiptProductScalarItem({ item }) {
         let quantity = quantityField;
         let unitPrice = unitPriceField
         if (oldestField === "quantity") {
-            quantity = newAmount / unitPrice;
+            quantity = Math.round(newAmount / unitPrice * 1000) / 1000;
             setQuantityField(quantity);
         } else { // unitPrice
             unitPrice = newAmount / quantity;
