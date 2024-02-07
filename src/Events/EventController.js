@@ -1,18 +1,13 @@
 import React, { useState } from 'react';
-import { Button, Alert, Snackbar } from '@mui/material';
+import { Alert, Snackbar } from '@mui/material';
+
 import { EventAppBar, EventAppBarClosable } from './EventAppBar';
 import EventsList from './EventsList';
-import FormDialog from '../Helpers/FormDialog';
-import { EventCreateForm, EventEditForm } from './EventForm';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
-import { useConfirm } from 'material-ui-confirm';
+import { EventFormDialog } from './EventForm';
 
-import apiPath from '../Api/ApiPath';
 
-function EventController({ handleSelectedEvent, onClose }) {
-    const queryClient = useQueryClient()
-
+export default function EventController({ handleSelectedEvent, onClose }) {
+    const [formOpen, setFormOpen] = useState(false);
     const [currentEvent, setCurrentEvent] = useState(null);
 
     const [messageOpen, setMessageOpen] = useState(false);
@@ -20,60 +15,24 @@ function EventController({ handleSelectedEvent, onClose }) {
     const [messageText, setMessageText] = useState("");
     const [messageState, setMessageState] = useState(true);
 
-    const [editOpen, setEditOpen] = useState(false);
-
-    const [createOpen, setCreateOpen] = useState(false);
-
-
-    const handleEditParticipants = (event) => {
-        setCurrentEvent(event);
-        setEditOpen(true);
+    const handleAddEvent = () => {
+        setFormOpen(true);
+        setCurrentEvent({});
     };
 
-    const handleAddEvent = () => {
-        setCreateOpen(true)
-    }
+    const handleEditEvent = (event) => {
+        setFormOpen(true);
+        setCurrentEvent(event);
+    };
 
-    const didSuccesfullyCreate = (message) => {
-        setCreateOpen(false);
+    const onSuccessfulCreateEdit = () => {
+        setFormOpen(false);
+        setMessageText("Gelukt!");
+        setMessageState("success");
         setMessageOpen(true);
-        setMessageText(message);
-    }
+    };
 
-    const didSuccesfullyEdit = (message) => {
-        setEditOpen(false);
-        setMessageOpen(true);
-        setMessageText(message);
-    }
-
-    const confirm = useConfirm();
-
-    const deleteParticipantMutation = useMutation({
-        mutationFn: async (itemId) => {
-            const data = await axios.delete(`${apiPath}/events/${itemId}/`)
-            return data
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['events'] });
-        },
-        onError: (error, variables, context) => {
-            // An error happened!
-            console.log(`Error`)
-        },
-    });
-
-    const handleRemoveClick = (event) => {
-        confirm({ description: `Verwijderen van ${event.name}` })
-            .then(() => {
-                deleteParticipantMutation.mutate(event.id)
-                didSuccesfullyEdit("Verwijderd!")
-            })
-            .catch(() => {
-
-            });
-    }
-
-    handleSelectedEvent = handleSelectedEvent ?? handleEditParticipants;
+    handleSelectedEvent = handleSelectedEvent ?? handleEditEvent;
 
     return (
         <>
@@ -86,23 +45,15 @@ function EventController({ handleSelectedEvent, onClose }) {
                 <EventAppBarClosable onClose={onClose} title={"Events"} onAdd={handleAddEvent} /> :
                 <EventAppBar title={"Events"} onAdd={handleAddEvent} />
             }
-            <EventsList handleEditEvent={handleEditParticipants} handleSelectedEvent={handleSelectedEvent} />
 
-            <FormDialog title={"Events"} open={createOpen} onClose={() => setCreateOpen(false)}>
-                <EventCreateForm didSuccesfullyCreate={didSuccesfullyCreate} />
-            </FormDialog>
+            <EventsList handleEditEvent={handleEditEvent} handleSelectedEvent={handleSelectedEvent} />
 
-            {currentEvent ?
-                <FormDialog title={"Events"} open={editOpen} onClose={() => setEditOpen(false)} secondaryButtons={
-                    <Button variant="contained" color={"error"} onClick={() => handleRemoveClick(currentEvent)} >Remove</Button>
-                }>
-                    <EventEditForm didSuccesfullyEdit={didSuccesfullyEdit} item={currentEvent} />
-                </FormDialog>
-                : <></>
-            }
-
+            <EventFormDialog
+                open={formOpen}
+                onClose={() => setFormOpen(false)}
+                initialValues={currentEvent}
+                onSuccessfulCreateEdit={onSuccessfulCreateEdit}
+            />
         </>
     );
 }
-
-export default EventController;

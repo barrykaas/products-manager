@@ -1,21 +1,16 @@
 import { useFormik } from 'formik';
-import { Button, Box, TextField, Stack, MenuItem, Select, InputLabel, FormControl, Paper, Typography, Divider, Grid } from '@mui/material';
-
+import { Button, Box, TextField, Stack, Paper, Divider } from '@mui/material';
+import { useConfirm } from 'material-ui-confirm';
 import * as yup from 'yup';
-import { useEffect, useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
-import { DateField, DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
-import { createEventFn } from './EventsApiQueries';
 
-import EmbeddedParticipantsEditor from './EmbeddedParticipantsEditor'
-import ParticipantsPicker from './ParticipantsController';
+import { useEventDeleter, useEventMutator } from './EventsApiQueries';
 import ParticipantsList from './ParticipantList';
+import FormDialog from '../Helpers/FormDialog';
 
-import apiPath from '../Api/ApiPath';
 
 const validationSchema = yup.object({
     event_date: yup
@@ -27,22 +22,32 @@ const validationSchema = yup.object({
         .required('Name is required'),
 });
 
-export function EventForm({ handleFormSubmit, initialValues}) {
+export function EventForm({ onSuccessfulCreateEdit, initialValues = {} }) {
+    const mutateEvent = useEventMutator({
+        onSuccess: onSuccessfulCreateEdit
+    });
+
+    const emptyForm = {
+        event_date: new Date(),
+        event_participants: [],
+        name: '',
+    };
+
+    initialValues = {
+        ...emptyForm,
+        ...initialValues
+    };
+
     const formik = useFormik({
-        initialValues: initialValues ?? {
-            event_date: new Date(),
-            event_participants: [],
-            name: '',
-        },
+        initialValues: initialValues,
         validationSchema: validationSchema,
         onSubmit: (values) => {
             console.log("Submit called");
-            handleFormSubmit(values);
+            mutateEvent(values);
         },
     });
 
     return (
-
         <Box sx={{ p: 2, height: 1, width: 1, bgcolor: 'background.paper' }}>
             <Stack component="form" spacing={2} onSubmit={formik.handleSubmit}>
                 <TextField
@@ -73,56 +78,49 @@ export function EventForm({ handleFormSubmit, initialValues}) {
                     />
                 </LocalizationProvider>
                 <Paper variant="outlined" >
-                <ParticipantsList setChecked={(value) => formik.setFieldValue('event_participants', value)} checked={formik.values.event_participants} />
+                    <ParticipantsList setChecked={(value) => formik.setFieldValue('event_participants', value)} checked={formik.values.event_participants} />
                 </Paper>
-                
+
                 <Button color="secondary" variant="contained" fullWidth>Add shoppinglist</Button>
                 <Divider />
                 <Button color="primary" variant="contained" fullWidth type="submit">
                     Save
                 </Button>
             </Stack>
-
-
         </Box>
     );
 };
 
-export function EventCreateForm({ didSuccesfullyCreate }) {
-    const queryClient = useQueryClient()
+export function EventFormDialog({ initialValues = {}, onSuccessfulCreateEdit, open, onClose }) {
+    const eventExists = Boolean(initialValues?.id);
+    const confirmDelete = useConfirm();
 
-    const mutation = useMutation({
-        mutationFn: createEventFn,
-        onSuccess: ({data}) => {
-            queryClient.invalidateQueries({ queryKey: ['events'] });
-            didSuccesfullyCreate("Toegevoegd!");
-        },
-        onError: (error, variables, context) => {
-            // An error happened!
-            console.log(`Error`)
-        },
+    const deleteEvent = useEventDeleter({
+        onSuccess: onClose
     });
 
-    return (<EventForm  handleFormSubmit={(data) => { mutation.mutate(data) }} />)
-}
+    const onDelete = () => {
+        confirmDelete({ description: `Verwijderen van ${initialValues?.name}` })
+            .then(() => {
+                deleteEvent(initialValues?.id);
+            })
+            .catch(() => { });
+    };
 
-export function EventEditForm({ didSuccesfullyEdit, item }) {
-    const queryClient = useQueryClient()
-
-    const mutation = useMutation({
-        mutationFn: async (updatedItem) => {
-            return axios.patch(`${apiPath}/events/${item.id}/`, updatedItem)
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['events'] });
-            didSuccesfullyEdit("Aangepast!");
-        },
-        onError: (error, variables, context) => {
-            // An error happened!
-            console.log(`Error`)
-        },
-    });
-
-    return (<EventForm  handleFormSubmit={(updatedItem) => { mutation.mutate(updatedItem) }} 
-                        initialValues={item} />)
+    return (
+        <FormDialog
+            title={eventExists ? "Event bewerken" : "Nieuw event"}
+            open={open}
+            onClose={onClose}
+            secondaryButtons={
+                eventExists ? (
+                    <Button variant="contained" color={"error"} onClick={onDelete}>
+                        Verwijderen
+                    </Button>
+                ) : null
+            }
+        >
+            <EventForm initialValues={initialValues} onSuccessfulCreateEdit={onSuccessfulCreateEdit} />
+        </FormDialog>
+    );
 }

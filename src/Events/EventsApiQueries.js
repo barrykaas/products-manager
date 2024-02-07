@@ -1,15 +1,23 @@
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 
 import ax from "../Api/axios";
 
 
 const eventsQueryKey = 'events';
 
-export const createEventFn = async (data) => {
-    return await ax.post('events/', data)
+const deleteEventFn = async (itemId) => {
+    return await ax.delete(`events/${itemId}/`);
 };
 
-export const fetchEvents = async ({ pageParam = 1 }) => {
+const mutateEventFn = async (data) => {
+    if (data.id) {
+        return await ax.patch(`events/${data.id}/`, data);
+    } else {
+        return await ax.post('events/', data);
+    }
+};
+
+const fetchEvents = async ({ pageParam = 1 }) => {
     let res;
     if (pageParam === 1) {
         res = await ax.get('events/');
@@ -38,4 +46,34 @@ export function useEvents() {
         queryFn: fetchEvents,
         getNextPageParam: (lastPage, allPages) => lastPage.next,
     });
+}
+
+export function useEventMutator({ onSuccess, onError } = {}) {
+    const queryClient = useQueryClient();
+
+    const mutateEvent = useMutation({
+        mutationFn: mutateEventFn,
+        onSuccess: (...args) => {
+            queryClient.invalidateQueries({ queryKey: [eventsQueryKey] });
+            if (onSuccess) onSuccess(...args);
+        },
+        onError: onError
+    });
+
+    return mutateEvent.mutate;
+}
+
+export function useEventDeleter({ onSuccess, onError } = {}) {
+    const queryClient = useQueryClient();
+
+    const deleteMutation = useMutation({
+        mutationFn: deleteEventFn,
+        onSuccess: (...args) => {
+            queryClient.invalidateQueries({ queryKey: [eventsQueryKey] });
+            if (onSuccess) onSuccess(...args);
+        },
+        onError: onError
+    });
+
+    return deleteMutation.mutate;
 }
