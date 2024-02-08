@@ -5,7 +5,7 @@ import ax from "../Api/axios";
 
 const personsQueryKey = 'persons';
 
-export const getPersonsFn = async () => {
+const getPersonsFn = async () => {
     return await ax.get('persons/');
 };
 

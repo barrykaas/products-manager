@@ -1,15 +1,14 @@
-import { Checkbox, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Skeleton } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
+import { Checkbox, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Skeleton } from "@mui/material";
 import React from "react";
-import { getPersonsFn } from "../Persons/PersonsApiQueries";
+import { usePersons } from "../Persons/PersonsApiQueries";
 
 
 
 export default function ParticipantsList({setChecked, checked}) {
 
-    const { isLoading, isError, data, error } = useQuery({ queryKey: ['persons'], queryFn: getPersonsFn })
+    const { isLoading, isError, data, error } = usePersons();
 
-    const persons = data.data;
+    const persons = data;
 
     const handleToggle = (value) => () => {
       const currentIndex = checked.indexOf(value);

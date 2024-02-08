@@ -1,21 +1,18 @@
-import { ListItem, Typography, ListItemText, Divider, ListItemButton, Skeleton, IconButton } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
+import { ListItem, ListItemText, Divider, ListItemButton, Skeleton, IconButton } from "@mui/material";
 import { Fragment } from "react";
-import { useEvents } from "./EventsApiQueries";
-import { getPersonsFn } from "../Persons/PersonsApiQueries";
-
 import EditIcon from '@mui/icons-material/Edit';
+
+import { useEvents } from "./EventsApiQueries";
+import { usePersons } from "../Persons/PersonsApiQueries";
 import InfiniteList from "../Helpers/InfiniteList";
+import { useListItems } from "../Lists/ListsApiQueries";
+import { formatEuro } from "../Helpers/monetary";
+import { isoToLocalDate } from "../Helpers/dateTime";
 
 
 function EventsListItem({ item, onEdit, onSelect }) {
-    const { isLoading, isError, data, error } = useQuery({ queryKey: ['persons'], queryFn: getPersonsFn })
-
-    function getDate() {
-        const date = new Date(item.event_date);
-        const formattedDate = date.toLocaleDateString();
-        return formattedDate
-    }
+    const { isLoading, isError, data } = usePersons();
+    const eventItemsQuery = useListItems({ eventId: item.id });
 
     if (isLoading || isError) {
         return <Skeleton />
@@ -27,35 +24,21 @@ function EventsListItem({ item, onEdit, onSelect }) {
         </IconButton>
         : null;
 
-    const eventParticipantPersons = data.data.filter(person => item.event_participants.includes(person.id));
+    const eventParticipantPersons = data.filter(person => item.event_participants.includes(person.id));
+
+    const eventTotal = eventItemsQuery.data.reduce((s, i) => s + i.amount, 0);
+
+    const secondaryInfo = [
+        isoToLocalDate(item.event_date),
+        formatEuro(eventTotal),
+        eventParticipantPersons.map(p => p.name).join(', '),
+    ];
 
     return (<ListItem alignItems="flex-start" secondaryAction={secondaryAction} disablePadding>
         <ListItemButton onClick={onSelect}>
             <ListItemText
                 primary={item.name}
-
-                secondary={
-                    <>
-                        {/* <Stack direction="row" spacing={1}>
-                        {eventParticipantPersons.map((person) => {
-                            return <Chip color={"warning"} size="small" key={person.id} label={`${person.name}`} />
-                        })}
-                        <Chip size="small" label={getDate()} color="primary" />
-                    </Stack> */}
-                        <Typography
-                            sx={{ display: 'inline' }}
-                            component="span"
-                            variant="body2"
-                            color="text.primary"
-                        >{getDate()}</Typography>
-
-
-                        {eventParticipantPersons.map((person, index) => {
-                            return index === 0 ? " - " + person.name : `, ${person.name}`;
-                        }).join('')}
-
-                    </>
-                }
+                secondary={secondaryInfo.join("  -  ")}
             />
         </ListItemButton>
 
@@ -83,8 +66,8 @@ export default function EventsList({ handleEditEvent, handleSelectedEvent }) {
             {allEvents.map((item) => (
                 <Fragment key={item.id}>
                     <EventsListItem item={item}
-                    onSelect={() => handleSelectedEvent(item)}
-                    onEdit={() => handleEditEvent(item)} />
+                        onSelect={() => handleSelectedEvent(item)}
+                        onEdit={() => handleEditEvent(item)} />
                     <Divider component="li" />
                 </Fragment>
             ))}
