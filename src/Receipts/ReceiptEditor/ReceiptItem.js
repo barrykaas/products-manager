@@ -1,14 +1,14 @@
 import { Skeleton } from "@mui/material";
 import React from "react";
 
-import ReceiptDiscountItem from "./ReceiptDiscountItem";
+import ReceiptAmountItem from "./ReceiptAmountItem";
 import ReceiptProductDiscreteItem from "./ReceiptProductDiscreteItem";
 import ReceiptProductScalarItem from "./ReceiptProductScalarItem";
 import useUnitTypeInfo from "../../UnitTypes/UnitTypeInfo";
 
 
 function ReceiptProductItem({ item }) {
-    const { isLoading, isError, unitTypeInfo, error } = useUnitTypeInfo();
+    const { isLoading, isError, unitTypeInfo } = useUnitTypeInfo();
 
     if (isLoading || isError) {
         return <Skeleton />
@@ -24,9 +24,7 @@ function ReceiptProductItem({ item }) {
 export default function ReceiptItem({ item }) {
     if (item.product) {
         return <ReceiptProductItem item={item} />;
-    } else if (item.discount || item.discount === 0) {
-        return <ReceiptDiscountItem item={item} />;
     } else {
-        return <div>Geen product en ook geen korting? item: {JSON.stringify(item)}</div>;
+        return <ReceiptAmountItem item={item} />;
     }
 }

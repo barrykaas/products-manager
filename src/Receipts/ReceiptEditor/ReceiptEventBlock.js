@@ -66,7 +66,7 @@ export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, o
                                 + Product
                             </Button>
                             <Button variant="outlined" size="small" onClick={onAddDiscount} color="warning">
-                                + Korting
+                                + Los bedrag
                             </Button>
                         </ButtonGroup>
                     </Grid>
@@ -93,7 +93,7 @@ export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, o
                         + Product
                     </Button>
                     <Button variant="outlined" onClick={onAddDiscount} color="warning">
-                        + Korting
+                        + Los bedrag
                     </Button>
                 </Stack>
                 <Stack direction="row" spacing={1} sx={{ px: 2, py: 1 }}>
