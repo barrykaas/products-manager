@@ -2,6 +2,7 @@ import { useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-q
 
 import ax from "../Api/axios";
 import { scannedItemsQueryKey } from "../ScannedItems/ScannedItemsApiQueries";
+import { useInvalidator } from "../Api/Common";
 
 
 export const productsQueryKey = "products";
@@ -71,3 +72,5 @@ export function useProductDeleter({ onSuccess, onError } = {}) {
 
     return deleteMutation.mutate;
 }
+
+export const useProductsInvalidator = () => useInvalidator(productsQueryKey);

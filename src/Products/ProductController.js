@@ -4,19 +4,18 @@ import { Alert, Snackbar, Box } from '@mui/material';
 import { ProductAppBar } from './ProductsAppBar';
 import ProductsList from './ProductsList';
 import { ProductFormDialog } from './ProductsForm';
+import { useProductsInvalidator } from './ProductsApiQueries';
 
 
 export default function ProductController({ handleSelectedProduct, onClose }) {
     const [currentProduct, setCurrentProduct] = useState(null);
-
     const [messageOpen, setMessageOpen] = useState(false);
-
     const [messageText, setMessageText] = useState("");
     const [messageState, setMessageState] = useState(true);
-
     const [editOpen, setEditOpen] = useState(false);
-
     const [searchQuery, setSearchQuery] = useState('');
+
+    const invalidateProducts = useProductsInvalidator();
 
     const handleEditProduct = (product) => {
         setCurrentProduct(product);
@@ -36,6 +35,8 @@ export default function ProductController({ handleSelectedProduct, onClose }) {
         setMessageText(message);
     };
 
+    const onRefresh = invalidateProducts;
+
     return (
         <Box height={1}>
             <Snackbar open={messageOpen} autoHideDuration={1500} onClose={() => setMessageOpen(false)}>
@@ -48,6 +49,7 @@ export default function ProductController({ handleSelectedProduct, onClose }) {
                 title={onClose ? "Kies product" : "Producten"}
                 onAdd={handleAddProduct}
                 onClose={onClose}
+                onRefresh={onRefresh}
                 searchQuery={searchQuery}
                 onSearchQueryChange={(e) => setSearchQuery(e.target.value)}
             />

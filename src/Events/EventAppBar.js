@@ -1,47 +1,35 @@
-import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import Link from '@mui/material/Link';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
+import { Refresh } from '@mui/icons-material';
 
 
-export function EventAppBar({ onAdd }) {
-    return (
-        <AppBar position="static">
-            <Toolbar>
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                    Events
-                </Typography>
-                <IconButton onClick={onAdd} color="primary" aria-label="add to shopping cart">
-                    <AddIcon />
-                </IconButton>
-            </Toolbar>
-        </AppBar>
-    );
-}
-
-export function EventAppBarClosable({ onAdd, onClose }) {
+export default function EventAppBar({ onAdd, onClose, onRefresh, title }) {
     return (
 
         <AppBar position="static">
             <Toolbar>
-                <IconButton
-                    edge="start"
-                    color="inherit"
-                    onClick={onClose}
-                    aria-label="close"
-                >
-                    <CloseIcon />
-                </IconButton>
+                {onClose ?
+                    <IconButton
+                        edge="start"
+                        color="inherit"
+                        onClick={onClose}
+                        aria-label="close"
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                    : null}
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                    Selecteer event
+                    {title}
                 </Typography>
+                {onRefresh ?
+                    <IconButton onClick={onRefresh}>
+                        <Refresh />
+                    </IconButton>
+                    : null}
                 <IconButton onClick={onAdd} color="primary" aria-label="add to shopping cart">
                     <AddIcon />
                 </IconButton>

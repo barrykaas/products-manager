@@ -1,6 +1,7 @@
 import { useQuery, useInfiniteQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 
 import ax from "../Api/axios";
+import { useInvalidator } from "../Api/Common";
 
 
 const eventsQueryKey = 'events';
@@ -77,3 +78,5 @@ export function useEventDeleter({ onSuccess, onError } = {}) {
 
     return deleteMutation.mutate;
 }
+
+export const useEventsInvalidator = () => useInvalidator(eventsQueryKey);

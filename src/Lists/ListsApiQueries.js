@@ -1,6 +1,7 @@
 import { useInfiniteQuery, useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 
 import ax from "../Api/axios";
+import { useInvalidator } from "../Api/Common";
 
 
 const listsQueryKey = 'lists';
@@ -137,3 +138,5 @@ export function useListItemDeleter({ onSuccess, onError } = {}) {
 
     return removeMutation.mutate;
 }
+
+export const useListsInvalidator = () => useInvalidator(listsQueryKey);

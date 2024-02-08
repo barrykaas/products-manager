@@ -1,6 +1,7 @@
-import { Chip, CircularProgress, Paper, Table, TableCell, TableContainer, TableHead, TableRow, Box } from "@mui/material";
+import { Chip, CircularProgress, Paper, Table, TableCell, TableContainer, TableHead, TableRow, Box, Button, Stack } from "@mui/material";
 import { usePersons } from "../Persons/PersonsApiQueries";
 import { formatEuro } from "../Helpers/monetary";
+
 
 function PersonRow({ person }) {
     const balance = person.expenses - person.consumption;
@@ -18,7 +19,7 @@ function PersonRow({ person }) {
 }
 
 export default function BalanceInfo() {
-    const { isError, error, isLoading, data } = usePersons();
+    const { isError, error, isLoading, data, invalidate } = usePersons();
 
     if (isLoading) {
         return <CircularProgress />;
@@ -27,19 +28,24 @@ export default function BalanceInfo() {
         return <div>Error: {JSON.stringify(error)}</div>;
     }
 
+    const onRefresh = invalidate;
+
     return (
-        <Box sx={{ overflow: "scroll" }}>
-            <TableContainer component={Paper} sx={{ minWidth: 500 }}>
-                <Table>
-                    <TableHead>
-                        <TableCell>Naam</TableCell>
-                        <TableCell>Stand</TableCell>
-                        <TableCell>Uitgaven (+)</TableCell>
-                        <TableCell>Consumptie (-)</TableCell>
-                    </TableHead>
-                    {data.map(person => PersonRow({ person }))}
-                </Table>
-            </TableContainer>
-        </Box>
+        <Stack>
+            <Button onClick={onRefresh}>Refresh</Button>
+            <Box sx={{ overflow: "scroll" }}>
+                <TableContainer component={Paper} sx={{ minWidth: 500 }}>
+                    <Table>
+                        <TableHead>
+                            <TableCell>Naam</TableCell>
+                            <TableCell>Stand</TableCell>
+                            <TableCell>Uitgaven (+)</TableCell>
+                            <TableCell>Consumptie (-)</TableCell>
+                        </TableHead>
+                        {data.map(person => PersonRow({ person }))}
+                    </Table>
+                </TableContainer>
+            </Box>
+        </Stack>
     );
 }

@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { Alert, Snackbar } from '@mui/material';
 
-import { EventAppBar, EventAppBarClosable } from './EventAppBar';
+import EventAppBar from './EventAppBar';
 import EventsList from './EventsList';
 import { EventFormDialog } from './EventForm';
+import { useEventsInvalidator } from './EventsApiQueries';
 
 
-export default function EventController({ handleSelectedEvent, onClose }) {
+const defaultTitle = "Events";
+
+export default function EventController({ handleSelectedEvent, onClose, title = defaultTitle }) {
     const [formOpen, setFormOpen] = useState(false);
     const [currentEvent, setCurrentEvent] = useState(null);
 
@@ -14,6 +17,8 @@ export default function EventController({ handleSelectedEvent, onClose }) {
 
     const [messageText, setMessageText] = useState("");
     const [messageState, setMessageState] = useState(true);
+
+    const invalidateEvents = useEventsInvalidator();
 
     const handleAddEvent = () => {
         setFormOpen(true);
@@ -32,6 +37,8 @@ export default function EventController({ handleSelectedEvent, onClose }) {
         setMessageOpen(true);
     };
 
+    const onRefresh = invalidateEvents;
+
     handleSelectedEvent = handleSelectedEvent ?? handleEditEvent;
 
     return (
@@ -41,10 +48,7 @@ export default function EventController({ handleSelectedEvent, onClose }) {
                     {messageText}
                 </Alert>
             </Snackbar>
-            {onClose ?
-                <EventAppBarClosable onClose={onClose} title={"Events"} onAdd={handleAddEvent} /> :
-                <EventAppBar title={"Events"} onAdd={handleAddEvent} />
-            }
+            <EventAppBar onClose={onClose} title={title} onRefresh={onRefresh} onAdd={handleAddEvent} />
 
             <EventsList handleEditEvent={handleEditEvent} handleSelectedEvent={handleSelectedEvent} />
 
