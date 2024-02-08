@@ -1,4 +1,4 @@
-import { Avatar } from "@mui/material";
+import { Avatar, Tooltip } from "@mui/material";
 
 import { usePersons } from "./PersonsApiQueries";
 
@@ -19,6 +19,8 @@ export default function PersonAvatar({ personId, ...args }) {
     }
 
     return (
-        <Avatar {...args} >{initials}</Avatar>
+        <Tooltip arrow title={person?.name ?? `ID ${personId}`}>
+            <Avatar {...args} >{initials}</Avatar>
+        </Tooltip>
     );
 }
