@@ -2,6 +2,7 @@ import { useQuery, useInfiniteQuery, useQueryClient, useMutation } from "@tansta
 
 import ax from "../Api/axios";
 import { useInvalidator } from "../Api/Common";
+import { listItemsQueryKey } from "../Lists/ListsApiQueries";
 
 
 const eventsQueryKey = 'events';
@@ -71,6 +72,7 @@ export function useEventDeleter({ onSuccess, onError } = {}) {
         mutationFn: deleteEventFn,
         onSuccess: (...args) => {
             queryClient.invalidateQueries({ queryKey: [eventsQueryKey] });
+            queryClient.invalidateQueries({ queryKey: [listItemsQueryKey] });
             if (onSuccess) onSuccess(...args);
         },
         onError: onError

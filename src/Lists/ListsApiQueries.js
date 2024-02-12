@@ -5,7 +5,7 @@ import { useInvalidator } from "../Api/Common";
 
 
 const listsQueryKey = 'lists';
-const listItemsQueryKey = 'listitems';
+export const listItemsQueryKey = 'listitems';
 export const receiptListType = 2;
 
 
