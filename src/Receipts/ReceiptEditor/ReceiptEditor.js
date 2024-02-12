@@ -123,6 +123,7 @@ export default function ReceiptEditor({ receiptId }) {
             >
                 <EventController
                     handleSelectedEvent={handleSelectedEvent}
+                    onClose={() => setIsPickingEvent(false)}
                 />
             </FormDialog>
 
