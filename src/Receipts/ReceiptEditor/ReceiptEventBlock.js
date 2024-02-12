@@ -1,76 +1,104 @@
-import { Typography, Grid, Stack, Chip, Button, List, Divider, ButtonGroup, Paper, Tooltip } from "@mui/material";
-import { Fragment } from "react";
+import { Typography, Grid, Stack, Chip, Button, List, Divider, ButtonGroup, Paper, Tooltip, IconButton } from "@mui/material";
+import { Fragment, useState } from "react";
+import { Edit } from "@mui/icons-material";
 
 import ReceiptItem from "./ReceiptItem";
 import { useEvent } from "../../Events/EventsApiQueries";
 import { isoToLocalDate } from "../../Helpers/dateTime";
 import { formatEuro } from "../../Helpers/monetary";
 import PersonAvatar from "../../Persons/Avatars";
+import { EventFormDialog } from "../../Events/EventForm";
+
+
+function Header({ itemId, title, date, personIds, onAddProduct, onAddAmount, onEdit }) {
+    const formattedDate = isoToLocalDate(date);
+
+    return (
+        <Grid container spacing={2} sx={{ p: 2 }} alignItems="center">
+            <Grid item>
+                <Tooltip arrow title={
+                    <Typography variant="caption" fontFamily="monospace">
+                        ID: {itemId}
+                    </Typography>
+                }>
+                    <Typography variant="h6" component="div">
+                        {title}
+                    </Typography>
+                </Tooltip>
+            </Grid>
+
+            {onEdit ?
+                <Grid item>
+                    <IconButton size="small" onClick={onEdit}>
+                        <Edit />
+                    </IconButton>
+                </Grid>
+                : null}
+
+            {date
+                ? (
+                    <Grid item>
+                        <Chip label={formattedDate} variant="outlined" />
+                    </Grid>
+                ) : null
+            }
+
+            <Grid item>
+                <Stack direction="row" spacing={0.5}>
+                    {personIds.map(parId =>
+                        <Fragment key={parId}>
+                            <PersonAvatar personId={parId} size={30} />
+                        </Fragment>
+                    )}
+                </Stack>
+            </Grid>
+
+            <Grid item>
+                <ButtonGroup size="small" variant="outlined" aria-label="outlined button group">
+                    <Button variant="outlined" size="small" onClick={onAddProduct}>
+                        + Product
+                    </Button>
+                    <Button variant="outlined" size="small" onClick={onAddAmount} color="warning">
+                        + Los bedrag
+                    </Button>
+                </ButtonGroup>
+            </Grid>
+        </Grid>
+    );
+}
 
 
 export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, onAddDiscount }) {
     const eventQuery = useEvent(eventId);
+    const [editingEvent, setEditingEvent] = useState(false);
 
-    let formattedDate, eventName;
+    const event = eventQuery.data;
+    let eventName = event?.name ?? `Event ${eventId}`;
     if (eventQuery.isLoading) {
         eventName = "Event laden...";
-    } else if (eventQuery.isError) {
-        eventName = `ERROR event ${eventId}`;
-    } else {
-        const event = eventQuery.data;
-        eventName = event.name;
-        formattedDate = isoToLocalDate(event.event_date);
     }
 
     const eventTotal = eventItems.reduce((s, i) => s + i.amount, 0);
-    const participantIds = eventQuery.data?.event_participants || [];
+    const participantIds = event?.event_participants ?? [];
 
     return (
         <Paper>
             <Stack>
-                {/* Header */}
-                <Grid container spacing={2} sx={{ p: 2 }} alignItems="center">
-                    <Grid item>
-                        <Tooltip arrow title={
-                            <Typography variant="caption" fontFamily="monospace">
-                                ID: {eventId}
-                            </Typography>
-                        }>
-                            <Typography variant="h6" component="div">
-                                {eventName}
-                            </Typography>
-                        </Tooltip>
-                    </Grid>
-
-                    {formattedDate
-                        ? (
-                            <Grid item>
-                                <Chip label={formattedDate} variant="outlined" />
-                            </Grid>
-                        ) : null
-                    }
-
-                    <Grid item>
-                        <Stack direction="row" spacing={0.5}>
-                            {participantIds.map(parId =>
-                                <Fragment key={parId}>
-                                    <PersonAvatar personId={parId} sx={{ width: 30, height: 30 }} />
-                                </Fragment>
-                            )}
-                        </Stack>
-                    </Grid>
-
-                    <Grid item>
-                        <ButtonGroup size="small" variant="outlined" aria-label="outlined button group">
-                            <Button variant="outlined" size="small" onClick={onAddProduct}>
-                                + Product
-                            </Button>
-                            <Button variant="outlined" size="small" onClick={onAddDiscount} color="warning">
-                                + Los bedrag
-                            </Button>
-                        </ButtonGroup>
-                    </Grid>
-                </Grid>
+                <Header
+                    itemId={eventId}
+                    title={eventName}
+                    date={event?.event_date}
+                    personIds={participantIds}
+                    onAddProduct={onAddProduct}
+                    onAddAmount={onAddDiscount}
+                    onEdit={() => setEditingEvent(true)}
+                />
+                <EventFormDialog
+                    open={editingEvent}
+                    onClose={() => setEditingEvent(false)}
+                    initialValues={event}
+                    onSuccessfulCreateEdit={() => setEditingEvent(false)}
+                />
 
                 <Divider />
 
