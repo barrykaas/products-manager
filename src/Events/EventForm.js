@@ -15,7 +15,7 @@ import FormDialog from '../Helpers/FormDialog';
 const validationSchema = yup.object({
     event_date: yup
         .date('Enter date of event')
-        .required('Date of event is required'),
+        .nullable(),
     event_participants: yup.array(yup.number()),
     name: yup
         .string('Enter name')
@@ -54,7 +54,7 @@ export function EventForm({ onSuccessfulCreateEdit, initialValues = {} }) {
                     fullWidth
                     id="name"
                     name="name"
-                    label="Name"
+                    label="Naam van het event"
                     value={formik.values.name}
                     onChange={formik.handleChange}
                     error={formik.touched.name && Boolean(formik.errors.name)}
@@ -64,7 +64,7 @@ export function EventForm({ onSuccessfulCreateEdit, initialValues = {} }) {
                     <DatePicker
                         id="event_date"
                         name="event_date"
-                        label="Date of event"
+                        label="Datum"
                         value={dayjs(formik.values.event_date)}
                         onChange={(value) => {
                             formik.setFieldValue('event_date', value);
@@ -77,6 +77,7 @@ export function EventForm({ onSuccessfulCreateEdit, initialValues = {} }) {
                         }}
                     />
                 </LocalizationProvider>
+
                 <Paper variant="outlined" >
                     <ParticipantsList setChecked={(value) => formik.setFieldValue('event_participants', value)} checked={formik.values.event_participants} />
                 </Paper>
