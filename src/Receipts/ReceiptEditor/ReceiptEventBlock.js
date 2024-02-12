@@ -10,6 +10,23 @@ import PersonAvatar from "../../Persons/Avatars";
 import { EventFormDialog } from "../../Events/EventForm";
 
 
+function AddProductButton({ variant = "outlined", ...args }) {
+    return (
+        <Button variant="outlined" {...args}>
+            + Product
+        </Button>
+    );
+}
+
+function AddAmountButton({ variant = "outlined", ...args }) {
+    return (
+        <Button variant="outlined" color="warning" {...args}>
+            + Los bedrag
+        </Button>
+    );
+}
+
+
 function Header({ itemId, title, date, personIds, onAddProduct, onAddAmount, onEdit }) {
     const formattedDate = isoToLocalDate(date);
 
@@ -55,12 +72,8 @@ function Header({ itemId, title, date, personIds, onAddProduct, onAddAmount, onE
 
             <Grid item>
                 <ButtonGroup size="small" variant="outlined" aria-label="outlined button group">
-                    <Button variant="outlined" size="small" onClick={onAddProduct}>
-                        + Product
-                    </Button>
-                    <Button variant="outlined" size="small" onClick={onAddAmount} color="warning">
-                        + Los bedrag
-                    </Button>
+                    <AddProductButton onClick={onAddProduct} />
+                    <AddAmountButton onClick={onAddAmount} />
                 </ButtonGroup>
             </Grid>
         </Grid>
@@ -117,12 +130,8 @@ export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, o
                     sx={{ p: 1, pb: 2 }}
                     direction="row" alignItems="center" justifyContent="space-evenly"
                 >
-                    <Button variant="outlined" onClick={onAddProduct}>
-                        + Product
-                    </Button>
-                    <Button variant="outlined" onClick={onAddDiscount} color="warning">
-                        + Los bedrag
-                    </Button>
+                    <AddProductButton onClick={onAddProduct} />
+                    <AddAmountButton onClick={onAddDiscount} />
                 </Stack>
                 <Stack direction="row" spacing={1} sx={{ px: 2, py: 1 }}>
                     <Typography component="div">
@@ -134,6 +143,24 @@ export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, o
                     </Typography>
                 </Stack>
 
+            </Stack>
+        </Paper>
+    );
+}
+
+export function QuickAddBlock({ onAddAmount, onAddProduct }) {
+    return (
+        <Paper sx={{ borderWidth: 2, borderStyle: "dashed", borderColor: "#888888", mx: 2, p: 2 }}>
+            <Stack spacing={2}>
+                <Typography variant="subtitle" sx={{ fontStyle: "italic" }}>
+                    Kies een bestaand event rechtsboven of quick add:
+                </Typography>
+                <Stack
+                    direction="row" alignItems="center" justifyContent="space-evenly"
+                >
+                    <AddProductButton onClick={onAddProduct} />
+                    <AddAmountButton onClick={onAddAmount} />
+                </Stack>
             </Stack>
         </Paper>
     );

@@ -3,13 +3,14 @@ import { Fragment, useState } from "react";
 
 import groupByProperty from "../../Helpers/groupBy";
 import { useListItems } from "../../Lists/ListsApiQueries";
-import ReceiptEventBlock from "./ReceiptEventBlock";
+import ReceiptEventBlock, { QuickAddBlock } from "./ReceiptEventBlock";
 import FormDialog from "../../Helpers/FormDialog";
 import ProductController from "../../Products/ProductController";
 import { useListItemMutator } from "../../Lists/ListsApiQueries";
 import EventController from "../../Events/EventController";
 import { formatEuro } from "../../Helpers/monetary";
 import { useUnitTypes } from "../../UnitTypes/UnitTypeQueries";
+import { useEventMutator } from "../../Events/EventsApiQueries";
 
 
 export default function ReceiptEditor({ receiptId }) {
@@ -17,16 +18,34 @@ export default function ReceiptEditor({ receiptId }) {
     const { getUnitType } = useUnitTypes();
     const [eventPickingProduct, setEventPickingProduct] = useState(null);
     const [isPickingEvent, setIsPickingEvent] = useState(false);
+
     const createEditListItem = useListItemMutator({
         onSuccess: () => setEventPickingProduct(null)
     });
+    const quickCreateEvent = useEventMutator();
+    const quickEvent = {
+        name: "Nieuw event",
+        event_date: new Date(),
+        event_participants: [],
+    };
 
     function onAddDiscount(eventId) {
-        createEditListItem({
-            discount: 0,
+        const createAmountItem = (eventId) => createEditListItem({
+            product_price: 0,
             list: receiptId,
             event: eventId
-        })
+        });
+
+        if (eventId === -1) {
+            quickCreateEvent(quickEvent, {
+                onSuccess: (response) => {
+                    const newEvent = response.data;
+                    createAmountItem(newEvent.id);
+                }
+            })
+        } else {
+            createAmountItem(eventId);
+        }
     }
 
     function onAddProduct(eventId) {
@@ -47,13 +66,24 @@ export default function ReceiptEditor({ receiptId }) {
             price = product.unit_price / quantity;
         }
 
-        createEditListItem({
+        const createProductItem = (eventId) => createEditListItem({
             product_id: product.id,
             product_quantity: quantity,
             product_price: price,
             list: receiptId,
-            event: eventPickingProduct
-        })
+            event: eventId
+        });
+
+        if (eventPickingProduct === -1) {
+            quickCreateEvent(quickEvent, {
+                onSuccess: (response) => {
+                    const newEvent = response.data;
+                    createProductItem(newEvent.id);
+                }
+            })
+        } else {
+            createProductItem(eventPickingProduct);
+        }
     }
 
     if (receiptItemsQuery.isLoading) {
@@ -64,6 +94,7 @@ export default function ReceiptEditor({ receiptId }) {
     }
 
     const allReceiptItems = receiptItemsQuery.data;
+    const noReceiptItems = allReceiptItems.length === 0;
     const events = groupByProperty(allReceiptItems, 'event');
     const receiptTotal = allReceiptItems.reduce((total, item) =>
         total + item.amount, 0);
@@ -81,7 +112,9 @@ export default function ReceiptEditor({ receiptId }) {
                             Producten
                         </Typography>
                     </Tooltip>
-                    <Button onClick={() => setIsPickingEvent(true)}>Add event</Button>
+                    <Button onClick={() => setIsPickingEvent(true)}>
+                        Kies event
+                    </Button>
                 </Stack>
 
                 {/* Event blocks */}
@@ -98,7 +131,14 @@ export default function ReceiptEditor({ receiptId }) {
                             />
                         </Fragment>
                     ))}
+                    {noReceiptItems ?
+                        <QuickAddBlock
+                            onAddProduct={() => onAddProduct(-1)}
+                            onAddAmount={() => onAddDiscount(-1)}
+                        />
+                        : null}
                 </Stack>
+
 
                 {/* Footer, totals */}
                 <Stack sx={{ px: 3 }}
