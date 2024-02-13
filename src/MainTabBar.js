@@ -8,6 +8,8 @@ import CategoriesController from "./Categories/CategoriesController";
 import ReceiptsController from "./Receipts/ReceiptsController/ReceiptsController";
 import ScannedItemsController from "./ScannedItems/ScannedItemsController";
 import BalanceInfo from "./Balance/BalanceInfo";
+import SettingsPage from "./Settings/SettingsPage";
+import { Settings } from "@mui/icons-material";
 
 
 function CustomTabPanel(props) {
@@ -61,6 +63,7 @@ export default function MainTabBar() {
           <Tab label="Brands" />
           <Tab label="Categorieën" />
           <Tab label="Balans" />
+          <Tab label={<Settings />} />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -83,6 +86,9 @@ export default function MainTabBar() {
       </CustomTabPanel>
       <CustomTabPanel value={value} index={6}>
         <BalanceInfo />
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={7}>
+        <SettingsPage />
       </CustomTabPanel>
     </Box>
   );

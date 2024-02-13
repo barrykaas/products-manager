@@ -10,6 +10,7 @@ import ReceiptEditor from "./ReceiptEditor/ReceiptEditor";
 import { PersonsIdField } from "../Persons/PersonsField";
 import FormDialog from "../Helpers/FormDialog";
 import { MarketIdField } from "../Markets/MarketField";
+import { useSettings } from "../Settings/SettingsPage";
 
 
 const emptyForm = {
@@ -40,6 +41,12 @@ const validationSchema = yup.object({
 export default function ReceiptForm({ initialValues = emptyForm, onSuccessfulCreateEdit }) {
     const existingReceiptId = initialValues?.id;
 
+    const { userId } = useSettings();
+    console.log("userId", userId);
+    if (!initialValues.payer) {
+        initialValues.payer = userId;
+    }
+
     const mutateList = useListMutator({
         onSuccess: (response) => {
             const newList = response.data;
@@ -55,7 +62,6 @@ export default function ReceiptForm({ initialValues = emptyForm, onSuccessfulCre
             mutateList(values);
         }
     });
-
 
     return (
         <Box sx={{ width: 1, bgcolor: 'background.paper' }}>

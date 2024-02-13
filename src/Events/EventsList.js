@@ -34,15 +34,16 @@ function EventsListItem({ item, onEdit, onSelect }) {
         eventParticipantPersons.map(p => p.name).join(', '),
     ];
 
-    return (<ListItem alignItems="flex-start" secondaryAction={secondaryAction} disablePadding>
-        <ListItemButton onClick={onSelect}>
-            <ListItemText
-                primary={item.name}
-                secondary={secondaryInfo.join("  -  ")}
-            />
-        </ListItemButton>
-
-    </ListItem>);
+    return (
+        <ListItem alignItems="flex-start" secondaryAction={secondaryAction} disablePadding>
+            <ListItemButton onClick={onSelect}>
+                <ListItemText
+                    primary={item.name}
+                    secondary={secondaryInfo.filter(Boolean).join("  -  ")}
+                />
+            </ListItemButton>
+        </ListItem>
+    );
 }
 
 export default function EventsList({ handleEditEvent, handleSelectedEvent }) {
