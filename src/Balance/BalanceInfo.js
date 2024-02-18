@@ -1,10 +1,12 @@
-import { Chip, CircularProgress, Paper, Table, TableCell, TableContainer, TableHead, TableRow, Box, Button, Stack } from "@mui/material";
-import { usePersons } from "../Persons/PersonsApiQueries";
+import { Chip, CircularProgress, Paper, Table, TableCell, TableContainer, TableHead, TableRow, Box, Button, Stack, Typography } from "@mui/material";
+import { ArrowForward } from "@mui/icons-material";
+
 import { formatEuro } from "../Helpers/monetary";
+import { useBalances } from "./BalanceApiQueries";
 
 
 function PersonRow({ person }) {
-    const balance = person.expenses - person.consumption;
+    const balance = person.balance;
 
     return (
         <TableRow>
@@ -19,7 +21,8 @@ function PersonRow({ person }) {
 }
 
 export default function BalanceInfo() {
-    const { isError, error, isLoading, data, invalidate } = usePersons();
+    const { isError, error, isLoading, data, getPerson, invalidate } = useBalances();
+
 
     if (isLoading) {
         return <CircularProgress />;
@@ -29,10 +32,12 @@ export default function BalanceInfo() {
     }
 
     const onRefresh = invalidate;
+    const toSettle = data.flatMap(person => person?.to_settle ?? [])
 
     return (
-        <Stack>
+        <Stack spacing={2}>
             <Button onClick={onRefresh}>Refresh</Button>
+
             <Box sx={{ overflow: "scroll" }}>
                 <TableContainer component={Paper} sx={{ minWidth: 500 }}>
                     <Table>
@@ -44,6 +49,24 @@ export default function BalanceInfo() {
                         </TableHead>
                         {data.map(person => PersonRow({ person }))}
                     </Table>
+                </TableContainer>
+            </Box>
+
+            <Box>
+                <Typography variant="h5">Terug te betalen:</Typography>
+                <TableContainer>
+                    {toSettle.map(settlement =>
+                        <TableRow>
+                            <TableCell>
+                                <b>{getPerson(settlement.from)?.name}</b>
+                            </TableCell>
+                            <TableCell>{formatEuro(settlement.amount)}</TableCell>
+                            <TableCell><ArrowForward /></TableCell>
+                            <TableCell>
+                                <b>{getPerson(settlement.to)?.name}</b>
+                            </TableCell>
+                        </TableRow>
+                    )}
                 </TableContainer>
             </Box>
         </Stack>
