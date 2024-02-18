@@ -27,14 +27,14 @@ function ReceiptsListItem({ item, onSelect }) {
 
   const receiptDate = new Date(item.transaction_date);
   const formattedDate = receiptDate.toLocaleDateString();
-  const receiptTotal = item.items.reduce((s, i) => s + i.amount, 0);
+  const eventCount = item.events.length;
 
   const secondaryInfo = [
     payer,
     getMarket(item.market)?.name,
-    `${new Set(item.items.map(i => i.event)).size} events`,
-    `${item.items.length} items`,
-    formatEuro(receiptTotal),
+    `${eventCount} event` + (eventCount === 1 ? '' : 's'),
+    `${item.item_count} items`,
+    formatEuro(item.amount),
     formattedDate,
   ];
 
@@ -52,7 +52,7 @@ function ReceiptsListItem({ item, onSelect }) {
             >
 
             </Typography>
-            {secondaryInfo.filter((e) => Boolean(e)).join(" - ")}
+            {secondaryInfo.filter(Boolean).join(" - ")}
           </>
         }
       />

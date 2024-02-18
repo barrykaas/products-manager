@@ -7,11 +7,20 @@ import { useInvalidator } from "../Api/Common";
 const listsQueryKey = 'lists';
 export const listItemsQueryKey = 'listitems';
 export const receiptListType = 2;
+export const transactionListType = 3;
+export const settlementListType = 4;
 
 
-const fetchLists = async ({ pageParam = 1, listType }) => {
+const fetchLists = async ({ pageParam = 1, listTypes, params = {} }) => {
     let res;
-    const urlParams = listType ? { type: listType } : null;
+    const urlParams = params;
+    if (listTypes) {
+        if (listTypes.length === 1) {
+            urlParams.type = listTypes[0]
+        } else {
+            urlParams.type__in = listTypes.join(',')
+        }
+    }
 
     if (pageParam === 1) {
         res = await ax.get('lists/', { params: urlParams });
@@ -20,6 +29,11 @@ const fetchLists = async ({ pageParam = 1, listType }) => {
     }
     return res.data;
 }
+
+const getListFn = async (id) => {
+    const res = await ax.get(`lists/${id}`);
+    return res.data;
+};
 
 const deleteListFn = async (itemId) => {
     return await ax.delete(`lists/${itemId}/`);
@@ -53,17 +67,27 @@ const deleteListItemFn = async (itemId) => {
     await ax.delete(`listitems/${itemId}/`);
 };
 
+export function useList(id) {
+    return useQuery({
+        queryKey: [listsQueryKey, id],
+        queryFn: async () => await getListFn(id)
+    })
+}
 
-export function useLists(listType) {
+export function useLists({ listTypes, params = {} }) {
     return useInfiniteQuery({
-        queryKey: [listsQueryKey],
-        queryFn: ({ pageParam = 1 }) => fetchLists({ pageParam, listType }),
+        queryKey: [listsQueryKey, listTypes],
+        queryFn: ({ pageParam = 1 }) => fetchLists({ pageParam, listTypes, params }),
         getNextPageParam: (lastPage, allPages) => lastPage.next,
     });
 }
 
 export function useReceipts() {
-    return useLists(receiptListType)
+    return useLists({ listTypes: [receiptListType] });
+}
+
+export function useTransactions() {
+    return useLists({ listTypes: [transactionListType, settlementListType] });
 }
 
 export function useListMutator({ onSuccess, onError } = {}) {
@@ -105,7 +129,7 @@ export function useListItems({ listId, eventId } = {}) {
     const actualData = data?.data || [];
     return { isError, error, isLoading, data: actualData };
 }
-    
+
 
 
 export function useListItemMutator({ onSuccess, onError } = {}) {

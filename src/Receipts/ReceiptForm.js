@@ -42,7 +42,6 @@ export default function ReceiptForm({ initialValues = emptyForm, onSuccessfulCre
     const existingReceiptId = initialValues?.id;
 
     const { userId } = useSettings();
-    console.log("userId", userId);
     if (!initialValues.payer) {
         initialValues.payer = userId;
     }

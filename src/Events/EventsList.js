@@ -12,7 +12,6 @@ import { isoToLocalDate } from "../Helpers/dateTime";
 
 function EventsListItem({ item, onEdit, onSelect }) {
     const { isLoading, isError, data } = usePersons();
-    const eventItemsQuery = useListItems({ eventId: item.id });
 
     if (isLoading || isError) {
         return <Skeleton />
@@ -25,12 +24,12 @@ function EventsListItem({ item, onEdit, onSelect }) {
         : null;
 
     const eventParticipantPersons = data.filter(person => item.event_participants.includes(person.id));
-
-    const eventTotal = eventItemsQuery.data.reduce((s, i) => s + i.amount, 0);
+    const listCount = item.lists.length;
 
     const secondaryInfo = [
         isoToLocalDate(item.event_date),
-        formatEuro(eventTotal),
+        formatEuro(item.amount),
+        `${listCount} lijst${listCount === 1 ? '' : 'en'}`,
         eventParticipantPersons.map(p => p.name).join(', '),
     ];
 
