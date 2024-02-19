@@ -1,14 +1,13 @@
-import { Typography, Box, AppBar, Toolbar, IconButton } from "@mui/material";
-import CloseIcon from '@mui/icons-material/Close';
+import { Box } from "@mui/material";
 
 import ScannedItemsList from "./ScannedItemsList";
 import { useState } from "react";
 import { ProductFormDialog } from "../Products/ProductsForm";
-import { Refresh } from "@mui/icons-material";
 import { useScannedItemsInvalidator } from "./ScannedItemsApiQueries";
+import ControllerAppBar from "../Helpers/ControllerAppBar";
 
 
-export default function ScannedItemsController({ onClose, selectBarcode, disableKnownProducts = false }) {
+export default function ScannedItemsController({ onClose, title = "Gescand", selectBarcode, disableKnownProducts = false }) {
     const [editingProduct, setEditingProduct] = useState();
     const invalidateScannedItems = useScannedItemsInvalidator();
     const customSelectHandler = Boolean(selectBarcode);
@@ -30,26 +29,7 @@ export default function ScannedItemsController({ onClose, selectBarcode, disable
     return (
         <>
             <Box sx={{ height: '100%' }}>
-                <AppBar position="sticky">
-                    <Toolbar>
-                        {onClose
-                            ? (<IconButton
-                                edge="start"
-                                color="inherit"
-                                onClick={onClose}
-                                aria-label="close"
-                            >
-                                <CloseIcon />
-                            </IconButton>)
-                            : null}
-                        <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-                            Gescand
-                        </Typography>
-                        <IconButton onClick={onRefresh}>
-                            <Refresh />
-                        </IconButton>
-                    </Toolbar>
-                </AppBar>
+                <ControllerAppBar title={title} onClose={onClose} onRefresh={onRefresh} />
                 <Box sx={{ height: '100%', overflow: "scroll" }}>
                     <ScannedItemsList selectBarcode={selectBarcode} disableKnownProducts={disableKnownProducts} />
                 </Box>

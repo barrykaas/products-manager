@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Alert, Snackbar } from '@mui/material';
 
-import EventAppBar from './EventAppBar';
 import EventsList from './EventsList';
 import { EventFormDialog } from './EventForm';
 import { useEventsInvalidator } from './EventsApiQueries';
+import ControllerAppBar from '../Helpers/ControllerAppBar';
 
 
 const defaultTitle = "Events";
@@ -48,7 +48,7 @@ export default function EventController({ handleSelectedEvent, onClose, title = 
                     {messageText}
                 </Alert>
             </Snackbar>
-            <EventAppBar onClose={onClose} title={title} onRefresh={onRefresh} onAdd={handleAddEvent} />
+            <ControllerAppBar onClose={onClose} title={title} onRefresh={onRefresh} onAdd={handleAddEvent} />
 
             <EventsList handleEditEvent={handleEditEvent} handleSelectedEvent={handleSelectedEvent} />
 

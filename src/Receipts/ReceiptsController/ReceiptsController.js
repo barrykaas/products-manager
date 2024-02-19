@@ -1,9 +1,9 @@
 import { useState } from "react";
 
-import ReceiptsAppBar from "./ReceiptsAppBar";
 import ReceiptsList from "./ReceiptsList";
 import { ReceiptFormDialog } from "../ReceiptForm";
 import { useListsInvalidator } from "../../Lists/ListsApiQueries";
+import ControllerAppBar from "../../Helpers/ControllerAppBar";
 
 
 export default function ReceiptsController() {
@@ -33,7 +33,11 @@ export default function ReceiptsController() {
 
     return (
         <>
-            <ReceiptsAppBar handleAddButton={onAddReceipt} onRefresh={onRefresh} />
+            <ControllerAppBar
+                title="Bonnetjes"
+                onRefresh={onRefresh}
+                onAdd={onAddReceipt}
+            />
 
             <ReceiptsList onSelectItem={selectReceipt} />
 
