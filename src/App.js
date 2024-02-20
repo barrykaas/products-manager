@@ -7,6 +7,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import './App.css';
 import MainTabBar from './MainTabBar';
 import { defaultQueryFn } from './Api/Common';
+import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
 
 
 const darkTheme = createTheme({
@@ -28,22 +29,24 @@ const queryClient = new QueryClient({
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <div className="App">
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-        />
-        <ThemeProvider theme={darkTheme}>
-          <CssBaseline />
-          <ConfirmProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <div className="App">
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+          />
+          <ThemeProvider theme={darkTheme}>
+            <CssBaseline />
+            <ConfirmProvider>
 
-            <MainTabBar />
+              <MainTabBar />
 
-          </ConfirmProvider>
-        </ThemeProvider>
-      </div>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+            </ConfirmProvider>
+          </ThemeProvider>
+        </div>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
