@@ -6,7 +6,7 @@ import ReceiptItem from "./ReceiptItem";
 import { useEvent } from "../../Events/EventsApiQueries";
 import { isoToLocalDate } from "../../Helpers/dateTime";
 import { formatEuro } from "../../Helpers/monetary";
-import PersonAvatar from "../../Persons/Avatars";
+import { PersonAvatarGroup } from "../../Persons/Avatars";
 import { EventFormDialog } from "../../Events/EventForm";
 
 
@@ -61,13 +61,7 @@ function Header({ itemId, title, date, personIds, onAddProduct, onAddAmount, onE
             }
 
             <Grid item>
-                <Stack direction="row" spacing={0.5}>
-                    {personIds.map(parId =>
-                        <Fragment key={parId}>
-                            <PersonAvatar personId={parId} size={30} />
-                        </Fragment>
-                    )}
-                </Stack>
+                <PersonAvatarGroup personIds={personIds} />
             </Grid>
 
             <Grid item>

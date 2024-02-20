@@ -1,4 +1,4 @@
-import { Avatar, Stack, Tooltip } from "@mui/material";
+import { Avatar, AvatarGroup, Grid, Stack, Tooltip } from "@mui/material";
 
 import { usePersons } from "./PersonsApiQueries";
 import { green, grey, red, orange, blue } from "@mui/material/colors";
@@ -41,12 +41,13 @@ export default function PersonAvatar({ personId, size = defaultSize }) {
     );
 }
 
-export function PersonAvatarsRow({ personIds = [], size = defaultSize }) {
+export function PersonAvatarGroup({ personIds = [], size = defaultSize, max = 10 }) {
+    personIds.sort();
     return (
-        <Stack direction="row">
+        <AvatarGroup max={max} size={size}>
             {personIds.map(personId =>
                 <PersonAvatar personId={personId} size={size} />
             )}
-        </Stack>
+        </AvatarGroup>
     );
 }
