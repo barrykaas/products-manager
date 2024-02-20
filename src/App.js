@@ -6,6 +6,8 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 import './App.css';
 import MainTabBar from './MainTabBar';
+import { defaultQueryFn } from './Api/Common';
+
 
 const darkTheme = createTheme({
   palette: {
@@ -13,17 +15,16 @@ const darkTheme = createTheme({
   },
 });
 
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
       retry: 1,
       staleTime: 5 * 1000,
+      queryFn: defaultQueryFn,
     },
   },
 });
-
 
 export default function App() {
   return (

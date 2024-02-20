@@ -15,6 +15,7 @@ import { Fragment, useState } from 'react';
 import PersonAvatar from '../Persons/Avatars';
 import { isoToLocalDate } from '../Helpers/dateTime';
 import { ReceiptFormDialog } from '../Receipts/ReceiptForm';
+import { useQuery } from '@tanstack/react-query';
 
 
 const validationSchema = yup.object({
@@ -140,10 +141,12 @@ function RelatedLists({ event }) {
     const [listFormOpen, setListFormOpen] = useState(false);
     const [currentList, setCurrentList] = useState();
 
-    const { isError, error, isLoading, data } = useLists({ params: {
-        event: event.id,
-        page_size: 1000
-    } });
+    const { isError, error, isLoading, data } = useQuery({
+        queryKey: ['lists', null, {
+            event: event.id,
+            page_size: 1000
+        }]
+    });
 
     if (isError) {
         return <p>{JSON.stringify(error)}</p>;
@@ -151,7 +154,7 @@ function RelatedLists({ event }) {
         return <CircularProgress />;
     }
 
-    const lists = data.pages.flatMap(page => page.results) || [];
+    const lists = data.results || [];
     if (lists.length === 0) return null;
 
     return (
