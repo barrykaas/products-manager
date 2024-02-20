@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Alert, Snackbar, Box } from '@mui/material';
+import { Alert, Snackbar } from '@mui/material';
 
-import { ProductAppBar } from './ProductsAppBar';
 import ProductsList from './ProductsList';
 import { ProductFormDialog } from './ProductsForm';
 import { useProductsInvalidator } from './ProductsApiQueries';
+import ControllerView from '../Helpers/ControllerView';
 
 
 export default function ProductController({ handleSelectedProduct, onClose }) {
@@ -38,27 +38,28 @@ export default function ProductController({ handleSelectedProduct, onClose }) {
     const onRefresh = invalidateProducts;
 
     return (
-        <Box height={1}>
+        <>
             <Snackbar open={messageOpen} autoHideDuration={1500} onClose={() => setMessageOpen(false)}>
                 <Alert severity={messageState ? "success" : "error"} sx={{ width: "100%" }}>
                     {messageText}
                 </Alert>
             </Snackbar>
 
-            <ProductAppBar
+            <ControllerView
                 title={onClose ? "Kies product" : "Producten"}
                 onAdd={handleAddProduct}
                 onClose={onClose}
                 onRefresh={onRefresh}
+                hasSearch
                 searchQuery={searchQuery}
                 onSearchQueryChange={(e) => setSearchQuery(e.target.value)}
-            />
-
-            <ProductsList
-                handleEdit={handleEditProduct}
-                handleSelectedProduct={handleSelectedProduct}
-                searchQuery={searchQuery}
-            />
+            >
+                <ProductsList
+                    handleEdit={handleEditProduct}
+                    handleSelectedProduct={handleSelectedProduct}
+                    searchQuery={searchQuery}
+                />
+            </ControllerView>
 
             <ProductFormDialog
                 open={editOpen}
@@ -66,6 +67,6 @@ export default function ProductController({ handleSelectedProduct, onClose }) {
                 initialValues={currentProduct}
                 onSuccessfulCreateEdit={() => didSuccessfullyEdit("Gelukt!")}
             />
-        </Box>
+        </>
     );
 }

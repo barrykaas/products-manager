@@ -4,7 +4,6 @@ import { useState } from "react";
 import ProductController from "./Products/ProductController";
 import EventController from "./Events/EventController";
 import BrandController from "./Brands/BrandController";
-import CategoriesController from "./Categories/CategoriesController";
 import ReceiptsController from "./Receipts/ReceiptsController/ReceiptsController";
 import ScannedItemsController from "./ScannedItems/ScannedItemsController";
 import BalanceInfo from "./Balance/BalanceInfo";
@@ -61,7 +60,6 @@ export default function MainTabBar() {
           <Tab label="Events" />
           <Tab label="Gescand" />
           <Tab label="Brands" />
-          <Tab label="Categorieën" />
           <Tab label="Balans" />
           <Tab label={<Settings />} />
         </Tabs>
@@ -82,12 +80,9 @@ export default function MainTabBar() {
         <BrandController />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={5}>
-        <CategoriesController />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={6}>
         <BalanceInfo />
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={7}>
+      <CustomTabPanel value={value} index={6}>
         <SettingsPage />
       </CustomTabPanel>
     </Box>

@@ -1,4 +1,4 @@
-import { Avatar, AvatarGroup, Grid, Stack, Tooltip } from "@mui/material";
+import { Avatar, AvatarGroup, Tooltip } from "@mui/material";
 
 import { usePersons } from "./PersonsApiQueries";
 import { green, grey, red, orange, blue } from "@mui/material/colors";

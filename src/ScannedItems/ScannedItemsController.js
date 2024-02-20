@@ -1,10 +1,8 @@
-import { Box } from "@mui/material";
-
 import ScannedItemsList from "./ScannedItemsList";
 import { useState } from "react";
 import { ProductFormDialog } from "../Products/ProductsForm";
 import { useScannedItemsInvalidator } from "./ScannedItemsApiQueries";
-import ControllerAppBar from "../Helpers/ControllerAppBar";
+import ControllerView from "../Helpers/ControllerView";
 
 
 export default function ScannedItemsController({ onClose, title = "Gescand", selectBarcode, disableKnownProducts = false }) {
@@ -28,23 +26,18 @@ export default function ScannedItemsController({ onClose, title = "Gescand", sel
 
     return (
         <>
-            <Box sx={{ height: '100%' }}>
-                <ControllerAppBar title={title} onClose={onClose} onRefresh={onRefresh} />
-                <Box sx={{ height: '100%', overflow: "scroll" }}>
-                    <ScannedItemsList selectBarcode={selectBarcode} disableKnownProducts={disableKnownProducts} />
-                </Box>
-            </Box>
+            <ControllerView title={title} onClose={onClose} onRefresh={onRefresh}>
+                <ScannedItemsList selectBarcode={selectBarcode} disableKnownProducts={disableKnownProducts} />
+            </ControllerView>
 
-            {
-                customSelectHandler ? null : (
-                    <ProductFormDialog
-                        initialValues={editingProduct}
-                        onSuccessfulCreateEdit={() => setEditingProduct(null)}
-                        open={Boolean(editingProduct)}
-                        onClose={() => setEditingProduct(null)}
-                    />
-                )
-            }
+            {!customSelectHandler && (
+                <ProductFormDialog
+                    initialValues={editingProduct}
+                    onSuccessfulCreateEdit={() => setEditingProduct(null)}
+                    open={Boolean(editingProduct)}
+                    onClose={() => setEditingProduct(null)}
+                />
+            )}
         </>
     );
 }

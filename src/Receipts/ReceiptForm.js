@@ -11,6 +11,7 @@ import { PersonsIdField } from "../Persons/PersonsField";
 import FormDialog from "../Helpers/FormDialog";
 import { MarketIdField } from "../Markets/MarketField";
 import { useSettings } from "../Settings/SettingsPage";
+import { useConfirm } from "material-ui-confirm";
 
 
 const emptyForm = {
@@ -131,12 +132,26 @@ export function ReceiptFormDialog({ open, onClose, initialValues, onSuccessfulCr
         onSuccess: onSuccessfulDelete
     });
 
+    const confirmDelete = useConfirm();
+
+
+
     const existingReceiptId = initialValues?.id;
+    const onDelete = () => {
+        confirmDelete({
+            description: "Weet je zeker dat je deze lijst wilt verwijderen?"
+        })
+            .then(() => {
+                deleteList(initialValues?.id);
+            })
+            .catch(() => { });
+    };
+
     const deleteButton = (
         <Button
             variant="contained"
             color={"error"}
-            onClick={() => deleteList(existingReceiptId)}>
+            onClick={onDelete}>
             Verwijderen
         </Button>
     );

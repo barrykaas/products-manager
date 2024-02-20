@@ -4,7 +4,7 @@ import { Alert, Snackbar } from '@mui/material';
 import EventsList from './EventsList';
 import { EventFormDialog } from './EventForm';
 import { useEventsInvalidator } from './EventsApiQueries';
-import ControllerAppBar from '../Helpers/ControllerAppBar';
+import ControllerView from '../Helpers/ControllerView';
 
 
 const defaultTitle = "Events";
@@ -48,9 +48,10 @@ export default function EventController({ handleSelectedEvent, onClose, title = 
                     {messageText}
                 </Alert>
             </Snackbar>
-            <ControllerAppBar onClose={onClose} title={title} onRefresh={onRefresh} onAdd={handleAddEvent} />
 
-            <EventsList handleEditEvent={handleEditEvent} handleSelectedEvent={handleSelectedEvent} />
+            <ControllerView onClose={onClose} title={title} onRefresh={onRefresh} onAdd={handleAddEvent}>
+                <EventsList handleEditEvent={handleEditEvent} handleSelectedEvent={handleSelectedEvent} />
+            </ControllerView>
 
             <EventFormDialog
                 open={formOpen}

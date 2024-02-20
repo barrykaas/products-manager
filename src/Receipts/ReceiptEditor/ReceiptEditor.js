@@ -172,7 +172,6 @@ export default function ReceiptEditor({ receiptId }) {
                 hasToolbar={false}
                 title={"Selecteer product"}
                 open={eventPickingProduct}
-                onClose={() => setEventPickingProduct(null)}
             >
                 <ProductController
                     onClose={() => setEventPickingProduct(null)}

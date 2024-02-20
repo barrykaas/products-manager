@@ -3,7 +3,7 @@ import { useState } from "react";
 import ReceiptsList from "./ReceiptsList";
 import { ReceiptFormDialog } from "../ReceiptForm";
 import { useListsInvalidator } from "../../Lists/ListsApiQueries";
-import ControllerAppBar from "../../Helpers/ControllerAppBar";
+import ControllerView from "../../Helpers/ControllerView";
 
 
 export default function ReceiptsController() {
@@ -33,13 +33,13 @@ export default function ReceiptsController() {
 
     return (
         <>
-            <ControllerAppBar
+            <ControllerView
                 title="Bonnetjes"
                 onRefresh={onRefresh}
                 onAdd={onAddReceipt}
-            />
-
-            <ReceiptsList onSelectItem={selectReceipt} />
+            >
+                <ReceiptsList onSelectItem={selectReceipt} />
+            </ControllerView>
 
             <ReceiptFormDialog
                 open={isEditing}
