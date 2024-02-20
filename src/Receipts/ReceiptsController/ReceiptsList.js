@@ -1,36 +1,22 @@
-import { Divider, Typography, ListItemButton, ListItemText } from "@mui/material";
+import { Divider, Typography, ListItemButton, ListItemText, ListItemAvatar } from "@mui/material";
 import { Fragment } from "react";
 
 import { useReceipts } from "../../Lists/ListsApiQueries";
-import { usePersons } from "../../Persons/PersonsApiQueries";
 import { useMarkets } from "../../Markets/MarketsApiQueries";
 import { formatEuro } from "../../Helpers/monetary";
 import InfiniteList from "../../Helpers/InfiniteList";
+import PersonAvatar from "../../Persons/Avatars";
+import { isoToRelativeDate } from "../../Helpers/dateTime";
 
 
 function ReceiptsListItem({ item, onSelect }) {
-  const personsQuery = usePersons();
   const { getMarket } = useMarkets();
 
   const receiptName = item.name;
-
-  let payer = null;
-  if (personsQuery.isLoading) {
-    payer = "Betaler wordt geladen...";
-  } else if (personsQuery.isError) {
-    payer = "Betaler ERROR";
-  } else if (!item.payer) {
-    payer = "Betaler onbekend"
-  } else {
-    payer = personsQuery.getPerson(item.payer)?.name
-  }
-
-  const receiptDate = new Date(item.transaction_date);
-  const formattedDate = receiptDate.toLocaleDateString();
+  const formattedDate = isoToRelativeDate(item.transaction_date);
   const eventCount = item.events.length;
 
   const secondaryInfo = [
-    payer,
     getMarket(item.market)?.name,
     `${eventCount} event` + (eventCount === 1 ? '' : 's'),
     `${item.item_count} items`,
@@ -40,6 +26,9 @@ function ReceiptsListItem({ item, onSelect }) {
 
   return (
     <ListItemButton alignItems="flex-start" onClick={onSelect}>
+      <ListItemAvatar>
+        <PersonAvatar personId={item.payer} size={36} />
+      </ListItemAvatar>
       <ListItemText
         primary={receiptName}
         secondary={
@@ -56,7 +45,8 @@ function ReceiptsListItem({ item, onSelect }) {
           </>
         }
       />
-    </ListItemButton>);
+    </ListItemButton>
+  );
 }
 
 export default function ReceiptsList({ onSelectItem }) {

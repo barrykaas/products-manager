@@ -14,7 +14,7 @@ export default function SettingsPage() {
                 label="Kies gebruiker"
                 value={cookies?.user && Number(cookies.user)}
                 setValue={(userId) => setCookie(
-                    "user", userId, { path: "/", expires: new Date("2030-01-01T00:00:00Z") }
+                    "user", userId, { expires: new Date("2030-01-01T00:00:00Z") }
                 )}
             />
         </Stack>

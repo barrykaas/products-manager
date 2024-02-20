@@ -1,8 +1,9 @@
-import { Avatar, Tooltip } from "@mui/material";
+import { Avatar, Stack, Tooltip } from "@mui/material";
 
 import { usePersons } from "./PersonsApiQueries";
 import { green, grey, red, orange, blue } from "@mui/material/colors";
 
+const defaultSize = 30;
 
 const kaasColors = {
     "Rutger": grey[300],
@@ -12,8 +13,10 @@ const kaasColors = {
     "Cas": orange[300],
 }
 
-export default function PersonAvatar({ personId, size = 30 }) {
+export default function PersonAvatar({ personId, size = defaultSize }) {
     const { isLoading, isError, getPerson } = usePersons();
+
+    if (!personId) return null;
 
     let initials;
     if (isLoading) {
@@ -35,5 +38,15 @@ export default function PersonAvatar({ personId, size = 30 }) {
                 sx={{ height: size, width: size, bgcolor: color }}
             >{initials}</Avatar>
         </Tooltip>
+    );
+}
+
+export function PersonAvatarsRow({ personIds = [], size = defaultSize }) {
+    return (
+        <Stack direction="row">
+            {personIds.map(personId =>
+                <PersonAvatar personId={personId} size={size} />
+            )}
+        </Stack>
     );
 }

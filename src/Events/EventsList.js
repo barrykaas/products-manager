@@ -5,9 +5,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useEvents } from "./EventsApiQueries";
 import { usePersons } from "../Persons/PersonsApiQueries";
 import InfiniteList from "../Helpers/InfiniteList";
-import { useListItems } from "../Lists/ListsApiQueries";
 import { formatEuro } from "../Helpers/monetary";
-import { isoToLocalDate } from "../Helpers/dateTime";
+import { isoToRelativeDate } from "../Helpers/dateTime";
 
 
 function EventsListItem({ item, onEdit, onSelect }) {
@@ -27,7 +26,7 @@ function EventsListItem({ item, onEdit, onSelect }) {
     const listCount = item.lists.length;
 
     const secondaryInfo = [
-        isoToLocalDate(item.event_date),
+        isoToRelativeDate(item.event_date),
         formatEuro(item.amount),
         `${listCount} lijst${listCount === 1 ? '' : 'en'}`,
         eventParticipantPersons.map(p => p.name).join(', '),
