@@ -11,7 +11,7 @@ export default function ProductController({ handleSelectedProduct, onClose }) {
     const [currentProduct, setCurrentProduct] = useState(null);
     const [messageOpen, setMessageOpen] = useState(false);
     const [messageText, setMessageText] = useState("");
-    const [messageState, setMessageState] = useState(true);
+    const [messageState] = useState(true);
     const [editOpen, setEditOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
 

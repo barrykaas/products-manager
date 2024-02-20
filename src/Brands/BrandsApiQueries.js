@@ -2,11 +2,8 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 
 import ax from "../Api/axios";
 
-export const brandsQueryKey = "brands";
 
-export const getBrandsFn = async () => {
-    return ax.get('brands/');
-};
+export const brandsQueryKey = "brands";
 
 export const deleteBrandFn = async (itemId) => {
     const data = await ax.delete(`brands/${itemId}/`);
@@ -19,8 +16,8 @@ export const addBrandFn = async (data) => {
 
 
 export const useBrands = () => {
-    const { isError, error, isLoading, data } = useQuery({ queryKey: [brandsQueryKey], queryFn: getBrandsFn });
-    const actualData = data?.data || [];
+    const { isError, error, isLoading, data } = useQuery({ queryKey: [brandsQueryKey] });
+    const actualData = data || [];
     const getBrand = (id) => {
         const matches = actualData.filter((brand) => id === brand.id);
         return matches[0] || null;

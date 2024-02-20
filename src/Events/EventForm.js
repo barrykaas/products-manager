@@ -6,16 +6,15 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
+import { useQuery } from '@tanstack/react-query';
 
 import { useEventDeleter, useEventMutator } from './EventsApiQueries';
 import ParticipantsList from './ParticipantList';
 import FormDialog from '../Helpers/FormDialog';
-import { useLists } from '../Lists/ListsApiQueries';
 import { Fragment, useState } from 'react';
 import PersonAvatar from '../Persons/Avatars';
 import { isoToLocalDate } from '../Helpers/dateTime';
 import { ReceiptFormDialog } from '../Receipts/ReceiptForm';
-import { useQuery } from '@tanstack/react-query';
 
 
 const validationSchema = yup.object({

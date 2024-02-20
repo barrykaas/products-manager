@@ -1,8 +1,8 @@
-import { useMutation, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import ax from "../Api/axios";
 import { scannedItemsQueryKey } from "../ScannedItems/ScannedItemsApiQueries";
-import { useInvalidator } from "../Api/Common";
+import { useInvalidator, usePaginatedQuery } from "../Api/Common";
 
 
 export const productsQueryKey = "products";
@@ -19,26 +19,11 @@ const deleteProductFn = async (itemId) => {
     return await ax.delete(`products/${itemId}/`);
 };
 
-const fetchProductsAndSearchFn = async (pageParam = 0, searchQuery) => {
-    const urlParams = {};
-    if (searchQuery) urlParams.search = searchQuery;
-
-    let res
-    if (pageParam === 0) {
-        res = await ax.get('products/', { params: urlParams });
-    } else {
-        res = await ax.get(pageParam);
-    }
-    return res.data;
-}
-
 
 export function useProducts(searchQuery) {
-    return useInfiniteQuery({
-        queryKey: ['products', searchQuery],
-        queryFn: ({ pageParam = 0 }) => fetchProductsAndSearchFn(pageParam, searchQuery),
-        getNextPageParam: (lastPage, pages) => lastPage.next,
-    });
+    const params = {};
+    if (searchQuery) params.search = searchQuery;
+    return usePaginatedQuery({ queryKey: [productsQueryKey, null, params] });
 }
 
 export function useProductMutator({ onSuccess, onError } = {}) {

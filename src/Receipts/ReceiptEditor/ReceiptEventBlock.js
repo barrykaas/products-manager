@@ -3,11 +3,11 @@ import { Fragment, useState } from "react";
 import { Edit } from "@mui/icons-material";
 
 import ReceiptItem from "./ReceiptItem";
-import { useEvent } from "../../Events/EventsApiQueries";
 import { isoToLocalDate } from "../../Helpers/dateTime";
 import { formatEuro } from "../../Helpers/monetary";
 import { PersonAvatarGroup } from "../../Persons/Avatars";
 import { EventFormDialog } from "../../Events/EventForm";
+import { useQuery } from "@tanstack/react-query";
 
 
 function AddProductButton({ variant = "outlined", ...args }) {
@@ -76,7 +76,7 @@ function Header({ itemId, title, date, personIds, onAddProduct, onAddAmount, onE
 
 
 export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, onAddDiscount }) {
-    const eventQuery = useEvent(eventId);
+    const eventQuery = useQuery({ queryKey: ['events', eventId] });
     const [editingEvent, setEditingEvent] = useState(false);
 
     const event = eventQuery.data;

@@ -1,7 +1,7 @@
-import { useInfiniteQuery, useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 
 import ax from "../Api/axios";
-import { useInvalidator } from "../Api/Common";
+import { useInvalidator, usePaginatedQuery } from "../Api/Common";
 
 
 const listsQueryKey = 'lists';
@@ -10,30 +10,6 @@ export const receiptListType = 2;
 export const transactionListType = 3;
 export const settlementListType = 4;
 
-
-const fetchLists = async ({ pageParam = 1, listTypes, params = {} }) => {
-    let res;
-    const urlParams = params;
-    if (listTypes) {
-        if (listTypes.length === 1) {
-            urlParams.type = listTypes[0]
-        } else {
-            urlParams.type__in = listTypes.join(',')
-        }
-    }
-
-    if (pageParam === 1) {
-        res = await ax.get('lists/', { params: urlParams });
-    } else {
-        res = await ax.get(pageParam);
-    }
-    return res.data;
-}
-
-const getListFn = async (id) => {
-    const res = await ax.get(`lists/${id}`);
-    return res.data;
-};
 
 const deleteListFn = async (itemId) => {
     return await ax.delete(`lists/${itemId}/`);
@@ -46,14 +22,6 @@ const mutateListFn = async (item) => {
         return await ax.post('lists/', item);
     }
 };
-
-const getListItemsFn = async ({ listId, eventId }) => {
-    const urlParams = {
-        list: listId,
-        event: eventId,
-    };
-    return await ax.get('listitems/', { params: urlParams })
-}
 
 const createMutateListItemFn = async (item) => {
     if (item.id) {
@@ -69,17 +37,23 @@ const deleteListItemFn = async (itemId) => {
 
 export function useList(id) {
     return useQuery({
-        queryKey: [listsQueryKey, id],
-        queryFn: async () => await getListFn(id)
+        queryKey: [listsQueryKey, id]
     })
 }
 
 export function useLists({ listTypes, params = {} }) {
-    return useInfiniteQuery({
-        queryKey: [listsQueryKey, listTypes],
-        queryFn: ({ pageParam = 1 }) => fetchLists({ pageParam, listTypes, params }),
-        getNextPageParam: (lastPage, allPages) => lastPage.next,
-    });
+    const urlParams = params;
+    if (listTypes) {
+        if (listTypes.length === 1) {
+            urlParams.type = listTypes[0]
+        } else {
+            urlParams.type__in = listTypes.join(',')
+        }
+    }
+
+    return usePaginatedQuery({
+        queryKey: [listsQueryKey, null, urlParams]
+    })
 }
 
 export function useReceipts() {
@@ -120,16 +94,11 @@ export function useListDeleter({ onSuccess, onError } = {}) {
     return deleteMutation.mutate;
 }
 
-export function useListItems({ listId, eventId } = {}) {
-    const { isError, error, isLoading, data } = useQuery({
-        queryKey: [listItemsQueryKey, listId, eventId],
-        queryFn: async () => await getListItemsFn({ listId, eventId })
-    });
-
-    const actualData = data?.data || [];
-    return { isError, error, isLoading, data: actualData };
+export function useListItems({ listId, eventId, params = {} } = {}) {
+    if (listId) params.list = listId;
+    if (eventId) params.event = eventId;
+    return useQuery({ queryKey: [listItemsQueryKey, null, params] })
 }
-
 
 
 export function useListItemMutator({ onSuccess, onError } = {}) {
