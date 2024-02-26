@@ -10,11 +10,15 @@ export function useInvalidator(queryKey) {
 export const defaultQueryFn = async ({ queryKey, pageParam = 1 }) => {
     const [route, itemId, params] = queryKey;
 
-    const url = pageParam !== 1
-        ? pageParam
-        : route + '/' + (itemId ? itemId + '/' : '')
-
-    const { data } = await ax.get(url, { params })
+    let url, axOptions;
+    if (pageParam === 1) {
+        url = route + '/' + (itemId ? itemId + '/' : '');
+        axOptions = { params };
+    } else {
+        url = pageParam;
+    }
+    
+    const { data } = await ax.get(url, axOptions)
     return data
 }
 
