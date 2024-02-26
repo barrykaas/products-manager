@@ -9,7 +9,7 @@ import ControllerView from '../Helpers/ControllerView';
 
 const defaultTitle = "Events";
 
-export default function EventController({ handleSelectedEvent, onClose, title = defaultTitle }) {
+export default function EventController({ handleSelectedEvent, onClose, onMenu, title = defaultTitle } = {}) {
     const [formOpen, setFormOpen] = useState(false);
     const [currentEvent, setCurrentEvent] = useState(null);
 
@@ -49,7 +49,13 @@ export default function EventController({ handleSelectedEvent, onClose, title = 
                 </Alert>
             </Snackbar>
 
-            <ControllerView onClose={onClose} title={title} onRefresh={onRefresh} onAdd={handleAddEvent}>
+            <ControllerView
+                onClose={onClose}
+                title={title}
+                onRefresh={onRefresh}
+                onAdd={handleAddEvent}
+                onMenu={onMenu}
+            >
                 <EventsList handleEditEvent={handleEditEvent} handleSelectedEvent={handleSelectedEvent} />
             </ControllerView>
 

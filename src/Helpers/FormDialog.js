@@ -20,7 +20,7 @@ function FormDialog({ open, onClose, title, secondaryButtons, hasToolbar = true,
       maxWidth='sm'
       TransitionComponent={TransitionRight}
     >
-      {hasToolbar ?
+      {hasToolbar &&
         <AppBar position="sticky">
           <Toolbar>
             <IconButton
@@ -31,18 +31,14 @@ function FormDialog({ open, onClose, title, secondaryButtons, hasToolbar = true,
             >
               <CloseIcon />
             </IconButton>
-            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div" noWrap>
+            <Typography flex={1} variant="h6" component="div" noWrap>
               {title}
             </Typography>
+
             {secondaryButtons}
-            {/* <Button autoFocus color="inherit" onClick={handleClose}>
-                            save
-                        </Button> */}
-
-
           </Toolbar>
         </AppBar>
-        : <></>}
+      }
       {children}
     </Dialog>
   );

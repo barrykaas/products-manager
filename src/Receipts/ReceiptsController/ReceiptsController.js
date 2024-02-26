@@ -6,7 +6,7 @@ import { useListsInvalidator } from "../../Lists/ListsApiQueries";
 import ControllerView from "../../Helpers/ControllerView";
 
 
-export default function ReceiptsController() {
+export default function ReceiptsController({ onMenu }) {
     const [isEditing, setIsEditing] = useState(false);
     const [initialFormData, setInitialFormData] = useState();
     const invalidateReceipts = useListsInvalidator();
@@ -32,14 +32,13 @@ export default function ReceiptsController() {
     };
 
     return (
-        <>
-            <ControllerView
-                title="Bonnetjes"
-                onRefresh={onRefresh}
-                onAdd={onAddReceipt}
-            >
-                <ReceiptsList onSelectItem={selectReceipt} />
-            </ControllerView>
+        <ControllerView
+            title="Bonnetjes"
+            onRefresh={onRefresh}
+            onAdd={onAddReceipt}
+            onMenu={onMenu}
+        >
+            <ReceiptsList onSelectItem={selectReceipt} />
 
             <ReceiptFormDialog
                 open={isEditing}
@@ -49,7 +48,6 @@ export default function ReceiptsController() {
                 onSuccessfulCreateEdit={handleSuccessfulCreateEdit}
                 onSuccessfulDelete={() => setIsEditing(false)}
             />
-
-        </>
+        </ControllerView>
     );
 }

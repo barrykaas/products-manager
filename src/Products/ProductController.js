@@ -7,7 +7,7 @@ import { useProductsInvalidator } from './ProductsApiQueries';
 import ControllerView from '../Helpers/ControllerView';
 
 
-export default function ProductController({ handleSelectedProduct, onClose }) {
+export default function ProductController({ handleSelectedProduct, onClose, onMenu }) {
     const [currentProduct, setCurrentProduct] = useState(null);
     const [messageOpen, setMessageOpen] = useState(false);
     const [messageText, setMessageText] = useState("");
@@ -49,10 +49,14 @@ export default function ProductController({ handleSelectedProduct, onClose }) {
                 title={onClose ? "Kies product" : "Producten"}
                 onAdd={handleAddProduct}
                 onClose={onClose}
+                onMenu={onMenu}
                 onRefresh={onRefresh}
                 hasSearch
                 searchQuery={searchQuery}
-                onSearchQueryChange={(e) => setSearchQuery(e.target.value)}
+                onSearchQueryChange={(e) => {
+                    console.log(e.target.value);
+                    setSearchQuery(e.target.value)
+                }}
             >
                 <ProductsList
                     handleEdit={handleEditProduct}
