@@ -179,7 +179,7 @@ export default function MainNav() {
 function ViewPanel({ id, currentView, children }) {
     const hidden = id !== currentView?.id;
     return (
-        <div hidden={hidden} style={{ height: "100%", width: "100%" }}>
+        <div hidden={hidden}>
             {hidden || children}
         </div>
     );

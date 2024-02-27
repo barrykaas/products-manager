@@ -1,8 +1,5 @@
-import { Divider, Typography, ListItemButton, ListItemText, ListItemAvatar, CircularProgress, Box, Stack } from "@mui/material";
+import { Typography, ListItemButton, ListItemText, ListItemAvatar, CircularProgress, Stack } from "@mui/material";
 import { Fragment } from "react";
-import { FixedSizeList } from 'react-window';
-import InfiniteLoader from "react-window-infinite-loader";
-import AutoSizer from "react-virtualized-auto-sizer";
 
 import { useReceipts } from "../../Lists/ListsApiQueries";
 import { useMarkets } from "../../Markets/MarketsApiQueries";
@@ -59,67 +56,22 @@ export default function ReceiptsList({ onSelectItem, searchQuery }) {
     isError,
     error,
     fetchNextPage
-  } = useReceipts({ params: { search: searchQuery, page_size: 50 } });
+  } = useReceipts({ params: { search: searchQuery, page_size: 20 } });
 
   const allReceipts = data?.pages.flatMap((page) => page.results) || [];
-  const itemCount = data?.pages?.at(0)?.count ?? 0;
-  // const itemCount = allReceipts.length;
-  // console.log('fetched length', allReceipts.length);
-
-
-  const Row = ({ index, style }) => {
-    // if (index >= allReceipts.length) {
-    //   console.log(`Row ${index}/${allReceipts.length}`);
-    // }
-    const item = allReceipts[index];
-    return (
-      <ReceiptsListItem
-        item={item}
-        style={style}
-        onSelect={() => onSelectItem(item)}
-      />
-    );
-  }
 
   return (
-    <AutoSizer>
-      {({ height, width }) =>
-        <InfiniteLoader
-          isItemLoaded={index => index < allReceipts.length}
-          itemCount={itemCount}
-          loadMoreItems={fetchNextPage}
-        >
-          {({ onItemsRendered, ref }) => (
-            <FixedSizeList
-              height={height}
-              width={width}
-              itemCount={itemCount}
-              itemSize={80}
-              onItemsRendered={onItemsRendered}
-              ref={ref}
-            >
-              {Row}
-            </FixedSizeList>
-          )}
-        </InfiniteLoader>
-      }
-
-    </AutoSizer>
-  )
-
-  // return (
-  //   <InfiniteList onMore={fetchNextPage} hasMore={hasNextPage}
-  //     isLoading={isFetching || isFetchingNextPage}
-  //     error={isError ? error : null}
-  //   >
-  //     {allReceipts.map((item) => (
-  //       <Fragment key={item.id}>
-  //         <ReceiptsListItem item={item}
-  //           onSelect={() => onSelectItem(item)} />
-  //         <Divider component="li" />
-  //       </Fragment>
-  //     ))}
-  //   </InfiniteList>
-  // );
+    <InfiniteList onMore={fetchNextPage} hasMore={hasNextPage}
+      isLoading={isFetching || isFetchingNextPage}
+      error={isError ? error : null}
+    >
+      {allReceipts.map((item) => (
+        <Fragment key={item.id}>
+          <ReceiptsListItem item={item}
+            onSelect={() => onSelectItem(item)} />
+        </Fragment>
+      ))}
+    </InfiniteList>
+  );
 
 }

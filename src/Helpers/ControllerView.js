@@ -8,21 +8,17 @@ import ToolbarSearch from "./ToolbarSearch";
 export default function ControllerView({ children, title, onClose, onAdd, onRefresh, initialSearch, handleNewSearch, onMenu }) {
     return (
         <Box sx={{ height: 1, width: 1 }}>
-            <Stack height={1} width={1}>
-                <ControllerAppBar
-                    title={title}
-                    onClose={onClose}
-                    onAdd={onAdd}
-                    onRefresh={onRefresh}
-                    onMenu={onMenu}
-                    initialSearch={initialSearch}
-                    handleNewSearch={handleNewSearch}
-                />
+            <ControllerAppBar
+                title={title}
+                onClose={onClose}
+                onAdd={onAdd}
+                onRefresh={onRefresh}
+                onMenu={onMenu}
+                initialSearch={initialSearch}
+                handleNewSearch={handleNewSearch}
+            />
 
-                <Box flexGrow={1} overflow="scroll">
-                    {children}
-                </Box>
-            </Stack>
+            {children}
 
             <Stack spacing={1} alignItems="center" sx={{ position: "fixed", bottom: "20px", right: "20px" }}>
                 {onRefresh &&
@@ -36,13 +32,14 @@ export default function ControllerView({ children, title, onClose, onAdd, onRefr
                     </Fab>
                 }
             </Stack>
+
         </Box>
     );
 }
 
 function ControllerAppBar({ title, onClose, initialSearch, handleNewSearch, onMenu }) {
     return (
-        <AppBar position="static">
+        <AppBar position="sticky">
             <Toolbar>
                 {onClose ||
                     <IconButton
