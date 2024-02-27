@@ -57,8 +57,8 @@ export default function EventController({ handleSelectedEvent, onClose, onMenu, 
                 onRefresh={onRefresh}
                 onAdd={handleAddEvent}
                 onMenu={onMenu}
-                searchQuery={searchQuery}
-                onSearchQueryChange={(e) => setSearchQuery(e.target.value)}
+                initialSearch={searchQuery}
+                handleNewSearch={setSearchQuery}
             >
                 <EventsList
                     handleEditEvent={handleEditEvent}

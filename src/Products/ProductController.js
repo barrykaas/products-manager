@@ -51,12 +51,8 @@ export default function ProductController({ handleSelectedProduct, onClose, onMe
                 onClose={onClose}
                 onMenu={onMenu}
                 onRefresh={onRefresh}
-                hasSearch
-                searchQuery={searchQuery}
-                onSearchQueryChange={(e) => {
-                    console.log(e.target.value);
-                    setSearchQuery(e.target.value)
-                }}
+                initialSearch={searchQuery}
+                handleNewSearch={setSearchQuery}
             >
                 <ProductsList
                     handleEdit={handleEditProduct}

@@ -38,8 +38,8 @@ export default function ReceiptsController({ onMenu }) {
             onRefresh={onRefresh}
             onAdd={onAddReceipt}
             onMenu={onMenu}
-            searchQuery={searchQuery}
-            onSearchQueryChange={(e) => setSearchQuery(e.target.value)}
+            initialSearch={searchQuery}
+            handleNewSearch={setSearchQuery}
         >
             <ReceiptsList
                 onSelectItem={selectReceipt}

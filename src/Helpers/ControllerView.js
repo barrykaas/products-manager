@@ -5,7 +5,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ToolbarSearch from "./ToolbarSearch";
 
 
-export default function ControllerView({ children, title, onClose, onAdd, onRefresh, searchQuery, onSearchQueryChange, onMenu }) {
+export default function ControllerView({ children, title, onClose, onAdd, onRefresh, initialSearch, handleNewSearch, onMenu }) {
     return (
         <Box sx={{
             height: 1, width: 1,
@@ -17,8 +17,8 @@ export default function ControllerView({ children, title, onClose, onAdd, onRefr
                 onAdd={onAdd}
                 onRefresh={onRefresh}
                 onMenu={onMenu}
-                searchQuery={searchQuery}
-                onSearchQueryChange={onSearchQueryChange}
+                initialSearch={initialSearch}
+                handleNewSearch={handleNewSearch}
             />
 
             {children}
@@ -40,7 +40,7 @@ export default function ControllerView({ children, title, onClose, onAdd, onRefr
     );
 }
 
-function ControllerAppBar({ title, onClose, searchQuery, onSearchQueryChange, onMenu }) {
+function ControllerAppBar({ title, onClose, initialSearch, handleNewSearch, onMenu }) {
     return (
         <AppBar position="sticky">
             <Toolbar>
@@ -67,10 +67,10 @@ function ControllerAppBar({ title, onClose, searchQuery, onSearchQueryChange, on
                     {title}
                 </Typography>
                 <Box flexGrow={1} />
-                {onSearchQueryChange &&
+                {handleNewSearch &&
                     <ToolbarSearch
-                        searchQuery={searchQuery}
-                        onChange={onSearchQueryChange}
+                        initialValue={initialSearch}
+                        handleNewValue={handleNewSearch}
                     />
                 }
             </Toolbar>

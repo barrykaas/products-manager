@@ -35,8 +35,8 @@ export default function BrandController({ handleSelectBrand, onClose, onMenu }) 
     return (
         <ControllerView
             title="Merken"
-            searchQuery={searchQuery}
-            onSearchQueryChange={(e) => setSearchQuery(e.target.value)}
+            initialSearch={searchQuery}
+            handleNewSearch={setSearchQuery}
             onMenu={onMenu}
             onClose={onClose}
         >
