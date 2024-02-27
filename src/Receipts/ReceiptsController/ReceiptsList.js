@@ -29,7 +29,9 @@ function ReceiptsListItem({ item, onSelect, ...args }) {
   ];
 
   return (
-    <ListItemButton alignItems="flex-start" onClick={onSelect} {...args}>
+    <ListItemButton alignItems="flex-start" onClick={onSelect} divider
+      {...args}
+    >
       <ListItemAvatar>
         <PersonAvatar personId={item.payer} size={36} />
       </ListItemAvatar>
@@ -57,7 +59,7 @@ export default function ReceiptsList({ onSelectItem, searchQuery }) {
     isError,
     error,
     fetchNextPage
-  } = useReceipts({ params: { search: searchQuery } });
+  } = useReceipts({ params: { search: searchQuery, page_size: 50 } });
 
   const allReceipts = data?.pages.flatMap((page) => page.results) || [];
   const itemCount = data?.pages?.at(0)?.count ?? 0;
@@ -66,9 +68,9 @@ export default function ReceiptsList({ onSelectItem, searchQuery }) {
 
 
   const Row = ({ index, style }) => {
-    if (index >= allReceipts.length) {
-      console.log(`Row ${index}/${allReceipts.length}`);
-    }
+    // if (index >= allReceipts.length) {
+    //   console.log(`Row ${index}/${allReceipts.length}`);
+    // }
     const item = allReceipts[index];
     return (
       <ReceiptsListItem
@@ -79,45 +81,45 @@ export default function ReceiptsList({ onSelectItem, searchQuery }) {
     );
   }
 
-  // return (
-  //   <AutoSizer>
-  //     {({ height, width }) =>
-  //       <InfiniteLoader
-  //         isItemLoaded={index => index < allReceipts.length}
-  //         itemCount={itemCount}
-  //         loadMoreItems={fetchNextPage}
-  //       >
-  //         {({ onItemsRendered, ref }) => (
-  //           <FixedSizeList
-  //             height={height}
-  //             width={width}
-  //             itemCount={itemCount}
-  //             itemSize={80}
-  //             onItemsRendered={onItemsRendered}
-  //             ref={ref}
-  //           >
-  //             {Row}
-  //           </FixedSizeList>
-  //         )}
-  //       </InfiniteLoader>
-  //     }
-
-  //   </AutoSizer>
-  // )
-
   return (
-    <InfiniteList onMore={fetchNextPage} hasMore={hasNextPage}
-      isLoading={isFetching || isFetchingNextPage}
-      error={isError ? error : null}
-    >
-      {allReceipts.map((item) => (
-        <Fragment key={item.id}>
-          <ReceiptsListItem item={item}
-            onSelect={() => onSelectItem(item)} />
-          <Divider component="li" />
-        </Fragment>
-      ))}
-    </InfiniteList>
-  );
+    <AutoSizer>
+      {({ height, width }) =>
+        <InfiniteLoader
+          isItemLoaded={index => index < allReceipts.length}
+          itemCount={itemCount}
+          loadMoreItems={fetchNextPage}
+        >
+          {({ onItemsRendered, ref }) => (
+            <FixedSizeList
+              height={height}
+              width={width}
+              itemCount={itemCount}
+              itemSize={80}
+              onItemsRendered={onItemsRendered}
+              ref={ref}
+            >
+              {Row}
+            </FixedSizeList>
+          )}
+        </InfiniteLoader>
+      }
+
+    </AutoSizer>
+  )
+
+  // return (
+  //   <InfiniteList onMore={fetchNextPage} hasMore={hasNextPage}
+  //     isLoading={isFetching || isFetchingNextPage}
+  //     error={isError ? error : null}
+  //   >
+  //     {allReceipts.map((item) => (
+  //       <Fragment key={item.id}>
+  //         <ReceiptsListItem item={item}
+  //           onSelect={() => onSelectItem(item)} />
+  //         <Divider component="li" />
+  //       </Fragment>
+  //     ))}
+  //   </InfiniteList>
+  // );
 
 }

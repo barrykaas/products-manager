@@ -102,7 +102,7 @@ export default function MainNav() {
     );
 
     return (
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{ display: 'flex', height: 1 }}>
             <CssBaseline />
             <Box
                 component="nav"
@@ -141,7 +141,7 @@ export default function MainNav() {
             </Box>
             <Box
                 component="main"
-                sx={{ flexGrow: 1, width: { sm: `calc(100% - ${drawerWidth}px)`, xs: 1 } }}
+                sx={{ flexGrow: 1, width: { sm: `calc(100% - ${drawerWidth}px)`, xs: 1 }, height: 1 }}
             >
                 <ViewPanel id="receipts" currentView={currentView} search>
                     <ReceiptsController onMenu={handleDrawerToggle} />
@@ -156,7 +156,7 @@ export default function MainNav() {
                 </ViewPanel>
 
                 <ViewPanel id="brands" currentView={currentView}>
-                    <BrandController onMenu={handleDrawerToggle}  />
+                    <BrandController onMenu={handleDrawerToggle} />
                 </ViewPanel>
 
                 <ViewPanel id="scanneditems" currentView={currentView}>
@@ -176,11 +176,10 @@ export default function MainNav() {
     );
 }
 
-
 function ViewPanel({ id, currentView, children }) {
-    const hidden = id !== currentView?.id
+    const hidden = id !== currentView?.id;
     return (
-        <div hidden={hidden}>
+        <div hidden={hidden} style={{ height: "100%", width: "100%" }}>
             {hidden || children}
         </div>
     );
