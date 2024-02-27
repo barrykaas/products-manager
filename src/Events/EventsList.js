@@ -41,7 +41,7 @@ function EventsListItem({ item, onEdit, onSelect }) {
     );
 }
 
-export default function EventsList({ handleEditEvent, handleSelectedEvent }) {
+export default function EventsList({ handleEditEvent, handleSelectedEvent, searchQuery }) {
     const {
         data,
         isFetching,
@@ -50,7 +50,7 @@ export default function EventsList({ handleEditEvent, handleSelectedEvent }) {
         isError,
         error,
         fetchNextPage
-    } = useEvents();
+    } = useEvents({ params: { search: searchQuery } });
 
     const allEvents = data?.pages.flatMap((page) => page.results) || [];
 

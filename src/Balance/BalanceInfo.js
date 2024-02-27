@@ -2,7 +2,9 @@ import { Chip, CircularProgress, Paper, Table, TableCell, TableContainer, TableH
 import { ArrowForward } from "@mui/icons-material";
 
 import { formatEuro } from "../Helpers/monetary";
-import { useBalances } from "./BalanceApiQueries";
+import { balancesQueryKey, useBalances } from "./BalanceApiQueries";
+import ControllerView from "../Helpers/ControllerView";
+import { useInvalidator } from "../Api/Common";
 
 
 function PersonRow({ person }) {
@@ -20,8 +22,8 @@ function PersonRow({ person }) {
     );
 }
 
-export default function BalanceInfo() {
-    const { isError, error, isLoading, data, getPerson, invalidate } = useBalances();
+function BalanceInfoContent() {
+    const { isError, error, isLoading, data, getPerson } = useBalances();
 
 
     if (isLoading) {
@@ -31,13 +33,10 @@ export default function BalanceInfo() {
         return <div>Error: {JSON.stringify(error)}</div>;
     }
 
-    const onRefresh = invalidate;
     const toSettle = data.flatMap(person => person?.to_settle ?? [])
 
     return (
         <Stack spacing={2}>
-            <Button onClick={onRefresh}>Refresh</Button>
-
             <Box sx={{ overflow: "scroll" }}>
                 <TableContainer component={Paper} sx={{ minWidth: 500 }}>
                     <Table>
@@ -70,5 +69,18 @@ export default function BalanceInfo() {
                 </TableContainer>
             </Box>
         </Stack>
+    );
+}
+
+export default function BalanceInfo() {
+    const invalidateBalance = useInvalidator([balancesQueryKey]);
+
+    return (
+        <ControllerView
+            title="Balans"
+            onRefresh={invalidateBalance}
+        >
+            <BalanceInfoContent />
+        </ControllerView>
     );
 }

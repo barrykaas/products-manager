@@ -9,6 +9,7 @@ import ControllerView from "../../Helpers/ControllerView";
 export default function ReceiptsController({ onMenu }) {
     const [isEditing, setIsEditing] = useState(false);
     const [initialFormData, setInitialFormData] = useState();
+    const [searchQuery, setSearchQuery] = useState("");
     const invalidateReceipts = useListsInvalidator();
 
     const onAddReceipt = () => {
@@ -37,8 +38,13 @@ export default function ReceiptsController({ onMenu }) {
             onRefresh={onRefresh}
             onAdd={onAddReceipt}
             onMenu={onMenu}
+            searchQuery={searchQuery}
+            onSearchQueryChange={(e) => setSearchQuery(e.target.value)}
         >
-            <ReceiptsList onSelectItem={selectReceipt} />
+            <ReceiptsList
+                onSelectItem={selectReceipt}
+                searchQuery={searchQuery}
+            />
 
             <ReceiptFormDialog
                 open={isEditing}

@@ -19,10 +19,10 @@ const mutateEventFn = async (data) => {
     }
 };
 
-export function useEvents() {
+export function useEvents({ params = {} } = {}) {
     return usePaginatedQuery({
-        queryKey: [eventsQueryKey]
-    });
+        queryKey: [eventsQueryKey, null, params]
+    })
 }
 
 export function useEventMutator({ onSuccess, onError } = {}) {
@@ -56,4 +56,4 @@ export function useEventDeleter({ onSuccess, onError } = {}) {
     return deleteMutation.mutate;
 }
 
-export const useEventsInvalidator = () => useInvalidator(eventsQueryKey);
+export const useEventsInvalidator = () => useInvalidator([eventsQueryKey]);

@@ -28,7 +28,11 @@ const iOS =
 
 const views = [
     {
-        id: "products", title: "Producten", icon: <ShoppingCart />,
+        id: "receipts", title: "Bonnetjes", icon: <ReceiptLong />,
+        search: true
+    },
+    {
+        id: "events", title: "Events", icon: <Groups />,
         search: true
     },
     {
@@ -36,11 +40,7 @@ const views = [
         refresh: true
     },
     {
-        id: "receipts", title: "Bonnetjes", icon: <ReceiptLong />,
-        search: true
-    },
-    {
-        id: "events", title: "Events", icon: <Groups />,
+        id: "products", title: "Producten", icon: <ShoppingCart />,
         search: true
     },
     {

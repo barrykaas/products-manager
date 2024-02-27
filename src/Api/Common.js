@@ -4,7 +4,7 @@ import ax from "./axios";
 
 export function useInvalidator(queryKey) {
     const queryClient = useQueryClient();
-    return () => queryClient.invalidateQueries({ queryKey: [queryKey] });
+    return () => queryClient.invalidateQueries({ queryKey });
 }
 
 export const defaultQueryFn = async ({ queryKey, pageParam = 1 }) => {

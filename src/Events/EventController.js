@@ -18,6 +18,8 @@ export default function EventController({ handleSelectedEvent, onClose, onMenu, 
     const [messageText, setMessageText] = useState("");
     const [messageState, setMessageState] = useState(true);
 
+    const [searchQuery, setSearchQuery] = useState("");
+
     const invalidateEvents = useEventsInvalidator();
 
     const handleAddEvent = () => {
@@ -55,8 +57,14 @@ export default function EventController({ handleSelectedEvent, onClose, onMenu, 
                 onRefresh={onRefresh}
                 onAdd={handleAddEvent}
                 onMenu={onMenu}
+                searchQuery={searchQuery}
+                onSearchQueryChange={(e) => setSearchQuery(e.target.value)}
             >
-                <EventsList handleEditEvent={handleEditEvent} handleSelectedEvent={handleSelectedEvent} />
+                <EventsList
+                    handleEditEvent={handleEditEvent}
+                    handleSelectedEvent={handleSelectedEvent}
+                    searchQuery={searchQuery}
+                />
             </ControllerView>
 
             <EventFormDialog

@@ -56,8 +56,8 @@ export function useLists({ listTypes, params = {} }) {
     })
 }
 
-export function useReceipts() {
-    return useLists({ listTypes: [receiptListType] });
+export function useReceipts({ params } = {}) {
+    return useLists({ listTypes: [receiptListType], params });
 }
 
 export function useTransactions() {
@@ -132,4 +132,4 @@ export function useListItemDeleter({ onSuccess, onError } = {}) {
     return removeMutation.mutate;
 }
 
-export const useListsInvalidator = () => useInvalidator(listsQueryKey);
+export const useListsInvalidator = () => useInvalidator([listsQueryKey]);

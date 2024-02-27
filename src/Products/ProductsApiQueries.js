@@ -58,4 +58,4 @@ export function useProductDeleter({ onSuccess, onError } = {}) {
     return deleteMutation.mutate;
 }
 
-export const useProductsInvalidator = () => useInvalidator(productsQueryKey);
+export const useProductsInvalidator = () => useInvalidator([productsQueryKey]);

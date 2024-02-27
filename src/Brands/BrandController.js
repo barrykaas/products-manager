@@ -4,9 +4,10 @@ import { useConfirm } from "material-ui-confirm";
 
 import BrandsList from "./BrandsList";
 import { useBrandDeleter } from "./BrandsApiQueries";
+import ControllerView from "../Helpers/ControllerView";
 
 
-export default function BrandController({ handleSelectBrand, onClose }) {
+export default function BrandController({ handleSelectBrand, onClose, onMenu }) {
     const [searchQuery, setSearchQuery] = useState("");
 
     const deleteBrand = useBrandDeleter({
@@ -32,20 +33,14 @@ export default function BrandController({ handleSelectBrand, onClose }) {
     }
 
     return (
-        <>
-            <Paper sx={{ m: 1, p: 1 }}>
-                <TextField
-                    id="standard-search"
-                    label="Zoek"
-                    type="search"
-                    variant="standard"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    fullWidth
-                />
-            </Paper>
-
+        <ControllerView
+            title="Merken"
+            searchQuery={searchQuery}
+            onSearchQueryChange={(e) => setSearchQuery(e.target.value)}
+            onMenu={onMenu}
+            onClose={onClose}
+        >
             <BrandsList searchQuery={searchQuery} handleDelete={handleDelete} />
-        </>
+        </ControllerView>
     );
 }

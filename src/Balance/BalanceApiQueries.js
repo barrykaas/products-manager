@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 
-const balancesQueryKey = 'balances';
+export const balancesQueryKey = 'balances';
 
 export const useBalances = () => {
     const queryClient = useQueryClient();
