@@ -19,6 +19,7 @@ function ReceiptsListItem({ item, onSelect, ...args }) {
   const receiptName = item.name;
   const formattedDate = isoToRelativeDate(item.transaction_date);
   const eventCount = item.events.length;
+  const amount = item.amount;
 
   const secondaryInfo = [
     formattedDate,
@@ -36,7 +37,9 @@ function ReceiptsListItem({ item, onSelect, ...args }) {
         primary={
           <Stack direction="row" justifyContent="space-between" spacing={1}>
             <Typography>{receiptName}</Typography>
-            <Typography align="right" sx={{ whiteSpace: "nowrap" }}><b>{formatEuro(item.amount)}</b></Typography>
+            {amount !== 0 &&
+              <Typography align="right" sx={{ whiteSpace: "nowrap" }}><b>{formatEuro(amount)}</b></Typography>
+            }
           </Stack>
         }
         secondary={secondaryInfo.filter(Boolean).join(" - ")}
@@ -54,7 +57,7 @@ export default function ReceiptsList({ onSelectItem, searchQuery }) {
     isError,
     error,
     fetchNextPage
-  } = useReceipts({ params: {search: searchQuery} });
+  } = useReceipts({ params: { search: searchQuery } });
 
   const allReceipts = data?.pages.flatMap((page) => page.results) || [];
   const itemCount = data?.pages?.at(0)?.count ?? 0;
