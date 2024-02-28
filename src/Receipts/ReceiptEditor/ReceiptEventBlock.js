@@ -5,7 +5,7 @@ import { Edit } from "@mui/icons-material";
 import ReceiptItem from "./ReceiptItem";
 import { isoToLocalDate } from "../../Helpers/dateTime";
 import { formatEuro } from "../../Helpers/monetary";
-import { PersonAvatarGroup } from "../../Persons/Avatars";
+import { PersonAvatarGroup } from "../../Persons/Avatars/Avatars";
 import { EventFormDialog } from "../../Events/EventForm";
 import { useQuery } from "@tanstack/react-query";
 

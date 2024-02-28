@@ -12,7 +12,7 @@ import { useEventDeleter, useEventMutator } from './EventsApiQueries';
 import ParticipantsList from './ParticipantList';
 import FormDialog from '../Helpers/FormDialog';
 import { Fragment, useState } from 'react';
-import PersonAvatar from '../Persons/Avatars';
+import PersonAvatar from '../Persons/Avatars/Avatars';
 import { isoToLocalDate } from '../Helpers/dateTime';
 import { ReceiptFormDialog } from '../Receipts/ReceiptForm';
 

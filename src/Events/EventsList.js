@@ -6,7 +6,7 @@ import { useEvents } from "./EventsApiQueries";
 import InfiniteList from "../Helpers/InfiniteList";
 import { formatEuro } from "../Helpers/monetary";
 import { isoToRelativeDate } from "../Helpers/dateTime";
-import { PersonAvatarGroup } from "../Persons/Avatars";
+import { PersonAvatarGroup } from "../Persons/Avatars/Avatars";
 import { Person } from "@mui/icons-material";
 
 

@@ -5,7 +5,7 @@ import { useReceipts } from "../../Lists/ListsApiQueries";
 import { useMarkets } from "../../Markets/MarketsApiQueries";
 import { formatEuro } from "../../Helpers/monetary";
 import InfiniteList from "../../Helpers/InfiniteList";
-import PersonAvatar from "../../Persons/Avatars";
+import PersonAvatar from "../../Persons/Avatars/Avatars";
 import { isoToRelativeDate } from "../../Helpers/dateTime";
 
 
