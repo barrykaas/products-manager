@@ -19,23 +19,25 @@ export function isoToRelativeDate(isoString) {
     const today = new Date();
     const daysAgo = (today - date) / (1000 * 86400);
 
-    if (daysAgo < -2 || daysAgo >= 3) {
-        if (today.getFullYear() === date.getFullYear()) {
-            return shortDate(date);
-        } else {
-            return shortDate(date) + ' ' + date.getFullYear();
-        }
-    } else if (daysAgo < -1) {
-        return 'Overmorgen';
-    } else if (daysAgo < 0) {
-        return 'Morgen';
-    } else if (daysAgo < 1) {
-        return 'Vandaag';
-    } else if (daysAgo < 2) {
-        return 'Gisteren';
-    } else if (daysAgo < 3) {
-        return 'Eergisteren';
-    } else {
-        return isoString;
+    let relDate = shortDate(date);
+
+    const fullYear = date.getFullYear();
+    if (today.getFullYear() !== fullYear) {
+        relDate = relDate + ' ' + fullYear;
     }
+
+    if (daysAgo < -2) {
+    } else if (daysAgo < -1) {
+        relDate = 'Overmorgen, ' + relDate;
+    } else if (daysAgo < 0) {
+        relDate = 'Morgen, ' + relDate;
+    } else if (daysAgo < 1) {
+        relDate = 'Vandaag, ' + relDate;
+    } else if (daysAgo < 2) {
+        relDate = 'Gisteren, ' + relDate;
+    } else if (daysAgo < 3) {
+        relDate = 'Eergisteren, ' + relDate;
+    }
+
+    return relDate;
 }
