@@ -1,4 +1,4 @@
-import { ListItemText, Divider, ListItemButton, IconButton, Stack, Typography, ListSubheader } from "@mui/material";
+import { ListItemText, ListItemButton, IconButton, Stack, Typography, ListSubheader, Paper } from "@mui/material";
 import { Fragment } from "react";
 import EditIcon from '@mui/icons-material/Edit';
 import { Person } from "@mui/icons-material";
@@ -6,7 +6,7 @@ import { Person } from "@mui/icons-material";
 import { useEvents } from "./EventsApiQueries";
 import InfiniteList from "../Helpers/InfiniteList";
 import { formatEuro } from "../Helpers/monetary";
-import { daysAhead, isoToRelativeDate, weeksAhead } from "../Helpers/dateTime";
+import { isoToRelativeDate, weeksAhead } from "../Helpers/dateTime";
 import { PersonAvatarGroup } from "../Persons/Avatars/Avatars";
 
 
@@ -34,7 +34,7 @@ function EventsListItem({ item, onEdit, onSelect }) {
         <ListItemButton
             onClick={onSelect}
             secondaryAction={secondaryAction}
-            alignItems="flex-start" disablePadding
+            alignItems="flex-start"
             divider
         >
             <Stack alignItems="flex-start" width={1}>
@@ -82,26 +82,12 @@ export default function EventsList({ handleEditEvent, handleSelectedEvent, searc
     } = useEvents({ params: { search: searchQuery } });
 
     const allEvents = data?.pages.flatMap((page) => page.results) || [];
-    // const groupedEvents = {
-    //     "Over meer dan twee weken": allEvents.filter(event => weeksAhead(event.event_date) > 2),
-    //     "Over twee weken": allEvents.filter(event => weeksAhead(event.event_date) === 2),
-    //     "Vorige week": allEvents.filter(event => weeksAhead(event.event_date) === -1),
-    //     "Deze week": allEvents.filter(event => weeksAhead(event.event_date) === 0),
-    //     "Twee weken geleden": allEvents.filter(event => weeksAhead(event.event_date) === -2),
-    //     "Meer dan twee weken geleden": allEvents.filter(event => weeksAhead(event.event_date) < -2),
-    // };
-    // const groupedEvents = {
-    //     "Over meer dan twee weken": [],
-    //     "Over twee weken": [],
-    //     "Vorige week": [],
-    //     "Deze week": [],
-    //     "Twee weken geleden": [],
-    //     "Meer dan twee weken geleden": [],
-    // };
     const groupedEvents = allEvents.reduce((grouped, event) => {
         const weeks = weeksAhead(event.event_date);
-        let id = "Geen datum";
-        if (weeks > 2) {
+        let id;
+        if (!event.event_date) {
+            id = "Geen datum";
+        } else if (weeks > 2) {
             id = "Over meer dan twee weken";
         } else if (weeks === 2) {
             id = "Over twee weken";
@@ -133,13 +119,12 @@ export default function EventsList({ handleEditEvent, handleSelectedEvent, searc
             {Object.keys(groupedEvents).map((period, index) => (
                 <li key={`section-${index}`}>
                     <ul>
-                        <ListSubheader disableSticky>{period}</ListSubheader>
+                        <ListSubheader disableSticky component={Paper}>{period}</ListSubheader>
                         {groupedEvents[period].map((item) => (
                             <Fragment key={item.id}>
                                 <EventsListItem item={item}
                                     onSelect={() => handleSelectedEvent(item)}
                                     onEdit={() => handleEditEvent(item)} />
-                                {/* <Divider component="li" /> */}
                             </Fragment>
                         ))}
                     </ul>
