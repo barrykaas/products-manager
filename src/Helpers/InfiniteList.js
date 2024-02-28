@@ -1,7 +1,7 @@
 import { Stack, List, CircularProgress, Button, Box } from "@mui/material";
 
 
-export default function InfiniteList({ onMore, hasMore, isLoading, error, children }) {
+export default function InfiniteList({ onMore, hasMore, isLoading, error, children, ListProps = {} }) {
     if (error) {
       return (<div>
         Error: {JSON.stringify(error)}
@@ -10,7 +10,8 @@ export default function InfiniteList({ onMore, hasMore, isLoading, error, childr
 
     return (
         <Stack sx={{ display: 'flex', height: '100%' }} alignItems='center'>
-          <List sx={{ p: 0, width: 1, bgcolor: 'background.paper' }}>
+          <List sx={{ p: 0, width: 1, bgcolor: 'background.paper' ,
+        '& ul': { padding: 0 }, }} {...ListProps}>
             {children}
           </List>
           {

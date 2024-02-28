@@ -1,7 +1,38 @@
 
 const locale = 'nl-NL'
 
-const shortDate = d => d.toLocaleDateString(
+/**
+ * @param {Date} date 
+ * @returns {Number}
+ */
+export function daysAhead(date) {
+    date = new Date(date);
+    date.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return (date - today) / 86400000;
+}
+
+function getDay(date) { // Monday = 0
+    return (date.getDay() + 6) % 7;
+}
+
+/**
+ * @param {Date} date 
+ * @returns {Number}
+ */
+export function weeksAhead(date) {
+    date = new Date(date);
+    date.setDate(date.getDate() - getDay(date));
+    date.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setDate(today.getDate() - getDay(today));
+    today.setHours(0, 0, 0, 0);
+    return (date - today) / 604800000;
+}
+
+
+const shortDate = d => (new Date(d)).toLocaleDateString(
     locale, { weekday: 'short', day: 'numeric', month: 'short' }
 );
 
@@ -12,12 +43,13 @@ export function isoToLocalDate(isoString) {
     return date.toLocaleDateString();
 }
 
+
 export function isoToRelativeDate(isoString) {
     if (!isoString) return isoString;
 
     const date = new Date(isoString); date.setHours(0, 0, 0, 0);
     const today = new Date();
-    const daysAgo = (today - date) / (1000 * 86400);
+    const daysAgo = -daysAhead(isoString);
 
     let relDate = shortDate(date);
 
