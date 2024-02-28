@@ -1,8 +1,8 @@
 import { Avatar, Tooltip } from "@mui/material";
+import { defaultSize } from "./Avatars";
 
-const defaultSize = 30;
 
-export function ImageAvatar({ person, size = defaultSize }) {    
+export function ImageAvatar({ person, size = defaultSize }) {
     return (
         <Tooltip arrow title={person.name}>
             <Avatar

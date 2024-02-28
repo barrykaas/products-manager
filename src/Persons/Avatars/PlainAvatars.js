@@ -1,8 +1,8 @@
 import { Avatar, Tooltip } from "@mui/material";
-
 import { green, grey, red, orange, blue } from "@mui/material/colors";
 
-const defaultSize = 30;
+import { defaultSize } from "./Avatars";
+
 
 const kaasColors = {
     "Rutger": grey[300],
