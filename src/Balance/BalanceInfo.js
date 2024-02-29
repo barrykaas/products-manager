@@ -35,6 +35,8 @@ function BalanceInfoContent() {
 
     const toSettle = data.flatMap(person => person?.to_settle ?? [])
 
+    const totalExpenses = data.reduce((part, person) => part + person.expenses, 0);
+
     return (
         <Stack spacing={2}>
             <Box sx={{ overflow: "scroll" }}>
@@ -47,6 +49,12 @@ function BalanceInfoContent() {
                             <TableCell>Consumptie (-)</TableCell>
                         </TableHead>
                         {data.map(person => PersonRow({ person }))}
+                        <TableHead>
+                            <TableCell>Totaal</TableCell>
+                            <TableCell />
+                            <TableCell />
+                            <TableCell>{formatEuro(totalExpenses)}</TableCell>
+                        </TableHead>
                     </Table>
                 </TableContainer>
             </Box>
