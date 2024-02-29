@@ -3,7 +3,7 @@ import { Fragment, useState } from "react";
 import { Edit } from "@mui/icons-material";
 
 import ReceiptItem from "./ReceiptItem";
-import { isoToLocalDate } from "../../Helpers/dateTime";
+import { isoToRelativeDate } from "../../Helpers/dateTime";
 import { formatEuro } from "../../Helpers/monetary";
 import { PersonAvatarGroup } from "../../Persons/Avatars/Avatars";
 import { EventFormDialog } from "../../Events/EventForm";
@@ -28,7 +28,7 @@ function AddAmountButton({ variant = "outlined", ...args }) {
 
 
 function Header({ itemId, title, date, personIds, onAddProduct, onAddAmount, onEdit }) {
-    const formattedDate = isoToLocalDate(date);
+    const formattedDate = isoToRelativeDate(date);
 
     return (
         <Grid container spacing={2} sx={{ p: 2 }} alignItems="center">
