@@ -94,7 +94,6 @@ export default function ReceiptEditor({ receiptId }) {
     }
 
     const allReceiptItems = receiptItemsQuery.data;
-    const noReceiptItems = allReceiptItems.length === 0;
     const events = groupByProperty(allReceiptItems, 'event');
     const receiptTotal = allReceiptItems.reduce((total, item) =>
         total + item.amount, 0);

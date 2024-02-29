@@ -1,5 +1,5 @@
-import { Checkbox, Chip, Divider, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Skeleton, Stack } from "@mui/material";
-import React, { Fragment } from "react";
+import { Checkbox, Chip, Grid, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Skeleton, Stack } from "@mui/material";
+import React from "react";
 import { usePersons } from "../Persons/PersonsApiQueries";
 
 
@@ -11,7 +11,7 @@ const participantPresets = [
 ];
 
 export default function ParticipantsList({ setChecked, checked }) {
-    const { isLoading, isError, data, error } = usePersons();
+    const { isLoading, isError, data } = usePersons();
 
     const persons = data;
 
