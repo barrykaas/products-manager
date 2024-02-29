@@ -17,6 +17,14 @@ import { isoToLocalDate } from '../Helpers/dateTime';
 import { ReceiptFormDialog } from '../Receipts/ReceiptForm';
 
 
+const defaultParticipants = [1, 2, 4, 5];
+
+export const emptyForm = () => ({
+    event_date: new Date(),
+    event_participants: [...defaultParticipants],
+    name: '',
+});
+
 const validationSchema = yup.object({
     event_date: yup
         .date('Enter date of event')
@@ -32,14 +40,8 @@ export function EventForm({ onSuccessfulCreateEdit, initialValues = {} }) {
         onSuccess: onSuccessfulCreateEdit
     });
 
-    const emptyForm = {
-        event_date: new Date(),
-        event_participants: [],
-        name: '',
-    };
-
     initialValues = {
-        ...emptyForm,
+        ...emptyForm(),
         ...initialValues
     };
 

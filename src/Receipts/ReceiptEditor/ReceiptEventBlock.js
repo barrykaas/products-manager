@@ -147,7 +147,7 @@ export function QuickAddBlock({ onAddAmount, onAddProduct }) {
         <Paper sx={{ borderWidth: 2, borderStyle: "dashed", borderColor: "#888888", mx: 2, p: 2 }}>
             <Stack spacing={2}>
                 <Typography variant="subtitle" sx={{ fontStyle: "italic" }}>
-                    Kies een bestaand event rechtsboven of quick add:
+                    Kies een bestaand event rechtsboven of quick add een nieuw event:
                 </Typography>
                 <Stack
                     direction="row" alignItems="center" justifyContent="space-evenly"

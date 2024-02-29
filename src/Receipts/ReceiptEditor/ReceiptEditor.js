@@ -11,6 +11,7 @@ import EventController from "../../Events/EventController";
 import { formatEuro } from "../../Helpers/monetary";
 import { useUnitTypes } from "../../UnitTypes/UnitTypeQueries";
 import { useEventMutator } from "../../Events/EventsApiQueries";
+import { emptyForm as emptyEventForm } from "../../Events/EventForm";
 
 
 export default function ReceiptEditor({ receiptId }) {
@@ -24,9 +25,8 @@ export default function ReceiptEditor({ receiptId }) {
     });
     const quickCreateEvent = useEventMutator();
     const quickEvent = {
-        name: "Nieuw event",
-        event_date: new Date(),
-        event_participants: [],
+        ...emptyEventForm(),
+        name: "Nieuw event"
     };
 
     function onAddDiscount(eventId) {
@@ -121,6 +121,11 @@ export default function ReceiptEditor({ receiptId }) {
                 <Stack sx={{ mx: 1, my: 2 }}
                     spacing={2}
                 >
+                    <QuickAddBlock
+                        onAddProduct={() => onAddProduct(-1)}
+                        onAddAmount={() => onAddDiscount(-1)}
+                    />
+
                     {Object.keys(events).map((eventId) => (
                         <Fragment key={eventId}>
                             <ReceiptEventBlock
@@ -131,12 +136,6 @@ export default function ReceiptEditor({ receiptId }) {
                             />
                         </Fragment>
                     ))}
-                    {noReceiptItems ?
-                        <QuickAddBlock
-                            onAddProduct={() => onAddProduct(-1)}
-                            onAddAmount={() => onAddDiscount(-1)}
-                        />
-                        : null}
                 </Stack>
 
 
