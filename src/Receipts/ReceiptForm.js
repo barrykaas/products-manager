@@ -14,14 +14,14 @@ import { useSettings } from "../Settings/SettingsPage";
 import { useConfirm } from "material-ui-confirm";
 
 
-const emptyForm = {
+const emptyForm = () => ({
     type: receiptListType,
     transaction_date: new Date(),
 
     name: null,
     market: null,
     payer: null,
-};
+});
 
 const validationSchema = yup.object({
     transaction_date: yup
@@ -39,13 +39,16 @@ const validationSchema = yup.object({
 });
 
 
-export default function ReceiptForm({ initialValues = emptyForm, onSuccessfulCreateEdit }) {
-    const existingReceiptId = initialValues?.id;
-
+export default function ReceiptForm({ initialValues = {}, onSuccessfulCreateEdit }) {
     const { userId } = useSettings();
-    if (!initialValues.payer) {
-        initialValues.payer = userId;
-    }
+
+    initialValues = {
+        ...emptyForm(),
+        payer: userId,
+        ...initialValues
+    };
+
+    const existingReceiptId = initialValues?.id;
 
     const mutateList = useListMutator({
         onSuccess: (response) => {
