@@ -290,13 +290,7 @@ export function ProductFormDialog({ initialValues = {}, onSuccessfulCreateEdit, 
             title={existingProductId ? "Product bewerken" : "Nieuw product"}
             open={open}
             onClose={onClose}
-            secondaryButtons={
-                existingProductId ? (
-                    <Button variant="contained" color={"error"} onClick={onDelete}>
-                        Verwijderen
-                    </Button>
-                ) : null
-            }
+            onDelete={existingProductId && onDelete}
         >
             <ProductForm initialValues={initialValues} handleFormSubmit={handleFormSubmit} />
         </FormDialog>

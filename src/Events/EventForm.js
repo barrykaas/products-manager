@@ -124,13 +124,7 @@ export function EventFormDialog({ initialValues = {}, onSuccessfulCreateEdit, op
             title={eventExists ? "Event bewerken" : "Nieuw event"}
             open={open}
             onClose={onClose}
-            secondaryButtons={
-                eventExists ? (
-                    <Button variant="contained" color={"error"} onClick={onDelete}>
-                        Verwijderen
-                    </Button>
-                ) : null
-            }
+            onDelete={eventExists && onDelete}
         >
             <EventForm initialValues={initialValues} onSuccessfulCreateEdit={onSuccessfulCreateEdit} />
         </FormDialog>

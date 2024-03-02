@@ -137,7 +137,7 @@ export function ReceiptFormDialog({ open, onClose, initialValues, onSuccessfulCr
 
 
     const existingReceiptId = initialValues?.id;
-    const onDelete = () => {
+    const onDelete =  () => {
         confirmDelete({
             description: "Weet je zeker dat je deze lijst wilt verwijderen?"
         })
@@ -147,21 +147,12 @@ export function ReceiptFormDialog({ open, onClose, initialValues, onSuccessfulCr
             .catch(() => { });
     };
 
-    const deleteButton = (
-        <Button
-            variant="contained"
-            color={"error"}
-            onClick={onDelete}>
-            Verwijderen
-        </Button>
-    );
-
     return (
         <FormDialog
             open={open}
             onClose={onClose}
+            onDelete={existingReceiptId && onDelete}
             title={initialValues?.name ? "Bon bewerken" : 'Nieuw bonnetje'}
-            secondaryButtons={existingReceiptId ? deleteButton : null}
         >
             <ReceiptForm initialValues={initialValues} onSuccessfulCreateEdit={onSuccessfulCreateEdit} />
         </FormDialog>

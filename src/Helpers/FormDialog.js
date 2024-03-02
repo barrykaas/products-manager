@@ -1,13 +1,14 @@
 import React from 'react';
 import { AppBar, Dialog, IconButton, Slide, Toolbar, Typography, useMediaQuery, useTheme } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { Delete } from '@mui/icons-material';
 
 
 const TransitionRight = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
 });
 
-function FormDialog({ open, onClose, title, secondaryButtons, hasToolbar = true, children }) {
+function FormDialog({ open, onClose, onDelete, title, secondaryButtons, hasToolbar = true, children }) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -36,6 +37,15 @@ function FormDialog({ open, onClose, title, secondaryButtons, hasToolbar = true,
             </Typography>
 
             {secondaryButtons}
+
+            {onDelete &&
+              <IconButton
+                color="error"
+                onClick={onDelete}
+              >
+                <Delete />
+              </IconButton>
+            }
           </Toolbar>
         </AppBar>
       }
