@@ -1,4 +1,4 @@
-import { Chip, CircularProgress, Paper, Table, TableCell, TableContainer, TableHead, TableRow, Box, Button, Stack, Typography } from "@mui/material";
+import { Chip, CircularProgress, Paper, Table, TableCell, TableContainer, TableHead, TableRow, Box, Stack, Typography } from "@mui/material";
 import { ArrowForward } from "@mui/icons-material";
 
 import { formatEuro } from "../Helpers/monetary";

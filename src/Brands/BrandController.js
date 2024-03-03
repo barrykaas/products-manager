@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Paper, TextField } from "@mui/material";
 import { useConfirm } from "material-ui-confirm";
 
 import BrandsList from "./BrandsList";
@@ -7,7 +6,7 @@ import { useBrandDeleter } from "./BrandsApiQueries";
 import ControllerView from "../Helpers/ControllerView";
 
 
-export default function BrandController({ handleSelectBrand, onClose, onMenu }) {
+export default function BrandController({ onClose, onMenu }) {
     const [searchQuery, setSearchQuery] = useState("");
 
     const deleteBrand = useBrandDeleter({
