@@ -132,7 +132,7 @@ export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, o
                         Totaal van <em>{eventName}</em>
                     </Typography>
                     <div style={{ flexGrow: 1 }}></div>
-                    <Typography variant="h6" component="div" sx={{ "white-space": "nowrap" }}>
+                    <Typography variant="h6" component="div" sx={{ whiteSpace: "nowrap" }}>
                         {formatEuro(eventTotal)}
                     </Typography>
                 </Stack>
