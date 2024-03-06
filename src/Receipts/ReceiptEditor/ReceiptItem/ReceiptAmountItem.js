@@ -1,4 +1,4 @@
-import { Grid, IconButton, InputAdornment, Stack, TextField, Typography } from "@mui/material";
+import { IconButton, InputAdornment, Stack, TextField } from "@mui/material";
 import { useState } from "react";
 
 import { useListItemDeleter, useListItemMutator } from "../../../Lists/ListsApiQueries";
@@ -10,10 +10,11 @@ export default function ReceiptAmountItem({ item }) {
     const price = item?.amount ?? 0;
 
     const [amountFieldValue, setAmountFieldValue] = useState(formatPrice(price));
+    const [descriptionField, setDescriptionField] = useState(item.description || '');
     const mutateListItem = useListItemMutator();
     const deleteListItem = useListItemDeleter();
 
-    const onUpdate = () => {
+    const onUpdateAmount = () => {
         const roundedAmount = formatPrice(amountFieldValue);
         setAmountFieldValue(roundedAmount);
         const newItem = {
@@ -25,40 +26,44 @@ export default function ReceiptAmountItem({ item }) {
         mutateListItem(newItem);
     };
 
+    const onUpdateDescription = () => {
+        mutateListItem({
+            id: item.id,
+            description: descriptionField
+        })
+    };
+
     const onDelete = () => {
         deleteListItem(item.id);
     };
 
 
     return (
-        <Stack sx={{ my: 1, mx: 2 }}>
-            <Grid container alignItems="center">
-                <Grid item xs>
-                    <Typography variant="h6" component="div">
-                        Los bedrag
-                    </Typography>
-                </Grid>
+        <Stack direction="row" sx={{ my: 1, mx: 2 }}>
+            <TextField
+                sx={{ m: 1, flexGrow: 1 }}
+                variant="standard"
+                value={descriptionField}
+                onChange={(event) => setDescriptionField(event.target.value)}
+                onBlur={onUpdateDescription}
+                placeholder="Beschrijving"
+            />
 
-                <Grid item>
-                    <TextField
-                        sx={{ m: 1, width: '10ch' }}
-                        InputProps={{
-                            startAdornment: <InputAdornment position="start">€</InputAdornment>,
-                        }}
-                        variant="standard"
-                        value={amountFieldValue}
-                        onChange={(event) => setAmountFieldValue(event.target.value)}
-                        onBlur={onUpdate}
-                        onFocus={(event) => event.target.select()}
-                    />
-                </Grid>
+            <TextField
+                sx={{ m: 1, width: '10ch' }}
+                InputProps={{
+                    startAdornment: <InputAdornment position="start">€</InputAdornment>,
+                }}
+                variant="standard"
+                value={amountFieldValue}
+                onChange={(event) => setAmountFieldValue(event.target.value)}
+                onBlur={onUpdateAmount}
+                onFocus={(event) => event.target.select()}
+            />
 
-                <Grid item>
-                    <IconButton onClick={onDelete} color="error">
-                        <Delete />
-                    </IconButton>
-                </Grid>
-            </Grid>
+            <IconButton onClick={onDelete} color="error">
+                <Delete />
+            </IconButton>
         </Stack>
     );
 }
