@@ -15,12 +15,12 @@ function formatWeight(weight) {
 }
 
 export default function QuantityController({ listItem }) {
-    const product = listItem.product;
+    const product = listItem?.product;
 
     const { unitTypeInfo } = useUnitTypeInfo();
-    const unitType = unitTypeInfo(product.unit_type);
+    const unitType = unitTypeInfo(product?.unit_type);
 
-    if (unitType.discrete) {
+    if (unitType?.discrete) {
         return <DiscreteQuantityController item={listItem} />;
     } else {
         return <ScalarQuantityController item={listItem} />;
