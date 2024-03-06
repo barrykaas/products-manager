@@ -1,9 +1,10 @@
-import { Typography, Button, Stack, Box, Tooltip } from "@mui/material";
+import { Typography, Button, Stack, Box, Tooltip, ButtonGroup } from "@mui/material";
 import { Fragment, useState } from "react";
+import { Add, List } from "@mui/icons-material";
 
 import groupByProperty from "../../Helpers/groupBy";
 import { useListItems } from "../../Lists/ListsApiQueries";
-import ReceiptEventBlock, { QuickAddBlock } from "./ReceiptEventBlock";
+import ReceiptEventBlock from "./ReceiptEventBlock";
 import FormDialog from "../../Helpers/FormDialog";
 import ProductController from "../../Products/ProductController";
 import { useListItemMutator } from "../../Lists/ListsApiQueries";
@@ -17,47 +18,42 @@ import { emptyForm as emptyEventForm } from "../../Events/EventForm";
 export default function ReceiptEditor({ receiptId }) {
     const receiptItemsQuery = useListItems({ listId: receiptId });
     const { getUnitType } = useUnitTypes();
-    const [eventPickingProduct, setEventPickingProduct] = useState(null);
-    const [isPickingEvent, setIsPickingEvent] = useState(false);
+    const [eventPickingProduct, setEventPickingProduct] = useState(-1);
+    const [eventPickerOpen, setEventPickerOpen] = useState(false);
+    const [currentEvents, setCurrentEvents] = useState([]);
 
     const createEditListItem = useListItemMutator({
-        onSuccess: () => setEventPickingProduct(null)
+        onSuccess: () => setEventPickingProduct(-1)
     });
-    const quickCreateEvent = useEventMutator();
-    const quickEvent = {
+
+    const createEvent = useEventMutator();
+
+    const onNewEvent = () => createEvent({
         ...emptyEventForm(),
         name: "Nieuw event"
-    };
-
-    function onAddDiscount(eventId) {
-        const createAmountItem = (eventId) => createEditListItem({
-            product_price: 0,
-            list: receiptId,
-            event: eventId
-        });
-
-        if (eventId === -1) {
-            quickCreateEvent(quickEvent, {
-                onSuccess: (response) => {
-                    const newEvent = response.data;
-                    createAmountItem(newEvent.id);
-                }
-            })
-        } else {
-            createAmountItem(eventId);
+    }, {
+        onSuccess: (response) => {
+            const newEvent = response.data;
+            setCurrentEvents([newEvent.id, ...currentEvents]);
         }
-    }
+    });
+
+    const onAddDiscount = (eventId) => createEditListItem({
+        product_price: 0,
+        list: receiptId,
+        event: eventId
+    });
 
     function onAddProduct(eventId) {
         setEventPickingProduct(eventId);
     }
 
     function handleSelectedEvent(event) {
-        setIsPickingEvent(false);
-        setEventPickingProduct(event.id);
+        setEventPickerOpen(false);
+        setCurrentEvents([event.id, ...currentEvents]);
     }
 
-    function handleSelectedProduct(product) {
+    const handleSelectedProduct = (product) => {
         let quantity, price;
         if (getUnitType(product.unit_type)?.discrete) {
             quantity = 1; price = product.unit_price;
@@ -66,24 +62,13 @@ export default function ReceiptEditor({ receiptId }) {
             price = product.unit_price / quantity;
         }
 
-        const createProductItem = (eventId) => createEditListItem({
+        createEditListItem({
             product_id: product.id,
             product_quantity: quantity,
             product_price: price,
             list: receiptId,
-            event: eventId
+            event: eventPickingProduct
         });
-
-        if (eventPickingProduct === -1) {
-            quickCreateEvent(quickEvent, {
-                onSuccess: (response) => {
-                    const newEvent = response.data;
-                    createProductItem(newEvent.id);
-                }
-            })
-        } else {
-            createProductItem(eventPickingProduct);
-        }
     }
 
     if (receiptItemsQuery.isLoading) {
@@ -94,7 +79,14 @@ export default function ReceiptEditor({ receiptId }) {
     }
 
     const allReceiptItems = receiptItemsQuery.data;
-    const events = groupByProperty(allReceiptItems, 'event');
+    const [events, existingEventIds] = groupByProperty(allReceiptItems, 'event');
+
+    existingEventIds.sort().reverse();
+    const eventIds = [...currentEvents];
+    existingEventIds.forEach(eventId => {
+        if (!eventIds.includes(eventId)) eventIds.push(eventId);
+    });
+
     const receiptTotal = allReceiptItems.reduce((total, item) =>
         total + item.amount, 0);
 
@@ -111,25 +103,25 @@ export default function ReceiptEditor({ receiptId }) {
                             Producten
                         </Typography>
                     </Tooltip>
-                    <Button onClick={() => setIsPickingEvent(true)}>
-                        Kies event
-                    </Button>
+                    <ButtonGroup>
+                        <Button onClick={() => setEventPickerOpen(true)} startIcon={<List />}>
+                            Kies event
+                        </Button>
+                        <Button onClick={onNewEvent} color="secondary" startIcon={<Add />}>
+                            Nieuw event
+                        </Button>
+                    </ButtonGroup>
                 </Stack>
 
                 {/* Event blocks */}
                 <Stack sx={{ mx: 1, my: 2 }}
                     spacing={2}
                 >
-                    <QuickAddBlock
-                        onAddProduct={() => onAddProduct(-1)}
-                        onAddAmount={() => onAddDiscount(-1)}
-                    />
-
-                    {Object.keys(events).map((eventId) => (
+                    {eventIds.map((eventId) => (
                         <Fragment key={eventId}>
                             <ReceiptEventBlock
                                 eventId={eventId}
-                                eventItems={events[eventId]}
+                                eventItems={events[eventId] || []}
                                 onAddProduct={() => onAddProduct(eventId)}
                                 onAddDiscount={() => onAddDiscount(eventId)}
                             />
@@ -156,12 +148,11 @@ export default function ReceiptEditor({ receiptId }) {
             <FormDialog
                 hasToolbar={false}
                 title={"Selecteer product"}
-                open={isPickingEvent}
-                onClose={() => setIsPickingEvent(false)}
+                open={eventPickerOpen}
             >
                 <EventController
                     handleSelectedEvent={handleSelectedEvent}
-                    onClose={() => setIsPickingEvent(false)}
+                    onClose={() => setEventPickerOpen(false)}
                 />
             </FormDialog>
 
@@ -169,10 +160,10 @@ export default function ReceiptEditor({ receiptId }) {
             <FormDialog
                 hasToolbar={false}
                 title={"Selecteer product"}
-                open={eventPickingProduct}
+                open={eventPickingProduct !== -1}
             >
                 <ProductController
-                    onClose={() => setEventPickingProduct(null)}
+                    onClose={() => setEventPickingProduct(-1)}
                     handleSelectedProduct={handleSelectedProduct}
                 />
             </FormDialog>
