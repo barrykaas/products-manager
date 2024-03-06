@@ -77,7 +77,7 @@ function ProductInfo({ product }) {
     }
 
     return (
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row" spacing={1} justifyContent="flex-start" alignItems="center">
             <Stack alignItems="flex-start">
                 {brandName &&
                     <Typography variant="subtitle2" color="text.secondary">
