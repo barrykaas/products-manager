@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { Box, Skeleton, Typography, Stack, IconButton, ListItem } from "@mui/material";
-import { Delete } from "@mui/icons-material";
+import { Skeleton, Typography, Stack, IconButton, ListItem } from "@mui/material";
+import { Delete, Edit } from "@mui/icons-material";
 
-import { useListItemDeleter, useListItemMutator } from "../../../Lists/ListsApiQueries";
+import { listItemsQueryKey, useListItemDeleter, useListItemMutator } from "../../../Lists/ListsApiQueries";
 import { useBrands } from "../../../Brands/BrandsApiQueries";
 import ProductTooltip from "../../../Products/ProductTooltip";
 import QuantityController from "./QuantityController";
 import FormDialog from "../../../Helpers/FormDialog";
 import ProductController from "../../../Products/ProductController";
+import { ProductFormDialog } from "../../../Products/ProductsForm";
+import { useQueryClient } from "@tanstack/react-query";
 
 
 export default function ReceiptProductItem({ item }) {
@@ -33,11 +35,10 @@ export default function ReceiptProductItem({ item }) {
 
                 <Stack
                     sx={{ px: 2 }}
-                    direction="row" alignItems="center" justifyContent="flex-start"
+                    direction="row" alignItems="center" justifyContent="space-between"
                     spacing={1}
                 >
                     <ProductInfo product={product} />
-                    <Box flexGrow={1} />
 
                     <IconButton onClick={onDelete} color="error">
                         <Delete />
@@ -64,6 +65,9 @@ export default function ReceiptProductItem({ item }) {
 function ProductInfo({ product }) {
     const brandsQuery = useBrands();
     const brandName = brandsQuery.getBrand(product.brand)?.name;
+    const [editorOpen, setEditorOpen] = useState(false);
+    const queryClient = useQueryClient();
+    const invalidateListItems = () => queryClient.invalidateQueries([listItemsQueryKey]);
 
     const isLoading = brandsQuery.isLoading;
     const isError = brandsQuery.isError;
@@ -73,17 +77,32 @@ function ProductInfo({ product }) {
     }
 
     return (
-        <Stack alignItems="flex-start">
-            {brandName &&
-                <Typography variant="subtitle2" color="text.secondary">
-                    {brandName}
-                </Typography>
-            }
-            <ProductTooltip product={product}>
-                <Typography variant="h6">
-                    {product.name}
-                </Typography>
-            </ProductTooltip>
+        <Stack direction="row" spacing={1}>
+            <Stack alignItems="flex-start">
+                {brandName &&
+                    <Typography variant="subtitle2" color="text.secondary">
+                        {brandName}
+                    </Typography>
+                }
+                <ProductTooltip product={product}>
+                    <Typography variant="h6">
+                        {product.name}
+                    </Typography>
+                </ProductTooltip>
+            </Stack>
+            <IconButton onClick={() => setEditorOpen(true)}>
+                <Edit />
+            </IconButton>
+
+            <ProductFormDialog
+                initialValues={product}
+                open={editorOpen}
+                onClose={() => setEditorOpen(false)}
+                onSuccessfulCreateEdit={() => {
+                    invalidateListItems();
+                    setEditorOpen(false);
+                }}
+            />
         </Stack>
     );
 }
