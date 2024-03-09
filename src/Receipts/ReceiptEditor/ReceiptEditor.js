@@ -121,7 +121,8 @@ export default function ReceiptEditor({ receiptId }) {
                         <Fragment key={eventId}>
                             <ReceiptEventBlock
                                 eventId={eventId}
-                                eventItems={events[eventId] || []}
+                                listId={receiptId}
+                                listItems={events[eventId] || []}
                                 onAddProduct={() => onAddProduct(eventId)}
                                 onAddDiscount={() => onAddDiscount(eventId)}
                             />

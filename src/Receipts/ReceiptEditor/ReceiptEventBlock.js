@@ -1,18 +1,21 @@
-import { Typography, Grid, Stack, Chip, Button, List, Divider, ButtonGroup, Paper, Tooltip, IconButton } from "@mui/material";
+import { Typography, Grid, Stack, Chip, Button, List, Divider, ButtonGroup, Paper, Tooltip, IconButton, Box } from "@mui/material";
 import { Fragment, useState } from "react";
 import { Edit } from "@mui/icons-material";
+import { useQuery } from "@tanstack/react-query";
 
 import ReceiptItem from "./ReceiptItem";
 import { isoToRelativeDate } from "../../Helpers/dateTime";
 import { formatEuro } from "../../Helpers/monetary";
 import { PersonAvatarGroup } from "../../Persons/Avatars/Avatars";
 import { EventFormDialog } from "../../Events/EventForm";
-import { useQuery } from "@tanstack/react-query";
+import QuickAddBox from "./QuickAddBox";
+import { useListItemMutator } from "../../Lists/ListsApiQueries";
 
 
-export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, onAddDiscount }) {
+export default function ReceiptEventBlock({ eventId, listId, listItems, onAddProduct, onAddDiscount }) {
     const eventQuery = useQuery({ queryKey: ['events', eventId], enabled: !!eventId });
     const [editingEvent, setEditingEvent] = useState(false);
+    const createListItem = useListItemMutator();
 
     const event = eventQuery.data;
 
@@ -24,7 +27,13 @@ export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, o
         }
     }
 
-    const eventTotal = eventItems.reduce((s, i) => s + i.amount, 0);
+    const eventTotal = listItems.reduce((s, i) => s + i.amount, 0);
+
+    const handleAddedItem = (listItem) => {
+        listItem.event = eventId;
+        listItem.list = listId;
+        createListItem(listItem);
+    };
 
     return (
         <Paper>
@@ -46,7 +55,7 @@ export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, o
 
                 {/* List items */}
                 <List>
-                    {eventItems.map((item) =>
+                    {listItems.map((item) =>
                         <Fragment key={item.id}>
                             <ReceiptItem item={item} />
                             <Divider />
@@ -55,13 +64,10 @@ export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, o
                 </List>
 
                 {/* Footer */}
-                <Stack
-                    sx={{ p: 1, pb: 2 }}
-                    direction="row" alignItems="center" justifyContent="space-evenly"
-                >
-                    <AddProductButton onClick={onAddProduct} />
-                    <AddAmountButton onClick={onAddDiscount} />
-                </Stack>
+                <Box sx={{ px: 2, py: 1 }}>
+                    <QuickAddBox handleListItem={handleAddedItem} />
+                </Box>
+
                 <Stack direction="row" spacing={1} sx={{ px: 2, py: 1 }}>
                     <Typography component="div">
                         Totaal van {eventId ?
@@ -73,7 +79,6 @@ export default function ReceiptEventBlock({ eventId, eventItems, onAddProduct, o
                         {formatEuro(eventTotal)}
                     </Typography>
                 </Stack>
-
             </Stack>
         </Paper>
     );
