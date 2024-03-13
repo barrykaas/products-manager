@@ -80,12 +80,13 @@ function BalanceInfoContent() {
     );
 }
 
-export default function BalanceInfo() {
+export default function BalanceInfo({ onMenu }) {
     const invalidateBalance = useInvalidator([balancesQueryKey]);
 
     return (
         <ControllerView
             title="Balans"
+            onMenu={onMenu}
             onRefresh={invalidateBalance}
         >
             <BalanceInfoContent />
