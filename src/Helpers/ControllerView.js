@@ -1,5 +1,5 @@
 import { Add, Close, Refresh } from "@mui/icons-material";
-import { AppBar, Box, Fab, IconButton, Stack, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Container, Fab, IconButton, Stack, Toolbar, Typography } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 
 import ToolbarSearch from "./ToolbarSearch";
@@ -7,7 +7,7 @@ import ToolbarSearch from "./ToolbarSearch";
 
 export default function ControllerView({ children, title, onClose, onAdd, onRefresh, initialSearch, handleNewSearch, onMenu }) {
     return (
-        <Box sx={{ height: 1, width: 1 }}>
+        <Box>
             <ControllerAppBar
                 title={title}
                 onClose={onClose}
@@ -18,7 +18,9 @@ export default function ControllerView({ children, title, onClose, onAdd, onRefr
                 handleNewSearch={handleNewSearch}
             />
 
-            {children}
+            <Container disableGutters maxWidth="md">
+                    {children}
+            </Container>
 
             <Stack spacing={1} alignItems="center" sx={{ position: "fixed", bottom: "20px", right: "20px" }}>
                 {onRefresh &&

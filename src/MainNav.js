@@ -102,7 +102,7 @@ export default function MainNav() {
     );
 
     return (
-        <Box sx={{ display: 'flex', height: 1 }}>
+        <Box sx={{ display: "flex", minHeight: "100vh" }}>
             <CssBaseline />
             <Box
                 component="nav"
@@ -141,7 +141,7 @@ export default function MainNav() {
             </Box>
             <Box
                 component="main"
-                sx={{ flexGrow: 1, width: { sm: `calc(100% - ${drawerWidth}px)`, xs: 1 }, height: 1 }}
+                sx={{ flexGrow: 1, width: { sm: `calc(100% - ${drawerWidth}px)`, xs: 1 }}}
             >
                 <ViewPanel id="receipts" currentView={currentView} search>
                     <ReceiptsController onMenu={handleDrawerToggle} />
