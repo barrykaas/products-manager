@@ -1,18 +1,21 @@
-import { Typography, Box, ListItem, ListItemText, ListItemButton, IconButton } from "@mui/material";
+import { Typography, ListItem, ListItemText, ListItemButton, IconButton, Stack } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 
 import { useBrands } from "../Brands/BrandsApiQueries";
 import useHumanReadableProduct from "./HumanReadableProduct";
 import { formatEuro } from "../Helpers/monetary";
+import useUnitTypeInfo from "../UnitTypes/UnitTypeInfo";
+import { formatPricePerUnit } from "../Helpers/productQuantity";
 
 
 export function ProductListItem({ product, onSelect, onEdit, disabled = false, showBarcode = false }) {
     const brands = useBrands();
     let brandName;
     const { formatProductDescription } = useHumanReadableProduct();
+    const { unitTypeInfo } = useUnitTypeInfo();
 
     if (brands.isLoading) {
-        brandName = "Loading brand...";
+        brandName = "Merk wordt geladen...";
     } else if (brands.isError) {
         brandName = "ERROR loading brands";
     } else {
@@ -20,30 +23,20 @@ export function ProductListItem({ product, onSelect, onEdit, disabled = false, s
         brandName = filteredBrand.length > 0 ? filteredBrand[0].name : null;
     }
 
-    const quantityString = formatProductDescription(product);
+    const name = product.name;
+    const price = product.unit_price;
 
-    return <DrawProductListItem
-        name={product.name}
-        brand={brandName}
-        unitPrice={product.unit_price}
-        quantity={quantityString}
-        barcode={showBarcode ? product.barcode : null}
-        onSelect={onSelect}
-        onEdit={onEdit}
-        disabled={disabled}
-    />;
-}
+    const unitType = unitTypeInfo(product.unit_type);
+    const pricePerUnitString = unitType ? formatPricePerUnit({
+        unit: unitType.physical_unit,
+        volumeOrPieces: product.unit_weightvol || product.unit_number,
+        price
+    }) : null;
+    const barcode = product.barcode;
 
-
-export function DrawProductListItem({ name, brand, unitPrice, quantity, barcode, onSelect, onEdit, disabled = false }) {
-
-    let primary = name;
-    if (barcode) {
-        primary = <>
-            <Box sx={{ display: 'inline' }}>{name}</Box>
-            <Box sx={{ display: 'inline', fontFamily: 'Monospace' }}> ({barcode})</Box>
-        </>;
-    }
+    const secondaryInfo = [
+        formatProductDescription(product),
+    ];
 
     const editButton = onEdit ?
         <IconButton aria-label="comment" onClick={onEdit}>
@@ -52,37 +45,51 @@ export function DrawProductListItem({ name, brand, unitPrice, quantity, barcode,
         : null;
 
     return (
-        <ListItem alignItems="flex-start" disablePadding secondaryAction={editButton}>
+        <ListItem alignItems="flex-start" disablePadding
+            secondaryAction={editButton}
+        >
             <ListItemButton onClick={onSelect} disabled={disabled}>
                 <ListItemText
-                    primary={primary}
+                    sx={onEdit && { pr: 2 }}
+                    primary={
+                        <Stack>
+                            <Typography variant="subtitle2" color="text.secondary">
+                                {brandName}
+                            </Typography>
+                            <Stack direction="row" spacing={1}>
+                                <Typography>{name}</Typography>
+                                {showBarcode &&
+                                    <Typography
+                                        fontFamily="monospace"
+                                    >
+                                        [{barcode}]
+                                    </Typography>
+                                }
+                                {price !== 0 &&
+                                    <Typography align="right"
+                                        sx={{ whiteSpace: "nowrap", flexGrow: 1 }}
+                                    >
+                                        <b>{formatEuro(price)}</b>
+                                    </Typography>
+                                }
+                            </Stack>
+                        </Stack>
+                    }
                     secondary={
-                        <>
-                            <Typography
-                                sx={{ display: 'inline' }}
-                                component="span"
-                                variant="body2"
-                                color="text.primary"
-                            >
-                                {brand ? brand : 'merkloos'}
-
-                            </Typography>
-                            {" - "}
-                            {unitPrice ? formatEuro(unitPrice) + " - " : null}
-                            <Typography
-                                sx={{ display: 'inline' }}
-                                component="span"
-                                variant="body2"
-                                color="text.primary"
-                            >
-                                {quantity}
-
-                            </Typography>
-                        </>
+                        <Stack direction="row" justifyContent="space-between" spacing={1}>
+                            {secondaryInfo.filter(Boolean).join("  -  ")}
+                            {price !== 0 &&
+                                <Typography
+                                    variant="inherit" align="right"
+                                    sx={{ whiteSpace: "nowrap" }}
+                                >
+                                    {pricePerUnitString}
+                                </Typography>
+                            }
+                        </Stack>
                     }
                 />
             </ListItemButton>
         </ListItem>
     );
 }
-

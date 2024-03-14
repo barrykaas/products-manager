@@ -19,7 +19,6 @@ export default function ProductsList({ handleEdit, handleSelectedProduct, search
 
   const productsData = data?.pages.flatMap((page) => page.results) || [];
 
-
   return (
     <InfiniteList onMore={fetchNextPage} hasMore={hasNextPage}
       isLoading={isFetching || isFetchingNextPage}
@@ -29,8 +28,12 @@ export default function ProductsList({ handleEdit, handleSelectedProduct, search
         <React.Fragment key={item.id}>
           <ProductListItem
             product={item}
-            onEdit={() => handleEdit(item)}
-            onSelect={() => handleSelectedProduct(item)}
+            onEdit={handleSelectedProduct && (() => handleEdit(item))}
+            onSelect={handleSelectedProduct ? (
+              () => handleSelectedProduct(item)
+            ) : (
+              () => handleEdit(item)
+            )}
           />
           <Divider component="li" />
         </React.Fragment>

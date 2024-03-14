@@ -22,8 +22,6 @@ export default function ProductController({ handleSelectedProduct, onClose, onMe
         setEditOpen(true);
     };
 
-    handleSelectedProduct = handleSelectedProduct ?? handleEditProduct;
-
     const handleAddProduct = () => {
         setCurrentProduct({});
         setEditOpen(true);
