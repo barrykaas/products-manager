@@ -45,7 +45,6 @@ export default function App() {
                             <Container
                                 maxWidth={false}
                                 disableGutters
-                                sx={{ height: '100vh' }}
                             >
                                 <MainNav />
                             </Container>
