@@ -58,13 +58,6 @@ export function ProductListItem({ product, onSelect, onEdit, disabled = false, s
                             </Typography>
                             <Stack direction="row" spacing={1}>
                                 <Typography>{name}</Typography>
-                                {showBarcode &&
-                                    <Typography
-                                        fontFamily="monospace"
-                                    >
-                                        [{barcode}]
-                                    </Typography>
-                                }
                                 {price !== 0 &&
                                     <Typography align="right"
                                         sx={{ whiteSpace: "nowrap", flexGrow: 1 }}
@@ -73,6 +66,13 @@ export function ProductListItem({ product, onSelect, onEdit, disabled = false, s
                                     </Typography>
                                 }
                             </Stack>
+                            {showBarcode &&
+                                <Typography
+                                    fontFamily="monospace"
+                                >
+                                    [{barcode}]
+                                </Typography>
+                            }
                         </Stack>
                     }
                     secondary={
