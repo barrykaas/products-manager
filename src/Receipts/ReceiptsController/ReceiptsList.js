@@ -9,7 +9,7 @@ import PersonAvatar from "../../Persons/Avatars/Avatars";
 import { isoToRelativeDate } from "../../Helpers/dateTime";
 
 
-function ReceiptsListItem({ item, onSelect, ...args }) {
+export function ReceiptsListItem({ item, onSelect, ...args }) {
   const { getMarket } = useMarkets();
   if (!item) return <CircularProgress />;
 

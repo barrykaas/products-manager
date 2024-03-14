@@ -15,6 +15,7 @@ import { Fragment, useState } from 'react';
 import PersonAvatar from '../Persons/Avatars/Avatars';
 import { isoToLocalDate } from '../Helpers/dateTime';
 import { ReceiptFormDialog } from '../Receipts/ReceiptForm';
+import { ReceiptsListItem } from '../Receipts/ReceiptsController/ReceiptsList';
 
 
 const defaultParticipants = [1, 2, 4, 5];
@@ -154,13 +155,13 @@ function RelatedLists({ event }) {
 
     return (
         <Stack spacing={2} sx={{ py: 2 }}>
-            <Typography variant='h6'>Gerelateerde lijsten:</Typography>
+            <Typography variant='h6'>Gerelateerde bonnetjes:</Typography>
             <List component={Paper}>
                 {lists.map(list =>
                     <Fragment key={list.id}>
-                        <RelatedListsItem
-                            list={list}
-                            onClick={() => {
+                        <ReceiptsListItem
+                            item={list}
+                            onSelect={() => {
                                 setCurrentList(list);
                                 setListFormOpen(true);
                             }}
@@ -175,21 +176,5 @@ function RelatedLists({ event }) {
                 initialValues={currentList}
             />
         </Stack>
-    );
-}
-
-function RelatedListsItem({ list, onClick }) {
-    return (
-        <ListItem disablePadding>
-            <ListItemButton onClick={onClick}>
-                <ListItemAvatar>
-                    <PersonAvatar personId={list.payer} />
-                </ListItemAvatar>
-                <ListItemText
-                    primary={list.name}
-                    secondary={isoToLocalDate(list.transaction_date)}
-                />
-            </ListItemButton>
-        </ListItem>
     );
 }
