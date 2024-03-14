@@ -1,5 +1,5 @@
 import { useFormik } from 'formik';
-import { Button, Box, TextField, Stack, Paper, Divider, Typography, ListItem, List, ListItemAvatar, ListItemText, ListItemButton, CircularProgress } from '@mui/material';
+import { Button, Box, TextField, Stack, Paper, Divider, Typography, List, CircularProgress } from '@mui/material';
 import { useConfirm } from 'material-ui-confirm';
 import * as yup from 'yup';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -12,8 +12,6 @@ import { useEventDeleter, useEventMutator } from './EventsApiQueries';
 import ParticipantsList from './ParticipantList';
 import FormDialog from '../Helpers/FormDialog';
 import { Fragment, useState } from 'react';
-import PersonAvatar from '../Persons/Avatars/Avatars';
-import { isoToLocalDate } from '../Helpers/dateTime';
 import { ReceiptFormDialog } from '../Receipts/ReceiptForm';
 import { ReceiptsListItem } from '../Receipts/ReceiptsController/ReceiptsList';
 
