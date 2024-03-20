@@ -1,9 +1,10 @@
 import { IconButton, InputAdornment, Stack, TextField } from "@mui/material";
 import { useState } from "react";
+import { Delete } from "@mui/icons-material";
 
 import { useListItemDeleter, useListItemMutator } from "../../../Lists/ListsApiQueries";
 import { formatPrice } from "../../../Helpers/monetary";
-import { Delete } from "@mui/icons-material";
+import ReplaceProductButton from "./ReplaceProductButton";
 
 
 export default function ReceiptAmountItem({ item }) {
@@ -61,9 +62,13 @@ export default function ReceiptAmountItem({ item }) {
                 onFocus={(event) => event.target.select()}
             />
 
-            <IconButton onClick={onDelete} color="error">
-                <Delete />
-            </IconButton>
+            <Stack direction="row" spacing={1}>
+                <ReplaceProductButton listItem={item} />
+
+                <IconButton onClick={onDelete} color="error">
+                    <Delete />
+                </IconButton>
+            </Stack>
         </Stack>
     );
 }

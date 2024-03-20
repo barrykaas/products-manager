@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Skeleton, Typography, Stack, IconButton, ListItem } from "@mui/material";
+import { Skeleton, Typography, Stack, IconButton, ListItem, Box } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { listItemsQueryKey, useListItemDeleter, useListItemMutator } from "../../../Lists/ListsApiQueries";
 import { useBrands } from "../../../Brands/BrandsApiQueries";
@@ -9,7 +10,7 @@ import QuantityController from "./QuantityController";
 import FormDialog from "../../../Helpers/FormDialog";
 import ProductController from "../../../Products/ProductController";
 import { ProductFormDialog } from "../../../Products/ProductsForm";
-import { useQueryClient } from "@tanstack/react-query";
+import ReplaceProductButton from "./ReplaceProductButton";
 
 
 export default function ReceiptProductItem({ item }) {
@@ -40,6 +41,9 @@ export default function ReceiptProductItem({ item }) {
                 >
                     <ProductInfo product={product} />
 
+                    <Box flexGrow={1} />
+
+                    <ReplaceProductButton listItem={item} />
                     <IconButton onClick={onDelete} color="error">
                         <Delete />
                     </IconButton>
