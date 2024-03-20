@@ -25,9 +25,11 @@ export default function InfiniteList({ onMore, hasMore, isLoading, error, childr
                     : (<Button
                         disabled={!hasMore}
                         onClick={onMore}
+                        fullWidth
+                        sx={{ height: 96 }}
                     >Meer laden</Button>)
             }
-            <Box height="200px" />
+            <Box height={128} />
         </Stack>
     );
 }
