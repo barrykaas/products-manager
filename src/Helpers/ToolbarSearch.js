@@ -24,12 +24,12 @@ export default function ToolbarSearch({ initialValue = "", handleNewValue }) {
             }}
             autoFocus
             startAdornment={
-                <InputAdornment>
+                <InputAdornment position="start">
                     <Search />
                 </InputAdornment>
             }
             endAdornment={searchQuery &&
-                <InputAdornment>
+                <InputAdornment position="end">
                     <IconButton onClick={clear}>
                         <Clear />
                     </IconButton>
