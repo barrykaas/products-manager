@@ -17,7 +17,7 @@ export default function ProductsList({ handleEdit, handleSelectedProduct, search
     error,
   } = useProducts(searchQuery);
 
-  const productsData = data?.pages.flatMap((page) => page.results) || [];
+  const productsData = (data?.pages || []).flatMap((page) => page.results);
 
   return (
     <InfiniteList onMore={fetchNextPage} hasMore={hasNextPage}
