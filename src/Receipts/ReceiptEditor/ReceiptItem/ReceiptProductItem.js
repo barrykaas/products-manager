@@ -66,7 +66,7 @@ export default function ReceiptProductItem({ item }) {
 }
 
 
-function ProductInfo({ product }) {
+export function ProductInfo({ product }) {
     const brandsQuery = useBrands();
     const brandName = brandsQuery.getBrand(product.brand)?.name;
     const [editorOpen, setEditorOpen] = useState(false);

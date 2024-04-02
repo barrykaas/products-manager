@@ -39,7 +39,7 @@ function EventsListItem({ item, onEdit, onSelect }) {
         >
             <ListItemButton onClick={onSelect}>
                 <Stack alignItems="flex-start" width={1}
-                    sx={onEdit && { pr: 2 }}
+                    sx={{ pr: onEdit ? 2 : "none" }}
                 >
                     <ListItemText
                         sx={{ width: 1 }}

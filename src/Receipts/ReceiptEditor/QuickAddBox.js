@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+import { Box, Stack, Typography } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
 
 import { productsQueryKey } from '../../Products/ProductsApiQueries';
 import { getWords } from '../../Helpers/strings';
-import { useQuery } from '@tanstack/react-query';
 import { isNumber, roundDigits } from '../../Helpers/numbers';
 import { useUnitTypes } from '../../UnitTypes/UnitTypeQueries';
 import { formatEuro } from '../../Helpers/monetary';
 import { constructListItem, finishListItem } from './ReceiptItem/tools';
+import { useBrands } from '../../Brands/BrandsApiQueries';
 
 
 export default function QuickAddBox({ handleListItem }) {
@@ -71,9 +73,10 @@ export default function QuickAddBox({ handleListItem }) {
             options={options}
             getOptionLabel={getOptionLabel}
             renderOption={(props, option) =>
-                <li {...props} key={option?.product?.id || -1}>
-                    {getOptionLabel(option)}
-                </li>
+                // <li {...props} key={option?.product?.id || -1}>
+                //     {getOptionLabel(option)}
+                // </li>
+                <RenderOption props={props} option={option} />
             }
             renderInput={(params) => (
                 <TextField {...params}
@@ -165,3 +168,42 @@ const mergeInputAndProduct = (product, parsedInput) => {
     finishListItem(option)
     return option;
 };
+
+
+function RenderOption({ props = {}, option }) {
+    const product = option?.product;
+    const unit = (!product || product.discrete) ? 'x' : product.physical_unit;
+
+    return <li {...props} key={option?.product?.id || -1}>
+        <Stack direction="row" alignItems="center" spacing={2} width={1}>
+            {option.product_quantity &&
+                <Typography width="50px">{option.product_quantity + unit}</Typography>
+            }
+
+            {option?.product ?
+                <ProductLabel product={option.product} />
+                : <Typography>"{option?.description}"</Typography>
+            }
+
+            <Box flexGrow={1} />
+            <Typography>{formatEuro(option.amount)}</Typography>
+        </Stack>
+    </li>;
+}
+
+function ProductLabel({ product }) {
+    const { getBrand } = useBrands();
+    // const { formatProductDescription } = useHumanReadableProduct();
+
+    const brandName = getBrand(product.brand)?.name;
+
+    return <Stack>
+        <Typography variant="subtitle2" color="text.secondary">
+            {brandName}
+        </Typography>
+        <Typography>{product.name}</Typography>
+        {/* <Typography variant="subtitle2" color="text.secondary">
+            {formatProductDescription(product)}
+        </Typography> */}
+    </Stack>;
+}
