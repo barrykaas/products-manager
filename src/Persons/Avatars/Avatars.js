@@ -36,7 +36,7 @@ export function PersonAvatarGroup({ personIds = [], size = defaultSize, max = 10
     return (
         <AvatarGroup max={max} size={size}>
             {personIds.map(personId =>
-                <PersonAvatar personId={personId} size={size} />
+                <PersonAvatar key={personId} personId={personId} size={size} />
             )}
         </AvatarGroup>
     );

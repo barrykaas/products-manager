@@ -41,6 +41,7 @@ export default function EventController({ handleSelectedEvent, onClose, onMenu, 
 
     const onRefresh = invalidateEvents;
 
+    const showEditButtons = Boolean(handleSelectedEvent);
     handleSelectedEvent = handleSelectedEvent ?? handleEditEvent;
 
     return (
@@ -61,7 +62,7 @@ export default function EventController({ handleSelectedEvent, onClose, onMenu, 
                 handleNewSearch={setSearchQuery}
             >
                 <EventsList
-                    handleEditEvent={handleEditEvent}
+                    handleEditEvent={showEditButtons && handleEditEvent}
                     handleSelectedEvent={handleSelectedEvent}
                     searchQuery={searchQuery}
                 />

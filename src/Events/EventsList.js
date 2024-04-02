@@ -1,4 +1,4 @@
-import { ListItemText, ListItemButton, IconButton, Stack, Typography, ListSubheader, Paper } from "@mui/material";
+import { ListItemText, ListItemButton, IconButton, Stack, Typography, ListSubheader, Paper, ListItem } from "@mui/material";
 import { Fragment } from "react";
 import EditIcon from '@mui/icons-material/Edit';
 import { Person } from "@mui/icons-material";
@@ -11,7 +11,7 @@ import { PersonAvatarGroup } from "../Persons/Avatars/Avatars";
 
 
 function EventsListItem({ item, onEdit, onSelect }) {
-    const secondaryAction = onEdit ?
+    const secondaryAction = (onSelect && onEdit) ?
         <IconButton aria-label="comment" onClick={onEdit}>
             <EditIcon />
         </IconButton>
@@ -31,42 +31,46 @@ function EventsListItem({ item, onEdit, onSelect }) {
     ];
 
     return (
-        <ListItemButton
-            onClick={onSelect}
+        <ListItem
             secondaryAction={secondaryAction}
-            alignItems="flex-start"
+            disablePadding
             divider
+            alignItems="flex-start"
         >
-            <Stack alignItems="flex-start" width={1}>
-                <ListItemText
-                    sx={{ width: 1 }}
-                    primary={
-                        <Stack direction="row" justifyContent="space-between" spacing={1}>
-                            <Typography>{name}</Typography>
-                            {amount !== 0 &&
-                                <Typography align="right" sx={{ whiteSpace: "nowrap" }}>
-                                    <b>{formatEuro(amount)}</b>
-                                </Typography>
-                            }
-                        </Stack>
-                    }
-                    secondary={
-                        <Stack direction="row" justifyContent="space-between" spacing={1}>
-                            {secondaryInfo.filter(Boolean).join("  -  ")}
-                            {amount !== 0 && amountPerPerson &&
-                                <Stack direction="row" alignItems="center" spacing={0.5}>
-                                    <Person fontSize="inherit" />
-                                    <Typography variant="inherit" align="right" sx={{ whiteSpace: "nowrap" }}>
-                                        {formatEuro(amountPerPerson)}
+            <ListItemButton onClick={onSelect}>
+                <Stack alignItems="flex-start" width={1}
+                    sx={onEdit && { pr: 2 }}
+                >
+                    <ListItemText
+                        sx={{ width: 1 }}
+                        primary={
+                            <Stack direction="row" justifyContent="space-between" spacing={1}>
+                                <Typography>{name}</Typography>
+                                {amount !== 0 &&
+                                    <Typography align="right" sx={{ whiteSpace: "nowrap" }}>
+                                        <b>{formatEuro(amount)}</b>
                                     </Typography>
-                                </Stack>
-                            }
-                        </Stack>
-                    }
-                />
-                <PersonAvatarGroup personIds={participants} />
-            </Stack>
-        </ListItemButton>
+                                }
+                            </Stack>
+                        }
+                        secondary={
+                            <Stack direction="row" justifyContent="space-between" spacing={1}>
+                                {secondaryInfo.filter(Boolean).join("  -  ")}
+                                {amount !== 0 && amountPerPerson &&
+                                    <Stack direction="row" alignItems="center" spacing={0.5}>
+                                        <Person fontSize="inherit" />
+                                        <Typography variant="inherit" align="right" sx={{ whiteSpace: "nowrap" }}>
+                                            {formatEuro(amountPerPerson)}
+                                        </Typography>
+                                    </Stack>
+                                }
+                            </Stack>
+                        }
+                    />
+                    <PersonAvatarGroup personIds={participants} />
+                </Stack>
+            </ListItemButton>
+        </ListItem>
     );
 }
 
@@ -123,8 +127,8 @@ export default function EventsList({ handleEditEvent, handleSelectedEvent, searc
                         {groupedEvents[period].map((item) => (
                             <Fragment key={item.id}>
                                 <EventsListItem item={item}
-                                    onSelect={() => handleSelectedEvent(item)}
-                                    onEdit={() => handleEditEvent(item)} />
+                                    onSelect={handleSelectedEvent && (() => handleSelectedEvent(item))}
+                                    onEdit={handleEditEvent && (() => handleEditEvent(item))} />
                             </Fragment>
                         ))}
                     </ul>
