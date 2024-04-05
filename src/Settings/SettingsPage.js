@@ -3,10 +3,12 @@ import { Stack, Typography } from "@mui/material";
 
 import { PersonsIdField } from "../Persons/PersonsField";
 import ControllerView from "../Helpers/ControllerView";
+import { MarketIdField } from "../Markets/MarketField";
+import { useSettings } from "./settings";
 
 
 export default function SettingsPage({ onMenu }) {
-    const [cookies, setCookie] = useCookies(["user"]);
+    const [settings, updateSettings] = useSettings();
 
     return (
         <ControllerView
@@ -17,22 +19,16 @@ export default function SettingsPage({ onMenu }) {
                 <Typography variant="h6">Wie ben je?</Typography>
                 <PersonsIdField
                     label="Kies gebruiker"
-                    value={cookies?.user && Number(cookies.user)}
-                    setValue={(userId) => setCookie(
-                        "user", userId, { expires: new Date("2030-01-01T00:00:00Z") }
-                    )}
+                    value={settings.userId}
+                    setValue={(userId) => updateSettings({ userId })}
+                />
+                <Typography variant="h6">Default winkel</Typography>
+                <MarketIdField
+                    // label="Kies gebruiker"
+                    value={settings.defaultMarket}
+                    setValue={(defaultMarket) => updateSettings({ defaultMarket })}
                 />
             </Stack>
         </ControllerView>
     );
-}
-
-export function useSettings() {
-    const [cookies] = useCookies([
-        "user"
-    ]);
-
-    return {
-        userId: cookies?.user && Number(cookies.user),
-    };
 }

@@ -10,7 +10,7 @@ import ReceiptEditor from "./ReceiptEditor/ReceiptEditor";
 import { PersonsIdField } from "../Persons/PersonsField";
 import FormDialog from "../Helpers/FormDialog";
 import { MarketIdField } from "../Markets/MarketField";
-import { useSettings } from "../Settings/SettingsPage";
+import { useSettings } from "../Settings/settings";
 import { useConfirm } from "material-ui-confirm";
 
 
@@ -40,11 +40,12 @@ const validationSchema = yup.object({
 
 
 export default function ReceiptForm({ initialValues = {}, onSuccessfulCreateEdit }) {
-    const { userId } = useSettings();
+    const [ settings ] = useSettings();
 
     initialValues = {
         ...emptyForm(),
-        payer: userId,
+        payer: settings.userId,
+        market: settings.defaultMarket,
         ...initialValues
     };
 
@@ -140,7 +141,7 @@ export function ReceiptFormDialog({ open, onClose, initialValues, onSuccessfulCr
 
 
     const existingReceiptId = initialValues?.id;
-    const onDelete =  () => {
+    const onDelete = () => {
         confirmDelete({
             description: "Weet je zeker dat je deze lijst wilt verwijderen?"
         })
