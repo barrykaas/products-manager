@@ -27,6 +27,6 @@ const unitMap = {
 export function formatPricePerUnit({ unit, volumeOrPieces, price }) {
     const newUnit = unit ? unitMap[unit] : 'st.';
     let ppu = price / volumeOrPieces;
-    if (unit) ppu *= 1000;
+    if (unit === 'g' || unit === 'mL') ppu *= 1000;
     return formatEuro(ppu) + '/' + newUnit;
 }
