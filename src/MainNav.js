@@ -11,14 +11,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { Balance, Groups, QrCode, ReceiptLong, Sell, Settings, ShoppingCart } from '@mui/icons-material';
 import { SwipeableDrawer } from '@mui/material';
-
-import ReceiptsController from './Receipts/ReceiptsController/ReceiptsController';
-import EventController from './Events/EventController';
-import ProductController from './Products/ProductController';
-import BrandController from './Brands/BrandController';
-import BalanceInfo from './Balance/BalanceInfo';
-import SettingsPage from './Settings/SettingsPage';
-import ScannedItemsController from './ScannedItems/ScannedItemsController';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 
 
 export const drawerWidth = 240;
@@ -36,7 +29,7 @@ const views = [
         search: true
     },
     {
-        id: "balances", title: "Balans", icon: <Balance />,
+        id: "balance", title: "Balans", icon: <Balance />,
         refresh: true
     },
     {
@@ -48,7 +41,7 @@ const views = [
         refresh: true, add: true
     },
     {
-        id: "scanneditems", title: "Gescand", icon: <QrCode />,
+        id: "scanned", title: "Gescand", icon: <QrCode />,
         refresh: true, add: true
     },
     { id: "settings", title: "Instellingen", icon: <Settings /> },
@@ -57,7 +50,7 @@ const views = [
 export default function MainNav() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
-    const [currentView, setCurrentView] = useState(views[0])
+    const { pathname } = useLocation();
 
     const handleDrawerClose = () => {
         setIsClosing(true);
@@ -75,7 +68,6 @@ export default function MainNav() {
     };
 
     const handleSelectView = (view) => {
-        setCurrentView(view);
         handleDrawerClose();
     };
 
@@ -87,13 +79,11 @@ export default function MainNav() {
             <Divider />
             <List>
                 {views.map(view => (
-                    <ListItemButton key={view.title}
+                    <ListItemButton component={Link} to={view.id} key={view.id}
                         onClick={() => handleSelectView(view)}
-                        selected={currentView.title === view.title}
+                        selected={pathname.startsWith('/' + view.id)}
                     >
-                        <ListItemIcon>
-                            {view.icon}
-                        </ListItemIcon>
+                        <ListItemIcon>{view.icon}</ListItemIcon>
                         <ListItemText primary={view.title} />
                     </ListItemButton>
                 ))}
@@ -141,46 +131,10 @@ export default function MainNav() {
             </Box>
             <Box
                 component="main"
-                sx={{ flexGrow: 1, width: { sm: `calc(100% - ${drawerWidth}px)`, xs: 1 }}}
+                sx={{ flexGrow: 1, width: { sm: `calc(100% - ${drawerWidth}px)`, xs: 1 } }}
             >
-                <ViewPanel id="receipts" currentView={currentView} search>
-                    <ReceiptsController onMenu={handleDrawerToggle} />
-                </ViewPanel>
-
-                <ViewPanel id="events" currentView={currentView} search>
-                    <EventController onMenu={handleDrawerToggle} />
-                </ViewPanel>
-
-                <ViewPanel id="products" currentView={currentView} search>
-                    <ProductController onMenu={handleDrawerToggle} />
-                </ViewPanel>
-
-                <ViewPanel id="brands" currentView={currentView}>
-                    <BrandController onMenu={handleDrawerToggle} />
-                </ViewPanel>
-
-                <ViewPanel id="scanneditems" currentView={currentView}>
-                    <ScannedItemsController onMenu={handleDrawerToggle} />
-                </ViewPanel>
-
-                <ViewPanel id="balances" currentView={currentView}>
-                    <BalanceInfo onMenu={handleDrawerToggle} />
-                </ViewPanel>
-
-                <ViewPanel id="settings" currentView={currentView}>
-                    <SettingsPage onMenu={handleDrawerToggle} />
-                </ViewPanel>
-
+                <Outlet context={{ onMenu: handleDrawerToggle }} />
             </Box>
         </Box>
-    );
-}
-
-function ViewPanel({ id, currentView, children }) {
-    const hidden = id !== currentView?.id;
-    return (
-        <div hidden={hidden}>
-            {hidden || children}
-        </div>
     );
 }

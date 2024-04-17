@@ -3,13 +3,13 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ConfirmProvider } from "material-ui-confirm";
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { Container } from '@mui/material';
 import { ErrorBoundary } from 'react-error-boundary';
 
 import './App.css';
 import { defaultQueryFn } from './Api/Common';
-import MainNav from './MainNav';
 import Fallback from './ErrorBoundary/Fallback';
+import { RouterProvider } from 'react-router-dom';
+import { router } from './router'
 
 
 const darkTheme = createTheme({
@@ -29,6 +29,7 @@ const queryClient = new QueryClient({
     },
 });
 
+
 export default function App() {
     return (
         <ErrorBoundary FallbackComponent={Fallback}>
@@ -42,12 +43,7 @@ export default function App() {
                         <CssBaseline />
                         <ConfirmProvider>
 
-                            <Container
-                                maxWidth={false}
-                                disableGutters
-                            >
-                                <MainNav />
-                            </Container>
+                            <RouterProvider router={router} />
 
                         </ConfirmProvider>
                     </ThemeProvider>

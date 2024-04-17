@@ -3,9 +3,12 @@ import { AppBar, Box, Container, Fab, IconButton, Stack, Toolbar, Typography } f
 import MenuIcon from '@mui/icons-material/Menu';
 
 import ToolbarSearch from "./ToolbarSearch";
+import { useOutletContext } from "react-router-dom";
 
 
-export default function ControllerView({ children, title, onClose, onAdd, onRefresh, initialSearch, handleNewSearch, onMenu }) {
+export default function ControllerView({ children, title, onClose, onAdd, onRefresh, initialSearch, handleNewSearch }) {
+    const { onMenu } = useOutletContext();
+
     return (
         <Box>
             <ControllerAppBar
