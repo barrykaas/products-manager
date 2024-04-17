@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Grid, Stack, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 
 import { productsQueryKey } from '../../Products/ProductsApiQueries';
@@ -11,6 +11,7 @@ import { useUnitTypes } from '../../UnitTypes/UnitTypeQueries';
 import { formatEuro } from '../../Helpers/monetary';
 import { constructListItem, finishListItem } from './ReceiptItem/tools';
 import { useBrands } from '../../Brands/BrandsApiQueries';
+import useHumanReadableProduct from '../../Products/HumanReadableProduct';
 
 
 export default function QuickAddBox({ handleListItem }) {
@@ -186,24 +187,33 @@ function RenderOption({ props = {}, option }) {
             }
 
             <Box flexGrow={1} />
-            <Typography>{formatEuro(option.amount)}</Typography>
+            <Typography sx={{ whiteSpace: "nowrap" }}>
+                {formatEuro(option.amount)}
+            </Typography>
         </Stack>
     </li>;
 }
 
 function ProductLabel({ product }) {
     const { getBrand } = useBrands();
-    // const { formatProductDescription } = useHumanReadableProduct();
+    const { formatProductDescription } = useHumanReadableProduct();
 
     const brandName = getBrand(product.brand)?.name;
 
-    return <Stack>
+    return <Stack width={1}>
         <Typography variant="subtitle2" color="text.secondary">
             {brandName}
         </Typography>
-        <Typography>{product.name}</Typography>
-        {/* <Typography variant="subtitle2" color="text.secondary">
-            {formatProductDescription(product)}
-        </Typography> */}
+        <Grid container spacing={1} alignItems="end" >
+            <Grid item>
+
+                <Typography>{product.name}</Typography>
+            </Grid>
+            <Grid item>
+                <Typography variant="subtitle2" color="text.secondary">
+                    {formatProductDescription(product)}
+                </Typography>
+            </Grid>
+        </Grid>
     </Stack>;
 }
