@@ -11,7 +11,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { Balance, Groups, QrCode, ReceiptLong, Sell, Settings, ShoppingCart } from '@mui/icons-material';
 import { SwipeableDrawer } from '@mui/material';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
 
 
 export const drawerWidth = 240;
@@ -90,6 +90,11 @@ export default function MainNav() {
             </List>
         </div>
     );
+
+    // Open first view by default
+    if (pathname === "/") {
+        return <Navigate to={"/" + views[0].id} />
+    }
 
     return (
         <Box sx={{ display: "flex", minHeight: "100vh" }}>

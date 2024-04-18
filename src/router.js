@@ -1,5 +1,5 @@
 import { Container } from "@mui/material";
-import { createBrowserRouter } from "react-router-dom";
+import { Navigate, createBrowserRouter } from "react-router-dom";
 
 import MainNav from "./MainNav";
 import ReceiptsController from "./Receipts/ReceiptsController/ReceiptsController";
@@ -16,6 +16,11 @@ export const router = createBrowserRouter([
         path: "/",
         element: <Root />,
         children: [
+            {
+                path: "products-manager",
+                element: <Navigate to="/" />
+            },
+
             {
                 path: "receipts",
                 element: <ReceiptsController />
