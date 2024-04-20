@@ -4,13 +4,14 @@ import ReceiptsList from "./ReceiptsList";
 import { ReceiptFormDialog } from "../ReceiptForm";
 import { useListsInvalidator } from "../../Lists/ListsApiQueries";
 import ControllerView from "../../Helpers/ControllerView";
+import useUrlSearchQuery from "../../Helpers/urlSearchQuery";
 
 
 export default function ReceiptsController({ onMenu }) {
     const [isEditing, setIsEditing] = useState(false);
     const [initialFormData, setInitialFormData] = useState();
-    const [searchQuery, setSearchQuery] = useState("");
     const invalidateReceipts = useListsInvalidator();
+    const [searchQuery, setSearchQuery] = useUrlSearchQuery();
 
     const onAddReceipt = () => {
         setInitialFormData(undefined);

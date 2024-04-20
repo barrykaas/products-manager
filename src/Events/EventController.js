@@ -5,6 +5,7 @@ import EventsList from './EventsList';
 import { EventFormDialog } from './EventForm';
 import { useEventsInvalidator } from './EventsApiQueries';
 import ControllerView from '../Helpers/ControllerView';
+import useUrlSearchQuery from '../Helpers/urlSearchQuery';
 
 
 const defaultTitle = "Events";
@@ -18,7 +19,7 @@ export default function EventController({ handleSelectedEvent, onClose, onMenu, 
     const [messageText, setMessageText] = useState("");
     const [messageState, setMessageState] = useState(true);
 
-    const [searchQuery, setSearchQuery] = useState("");
+    const [searchQuery, setSearchQuery] = useUrlSearchQuery();
 
     const invalidateEvents = useEventsInvalidator();
 

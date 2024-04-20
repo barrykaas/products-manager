@@ -5,6 +5,7 @@ import ProductsList from './ProductsList';
 import { ProductFormDialog } from './ProductsForm';
 import { useProductsInvalidator } from './ProductsApiQueries';
 import ControllerView from '../Helpers/ControllerView';
+import useUrlSearchQuery from '../Helpers/urlSearchQuery';
 
 
 export default function ProductController({ handleSelectedProduct, onClose, onMenu }) {
@@ -13,7 +14,7 @@ export default function ProductController({ handleSelectedProduct, onClose, onMe
     const [messageText, setMessageText] = useState("");
     const [messageState] = useState(true);
     const [editOpen, setEditOpen] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery, setSearchQuery] = useUrlSearchQuery();
 
     const invalidateProducts = useProductsInvalidator();
 
