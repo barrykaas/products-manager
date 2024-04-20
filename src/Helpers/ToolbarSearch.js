@@ -2,12 +2,19 @@ import { Clear, Search } from "@mui/icons-material";
 import { IconButton, Input, InputAdornment } from "@mui/material";
 import { useState } from "react";
 
+import useDebounce from "./debounce";
+
 
 export default function ToolbarSearch({ initialValue = "", handleNewValue }) {
-    const [searchQuery, setSearchQuery] = useState(initialValue);
+    const [inputValue, setInputValue] = useState(initialValue);
+
+    useDebounce(
+        () => handleNewValue(inputValue),
+        [inputValue], 250
+    );
 
     const clear = () => {
-        setSearchQuery("");
+        setInputValue("");
         handleNewValue("");
     };
 
@@ -16,11 +23,10 @@ export default function ToolbarSearch({ initialValue = "", handleNewValue }) {
             id="standard-search"
             placeholder="Zoek"
             type="search"
-            value={searchQuery}
+            value={inputValue}
             onChange={(e) => {
                 const newValue = e.target.value;
-                setSearchQuery(newValue);
-                handleNewValue(newValue);
+                setInputValue(newValue);
             }}
             autoFocus
             startAdornment={
@@ -28,7 +34,7 @@ export default function ToolbarSearch({ initialValue = "", handleNewValue }) {
                     <Search />
                 </InputAdornment>
             }
-            endAdornment={searchQuery &&
+            endAdornment={inputValue &&
                 <InputAdornment position="end">
                     <IconButton onClick={clear}>
                         <Clear />
