@@ -41,6 +41,7 @@ export function ReceiptsListItem({ item, onSelect, ...args }) {
             }
           </Stack>
         }
+        secondaryTypographyProps={{ component: "div" }}
         secondary={secondaryInfo.filter(Boolean).join(" - ")}
       />
     </ListItemButton>

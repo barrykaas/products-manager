@@ -75,6 +75,7 @@ export function ProductListItem({ product, onSelect, onEdit, disabled = false, s
                             }
                         </Stack>
                     }
+                    secondaryTypographyProps={{ component: "div" }}
                     secondary={
                         <Stack direction="row" justifyContent="space-between" spacing={1}>
                             {secondaryInfo.filter(Boolean).join("  -  ")}

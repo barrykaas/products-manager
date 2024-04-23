@@ -1,10 +1,11 @@
-import { Chip, CircularProgress, Paper, Table, TableCell, TableContainer, TableHead, TableRow, Box, Stack, Typography } from "@mui/material";
+import { Chip, CircularProgress, Paper, Table, TableCell, TableContainer, TableHead, TableRow, Box, Stack, Typography, TableBody } from "@mui/material";
 import { ArrowForward } from "@mui/icons-material";
 
 import { formatEuro } from "../Helpers/monetary";
 import { balancesQueryKey, useBalances } from "./BalanceApiQueries";
 import ControllerView from "../Helpers/ControllerView";
 import { useInvalidator } from "../Api/Common";
+import { Fragment } from "react";
 
 
 function PersonRow({ person }) {
@@ -43,17 +44,27 @@ function BalanceInfoContent() {
                 <TableContainer component={Paper} sx={{ minWidth: 500 }}>
                     <Table>
                         <TableHead>
-                            <TableCell>Naam</TableCell>
-                            <TableCell>Stand</TableCell>
-                            <TableCell>Uitgaven (+)</TableCell>
-                            <TableCell>Consumptie (-)</TableCell>
+                            <TableRow>
+                                <TableCell>Naam</TableCell>
+                                <TableCell>Stand</TableCell>
+                                <TableCell>Uitgaven (+)</TableCell>
+                                <TableCell>Consumptie (-)</TableCell>
+                            </TableRow>
                         </TableHead>
-                        {data.map(person => PersonRow({ person }))}
+                        <TableBody>
+                            {data.map(person =>
+                                <Fragment key={person.id}>
+                                    <PersonRow person={person} />
+                                </Fragment>
+                            )}
+                        </TableBody>
                         <TableHead>
-                            <TableCell>Totaal</TableCell>
-                            <TableCell />
-                            <TableCell />
-                            <TableCell>{formatEuro(totalExpenses)}</TableCell>
+                            <TableRow>
+                                <TableCell>Totaal</TableCell>
+                                <TableCell />
+                                <TableCell />
+                                <TableCell>{formatEuro(totalExpenses)}</TableCell>
+                            </TableRow>
                         </TableHead>
                     </Table>
                 </TableContainer>
@@ -62,18 +73,24 @@ function BalanceInfoContent() {
             <Box>
                 <Typography variant="h5">Terug te betalen:</Typography>
                 <TableContainer>
-                    {toSettle.map(settlement =>
-                        <TableRow>
-                            <TableCell>
-                                <b>{getPerson(settlement.from)?.name}</b>
-                            </TableCell>
-                            <TableCell>{formatEuro(settlement.amount)}</TableCell>
-                            <TableCell><ArrowForward /></TableCell>
-                            <TableCell>
-                                <b>{getPerson(settlement.to)?.name}</b>
-                            </TableCell>
-                        </TableRow>
-                    )}
+                    <Table>
+                        <TableBody>
+                            {toSettle.map(settlement =>
+                                <Fragment key={settlement.from + ',' + settlement.to}>
+                                    <TableRow>
+                                        <TableCell>
+                                            <b>{getPerson(settlement.from)?.name}</b>
+                                        </TableCell>
+                                        <TableCell>{formatEuro(settlement.amount)}</TableCell>
+                                        <TableCell><ArrowForward /></TableCell>
+                                        <TableCell>
+                                            <b>{getPerson(settlement.to)?.name}</b>
+                                        </TableCell>
+                                    </TableRow>
+                                </Fragment>
+                            )}
+                        </TableBody>
+                    </Table>
                 </TableContainer>
             </Box>
         </Stack>

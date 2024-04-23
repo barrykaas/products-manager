@@ -53,6 +53,7 @@ function EventsListItem({ item, onEdit, onSelect }) {
                                 }
                             </Stack>
                         }
+                        secondaryTypographyProps={{ component: "div" }}
                         secondary={
                             <Stack direction="row" justifyContent="space-between" spacing={1}>
                                 {secondaryInfo.filter(Boolean).join("  -  ")}

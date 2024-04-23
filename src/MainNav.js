@@ -52,6 +52,11 @@ export default function MainNav() {
     const [isClosing, setIsClosing] = useState(false);
     const { pathname } = useLocation();
 
+    // Open first view by default
+    if (pathname === "/") {
+        return <Navigate to={"/" + views[0].id} />
+    }
+
     const handleDrawerClose = () => {
         setIsClosing(true);
         setMobileOpen(false);
@@ -90,11 +95,6 @@ export default function MainNav() {
             </List>
         </div>
     );
-
-    // Open first view by default
-    if (pathname === "/") {
-        return <Navigate to={"/" + views[0].id} />
-    }
 
     return (
         <Box sx={{ display: "flex", minHeight: "100vh" }}>
