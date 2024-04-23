@@ -13,7 +13,7 @@ export default function useUrlSearchQuery() {
         } else {
             searchParams.delete(searchParamName);
         }
-        setSearchParams(searchParams);
+        setSearchParams(searchParams, { replace: true });
     };
 
     return [searchQuery, setSearchQuery];
