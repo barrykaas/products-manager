@@ -1,5 +1,6 @@
 import { Typography, ListItemButton, ListItemText, ListItemAvatar, CircularProgress, Stack } from "@mui/material";
 import { Fragment } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import { useReceipts } from "../../Lists/ListsApiQueries";
 import { useMarkets } from "../../Markets/MarketsApiQueries";
@@ -7,6 +8,7 @@ import { formatEuro } from "../../Helpers/monetary";
 import InfiniteList from "../../Helpers/InfiniteList";
 import PersonAvatar from "../../Persons/Avatars/Avatars";
 import { isoToRelativeDate } from "../../Helpers/dateTime";
+import { removeEmpty } from "../../Helpers/objects";
 
 
 export function ReceiptsListItem({ item, onSelect, ...args }) {
@@ -49,6 +51,7 @@ export function ReceiptsListItem({ item, onSelect, ...args }) {
 }
 
 export default function ReceiptsList({ onSelectItem, searchQuery }) {
+  const [searchParams] = useSearchParams();
   const {
     data,
     isFetching,
@@ -57,7 +60,13 @@ export default function ReceiptsList({ onSelectItem, searchQuery }) {
     isError,
     error,
     fetchNextPage
-  } = useReceipts({ params: { search: searchQuery, page_size: 20 } });
+  } = useReceipts({
+    params: {
+      search: searchQuery,
+      page_size: 20,
+      ...searchParamsToApi(searchParams)
+    }
+  });
 
   const allReceipts = data?.pages.flatMap((page) => page.results) || [];
 
@@ -75,4 +84,24 @@ export default function ReceiptsList({ onSelectItem, searchQuery }) {
     </InfiniteList>
   );
 
+}
+
+function searchParamsToApi(params) {
+  const apiParams = {
+    ordering: params.get('ordering'),
+
+    payer: params.get('payer'),
+    payer__in: params.get('payer_in'),
+
+    market: params.get('market'),
+    market__in: params.get('market_in'),
+
+    transaction_date__lte: params.get('transaction_before'),
+    transaction_date__gte: params.get('transaction_after'),
+
+    date_created__lte: params.get('created_before'),
+    date_created__gte: params.get('created_after'),
+  };
+  
+  return removeEmpty(apiParams);
 }
