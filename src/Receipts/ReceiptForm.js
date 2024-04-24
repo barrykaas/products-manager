@@ -1,9 +1,6 @@
 import { Stack, Button, Box, TextField, Divider } from "@mui/material";
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import * as yup from "yup";
 import { useFormik } from "formik";
-import dayjs from "dayjs";
 
 import { receiptListType, useListDeleter, useListMutator } from "../Lists/ListsApiQueries";
 import ReceiptEditor from "./ReceiptEditor/ReceiptEditor";
@@ -12,6 +9,7 @@ import FormDialog from "../Helpers/FormDialog";
 import { MarketIdField } from "../Markets/MarketField";
 import { useSettings } from "../Settings/settings";
 import { useConfirm } from "material-ui-confirm";
+import { DateField } from "../Helpers/DateField";
 
 
 const emptyForm = () => ({
@@ -40,7 +38,7 @@ const validationSchema = yup.object({
 
 
 export default function ReceiptForm({ initialValues = {}, onSuccessfulCreateEdit }) {
-    const [ settings ] = useSettings();
+    const [settings] = useSettings();
 
     initialValues = {
         ...emptyForm(),
@@ -88,23 +86,21 @@ export default function ReceiptForm({ initialValues = {}, onSuccessfulCreateEdit
                     setValue={(marketId) => formik.setFieldValue("market", marketId)}
                 />
 
-                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={'en-gb'}>
-                    <DatePicker
-                        id="transaction_date"
-                        name="transaction_date"
-                        label="Datum"
-                        value={dayjs(formik.values.transaction_date)}
-                        onChange={(value) => {
-                            formik.setFieldValue('transaction_date', value);
-                        }}
-                        slotProps={{
-                            textField: {
-                                helperText: formik.touched.transaction_date && formik.errors.transaction_date,
-                                error: formik.touched.transaction_date && Boolean(formik.errors.transaction_date)
-                            },
-                        }}
-                    />
-                </LocalizationProvider>
+                <DateField
+                    id="transaction_date"
+                    name="transaction_date"
+                    label="Datum"
+                    value={formik.values.transaction_date}
+                    onChange={(value) => {
+                        formik.setFieldValue('transaction_date', value);
+                    }}
+                    slotProps={{
+                        textField: {
+                            helperText: formik.touched.transaction_date && formik.errors.transaction_date,
+                            error: formik.touched.transaction_date && Boolean(formik.errors.transaction_date)
+                        },
+                    }}
+                />
 
                 <PersonsIdField
                     label="Betaler"

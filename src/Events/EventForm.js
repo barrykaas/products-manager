@@ -2,9 +2,6 @@ import { useFormik } from 'formik';
 import { Button, Box, TextField, Stack, Paper, Divider, Typography, List, CircularProgress } from '@mui/material';
 import { useConfirm } from 'material-ui-confirm';
 import * as yup from 'yup';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
 import { useQuery } from '@tanstack/react-query';
 
@@ -14,6 +11,7 @@ import FormDialog from '../Helpers/FormDialog';
 import { Fragment, useState } from 'react';
 import { ReceiptFormDialog } from '../Receipts/ReceiptForm';
 import { ReceiptsListItem } from '../Receipts/ReceiptsController/ReceiptsList';
+import { DateField } from '../Helpers/DateField';
 
 
 const defaultParticipants = [1, 2, 4, 5];
@@ -65,23 +63,23 @@ export function EventForm({ onSuccessfulCreateEdit, initialValues = {} }) {
                     error={formik.touched.name && Boolean(formik.errors.name)}
                     helperText={formik.touched.name && formik.errors.name}
                 />
-                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={'en-gb'}>
-                    <DatePicker
-                        id="event_date"
-                        name="event_date"
-                        label="Datum"
-                        value={dayjs(formik.values.event_date)}
-                        onChange={(value) => {
-                            formik.setFieldValue('event_date', value);
-                        }}
-                        slotProps={{
-                            textField: {
-                                helperText: formik.touched.event_date && formik.errors.event_date,
-                                error: formik.touched.event_date && Boolean(formik.errors.event_date)
-                            },
-                        }}
-                    />
-                </LocalizationProvider>
+
+                <DateField
+                    id="event_date"
+                    name="event_date"
+                    label="Datum"
+                    clearable
+                    value={formik.values.event_date}
+                    onChange={(value) => {
+                        formik.setFieldValue('event_date', value);
+                    }}
+                    slotProps={{
+                        textField: {
+                            helperText: formik.touched.event_date && formik.errors.event_date,
+                            error: formik.touched.event_date && Boolean(formik.errors.event_date)
+                        },
+                    }}
+                />
 
                 <Paper variant="outlined" >
                     <ParticipantsList setChecked={(value) => formik.setFieldValue('event_participants', value)} checked={formik.values.event_participants} />

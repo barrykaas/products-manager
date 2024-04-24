@@ -1,11 +1,8 @@
-import { Box, Button, IconButton, InputAdornment, Skeleton, Stack, TextField } from '@mui/material';
+import { Box, Button, IconButton, InputAdornment, Skeleton, Stack, TextField, Typography } from '@mui/material';
 import { useFormik } from 'formik';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useState } from 'react';
 import { AddCircle, QrCodeScanner, RemoveCircle } from '@mui/icons-material';
 import { useConfirm } from 'material-ui-confirm';
-import dayjs from 'dayjs';
 import 'dayjs/locale/en-gb';
 import * as yup from 'yup';
 
@@ -16,12 +13,13 @@ import FormDialog from '../Helpers/FormDialog';
 import { BrandsIdField } from '../Brands/BrandsField';
 import { UnitTypeIdField } from '../UnitTypes/UnitTypeField';
 import { useUnitTypes } from '../UnitTypes/UnitTypeQueries';
+import { isoToRelativeDate } from '../Helpers/dateTime';
 
 
 const validationSchema = yup.object({
-    date_added: yup
-        .date('Enter transaction date')
-        .required('Transaction date is required'),
+    // date_added: yup
+    //     .date('Enter transaction date')
+    //     .required('Transaction date is required'),
     name: yup
         .string('Enter name')
         .required('Name is required'),
@@ -57,7 +55,6 @@ export function ProductForm({
     initialValues = {},
 }) {
     const emptyForm = {
-        date_added: new Date(),
         name: '',
         brand: null,
         unit_number: 1,
@@ -229,24 +226,11 @@ export function ProductForm({
                     }}
                 />
 
-                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={'en-gb'}>
-                    <DatePicker
-                        id="date_added"
-                        name="date_added"
-                        label="Transaction date"
-                        value={dayjs(formik.values.date_added)}
-                        onChange={(value) => {
-                            formik.setFieldValue('date_added', value);
-                        }}
-                        slotProps={{
-                            textField: {
-                                helperText:
-                                    formik.touched.date_added && formik.errors.date_added,
-                                error: formik.touched.date_added && Boolean(formik.errors.date_added),
-                            },
-                        }}
-                    />
-                </LocalizationProvider>
+                {initialValues?.date_added &&
+                    <Typography fontStyle="italic">
+                        Toegevoegd op {isoToRelativeDate(initialValues.date_added)}
+                    </Typography>
+                }
 
                 <Button color="primary" variant="contained" fullWidth type="submit">
                     Save
