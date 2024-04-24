@@ -90,6 +90,8 @@ function searchParamsToApi(params) {
   const apiParams = {
     ordering: params.get('ordering'),
 
+    event: params.get('event'),
+
     payer: params.get('payer'),
     payer__in: params.get('payer_in'),
 

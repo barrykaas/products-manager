@@ -1,12 +1,12 @@
-import { Add, Close, Refresh } from "@mui/icons-material";
+import { Add, Close, FilterAlt, Refresh } from "@mui/icons-material";
 import { AppBar, Box, Container, Fab, IconButton, Stack, Toolbar, Typography } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
-
-import ToolbarSearch from "./ToolbarSearch";
 import { useOutletContext } from "react-router-dom";
 
+import ToolbarSearch from "./ToolbarSearch";
 
-export default function ControllerView({ children, title, onClose, onAdd, onRefresh, initialSearch, handleNewSearch }) {
+
+export default function ControllerView({ children, title, onClose, onAdd, onRefresh, onFilter, initialSearch, handleNewSearch }) {
     const { onMenu } = useOutletContext();
 
     return (
@@ -26,6 +26,11 @@ export default function ControllerView({ children, title, onClose, onAdd, onRefr
             </Container>
 
             <Stack spacing={1} alignItems="center" sx={{ position: "fixed", bottom: "20px", right: "20px" }}>
+                {onFilter &&
+                    <Fab size="small" color="secondary" onClick={onFilter}>
+                        <FilterAlt />
+                    </Fab>
+                }
                 {onRefresh &&
                     <Fab size="small" onClick={onRefresh}>
                         <Refresh />
