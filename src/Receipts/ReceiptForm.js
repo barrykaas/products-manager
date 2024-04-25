@@ -1,4 +1,4 @@
-import { Stack, Button, Box, TextField, Divider } from "@mui/material";
+import { Stack, Button, Box, TextField, Divider, Typography } from "@mui/material";
 import * as yup from "yup";
 import { useFormik } from "formik";
 
@@ -10,6 +10,7 @@ import { MarketIdField } from "../Markets/MarketField";
 import { useSettings } from "../Settings/settings";
 import { useConfirm } from "material-ui-confirm";
 import { DateField } from "../Helpers/DateField";
+import { isoToRelativeDate } from "../Helpers/dateTime";
 
 
 const emptyForm = () => ({
@@ -107,6 +108,12 @@ export default function ReceiptForm({ initialValues = {}, onSuccessfulCreateEdit
                     value={formik.values.payer}
                     setValue={(payerId) => formik.setFieldValue("payer", payerId)}
                 />
+
+                {initialValues?.date_created &&
+                    <Typography fontStyle="italic">
+                        Gecreëerd op {isoToRelativeDate(initialValues.date_created)}
+                    </Typography>
+                }
 
                 <Button color="primary" variant="contained" fullWidth type="submit">
                     {existingReceiptId ? "Update" : "Creëer"}

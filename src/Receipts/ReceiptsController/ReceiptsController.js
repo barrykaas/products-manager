@@ -10,7 +10,7 @@ import FormDialog from "../../Helpers/FormDialog";
 import { useSearchParams } from "react-router-dom";
 import { PersonsIdField } from "../../Persons/PersonsField";
 import { MarketIdField } from "../../Markets/MarketField";
-import { DateField } from "../../Helpers/DateField";
+import { DateRangeField } from "../../Helpers/DateField";
 
 
 export default function ReceiptsController({ onMenu }) {
@@ -77,6 +77,10 @@ const allFilterParams = [
     "market",
     "event",
     "ordering",
+    "transaction_before",
+    "transaction_after",
+    "created_before",
+    "created_after",
 ];
 
 function FilterDialog({ open, onClose }) {
@@ -146,36 +150,22 @@ function FilterDialog({ open, onClose }) {
                 />
 
                 <Typography>Transactiedatum</Typography>
-                <Stack direction="row" spacing={1.5}>
-                    <DateField
-                        label="Na"
-                        clearable
-                        value={searchParams.get("transaction_after")}
-                        onChange={value => updateParam("transaction_after", value?.toISOString())}
-                    />
-                    <DateField
-                        label="Voor"
-                        clearable
-                        value={searchParams.get("transaction_before")}
-                        onChange={value => updateParam("transaction_before", value?.toISOString())}
-                    />
-                </Stack>
+                <DateRangeField
+                    clearable
+                    valueAfter={searchParams.get("transaction_after")}
+                    onChangeAfter={value => updateParam("transaction_after", value?.toISOString())}
+                    valueBefore={searchParams.get("transaction_before")}
+                    onChangeBefore={value => updateParam("transaction_before", value?.toISOString())}
+                />
 
                 <Typography>Datum gecreëerd</Typography>
-                <Stack direction="row" spacing={1.5}>
-                    <DateField
-                        label="Na"
-                        clearable
-                        value={searchParams.get("created_after")}
-                        onChange={value => updateParam("created_after", value?.toISOString())}
-                    />
-                    <DateField
-                        label="Voor"
-                        clearable
-                        value={searchParams.get("created_before")}
-                        onChange={value => updateParam("created_before", value?.toISOString())}
-                    />
-                </Stack>
+                <DateRangeField
+                    clearable
+                    valueAfter={searchParams.get("created_after")}
+                    onChangeAfter={value => updateParam("created_after", value?.toISOString())}
+                    valueBefore={searchParams.get("created_before")}
+                    onChangeBefore={value => updateParam("created_before", value?.toISOString())}
+                />
 
             </Stack>
         </FormDialog>

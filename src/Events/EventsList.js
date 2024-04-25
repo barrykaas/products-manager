@@ -8,6 +8,8 @@ import InfiniteList from "../Helpers/InfiniteList";
 import { formatEuro } from "../Helpers/monetary";
 import { isoToRelativeDate, weeksAhead } from "../Helpers/dateTime";
 import { PersonAvatarGroup } from "../Persons/Avatars/Avatars";
+import { useSearchParams } from "react-router-dom";
+import { removeEmpty } from "../Helpers/objects";
 
 
 function EventsListItem({ item, onEdit, onSelect }) {
@@ -76,6 +78,7 @@ function EventsListItem({ item, onEdit, onSelect }) {
 }
 
 export default function EventsList({ handleEditEvent, handleSelectedEvent, searchQuery }) {
+    const [searchParams] = useSearchParams();
     const {
         data,
         isFetching,
@@ -84,8 +87,14 @@ export default function EventsList({ handleEditEvent, handleSelectedEvent, searc
         isError,
         error,
         fetchNextPage
-    } = useEvents({ params: { search: searchQuery } });
+    } = useEvents({
+        params: {
+            search: searchQuery,
+            ...searchParamsToApi(searchParams)
+        }
+    });
 
+    // TODO: fix subheaders
     const allEvents = data?.pages.flatMap((page) => page.results) || [];
     const groupedEvents = allEvents.reduce((grouped, event) => {
         const weeks = weeksAhead(event.event_date);
@@ -139,3 +148,16 @@ export default function EventsList({ handleEditEvent, handleSelectedEvent, searc
     );
 };
 
+function searchParamsToApi(params) {
+    const apiParams = {
+        ordering: params.get('ordering'),
+
+        event_date__lte: params.get('event_before'),
+        event_date__gte: params.get('event_after'),
+
+        date_created__lte: params.get('created_before'),
+        date_created__gte: params.get('created_after'),
+    };
+
+    return removeEmpty(apiParams);
+}

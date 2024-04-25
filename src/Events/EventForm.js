@@ -12,6 +12,7 @@ import { Fragment, useState } from 'react';
 import { ReceiptFormDialog } from '../Receipts/ReceiptForm';
 import { ReceiptsListItem } from '../Receipts/ReceiptsController/ReceiptsList';
 import { DateField } from '../Helpers/DateField';
+import { isoToRelativeDate } from '../Helpers/dateTime';
 
 
 const defaultParticipants = [1, 2, 4, 5];
@@ -85,6 +86,11 @@ export function EventForm({ onSuccessfulCreateEdit, initialValues = {} }) {
                     <ParticipantsList setChecked={(value) => formik.setFieldValue('event_participants', value)} checked={formik.values.event_participants} />
                 </Paper>
 
+                {initialValues?.date_created &&
+                    <Typography fontStyle="italic">
+                        Gecreëerd op {isoToRelativeDate(initialValues.date_created)}
+                    </Typography>
+                }
 
                 <Button color="primary" variant="contained" fullWidth type="submit">
                     Save
