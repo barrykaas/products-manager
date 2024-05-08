@@ -1,44 +1,31 @@
 import { useState } from "react";
 import { Autocomplete, Button, Stack, TextField, Typography } from "@mui/material";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import ReceiptsList from "./ReceiptsList";
-import { ReceiptFormDialog } from "../ReceiptForm";
 import { useListsInvalidator } from "../../Lists/ListsApiQueries";
 import ControllerView from "../../Helpers/ControllerView";
 import useUrlSearchQuery from "../../Helpers/urlSearchQuery";
 import FormDialog from "../../Helpers/FormDialog";
-import { useSearchParams } from "react-router-dom";
 import { PersonsIdField } from "../../Persons/PersonsField";
 import { MarketIdField } from "../../Markets/MarketField";
 import { DateRangeField } from "../../Helpers/DateField";
 
 
 export default function ReceiptsController({ onMenu }) {
-    const [isEditing, setIsEditing] = useState(false);
-    const [initialFormData, setInitialFormData] = useState();
     const invalidateReceipts = useListsInvalidator();
     const [searchQuery, setSearchQuery] = useUrlSearchQuery();
     const [filterOpen, setFilterOpen] = useState(false);
+    const navigate = useNavigate();
 
     const onAddReceipt = () => {
-        setInitialFormData(undefined);
-        setIsEditing(true)
+        navigate('new');
     };
     const selectReceipt = (item) => {
-        setInitialFormData(item);
-        setIsEditing(true);
-    };
-
-    const handleSuccessfulCreateEdit = (newReceipt) => {
-        setInitialFormData(newReceipt);
+        navigate(`${item.id}`);
     };
 
     const onRefresh = invalidateReceipts;
-
-    const onCloseForm = () => {
-        setIsEditing(false);
-        onRefresh();
-    };
 
     return (
         <ControllerView
@@ -55,15 +42,6 @@ export default function ReceiptsController({ onMenu }) {
                 searchQuery={searchQuery}
             />
 
-            <ReceiptFormDialog
-                open={isEditing}
-                onClose={onCloseForm}
-
-                initialValues={initialFormData}
-                onSuccessfulCreateEdit={handleSuccessfulCreateEdit}
-                onSuccessfulDelete={() => setIsEditing(false)}
-            />
-
             <FilterDialog
                 open={filterOpen}
                 onClose={() => setFilterOpen(false)}
@@ -71,6 +49,7 @@ export default function ReceiptsController({ onMenu }) {
         </ControllerView>
     );
 }
+
 
 const allFilterParams = [
     "payer",

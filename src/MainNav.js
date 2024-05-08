@@ -54,7 +54,7 @@ export default function MainNav() {
 
     // Open first view by default
     if (pathname === "/") {
-        return <Navigate to={"/" + views[0].id} />
+        return <Navigate to={"/" + views[0].id} replace />
     }
 
     const handleDrawerClose = () => {

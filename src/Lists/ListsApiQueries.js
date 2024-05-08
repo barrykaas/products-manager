@@ -4,7 +4,7 @@ import ax from "../Api/axios";
 import { useInvalidator, usePaginatedQuery } from "../Api/Common";
 
 
-const listsQueryKey = 'lists';
+export const listsQueryKey = 'lists';
 export const listItemsQueryKey = 'listitems';
 export const receiptListType = 2;
 export const transactionListType = 3;

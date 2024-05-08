@@ -11,6 +11,7 @@ import { useSettings } from "../Settings/settings";
 import { useConfirm } from "material-ui-confirm";
 import { DateField } from "../Helpers/DateField";
 import { isoToRelativeDate } from "../Helpers/dateTime";
+import { useNavigate } from "react-router-dom";
 
 
 const emptyForm = () => ({
@@ -38,7 +39,7 @@ const validationSchema = yup.object({
 });
 
 
-export default function ReceiptForm({ initialValues = {}, onSuccessfulCreateEdit }) {
+export default function ReceiptForm({ initialValues = {}, onSuccessfulCreateEdit, onSuccessfulDelete }) {
     const [settings] = useSettings();
 
     initialValues = {
@@ -56,6 +57,21 @@ export default function ReceiptForm({ initialValues = {}, onSuccessfulCreateEdit
             onSuccessfulCreateEdit(newList);
         }
     });
+
+    const deleteList = useListDeleter({
+        onSuccess: onSuccessfulDelete
+    });
+
+    const confirmDelete = useConfirm();
+    const onDelete = () => {
+        confirmDelete({
+            description: "Weet je zeker dat je deze lijst wilt verwijderen?"
+        })
+            .then(() => {
+                deleteList(initialValues?.id);
+            })
+            .catch(() => { });
+    };
 
     const formik = useFormik({
         initialValues: initialValues,
@@ -118,6 +134,12 @@ export default function ReceiptForm({ initialValues = {}, onSuccessfulCreateEdit
                 <Button color="primary" variant="contained" fullWidth type="submit">
                     {existingReceiptId ? "Update" : "Creëer"}
                 </Button>
+
+                {existingReceiptId &&
+                    <Button color="error" variant="contained" fullWidth onClick={onDelete}>
+                        Verwijder
+                    </Button>
+                }
             </Stack>
 
             <Divider />
@@ -140,8 +162,11 @@ export function ReceiptFormDialog({ open, onClose, initialValues, onSuccessfulCr
     });
 
     const confirmDelete = useConfirm();
+    const navigate = useNavigate();
 
-
+    if (!onClose) {
+        onClose = () => navigate('..');
+    }
 
     const existingReceiptId = initialValues?.id;
     const onDelete = () => {
