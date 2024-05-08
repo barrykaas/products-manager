@@ -18,12 +18,10 @@ export default function ReceiptsController({ onMenu }) {
     const [filterOpen, setFilterOpen] = useState(false);
     const navigate = useNavigate();
 
-    const onAddReceipt = () => {
-        navigate('new');
-    };
-    const selectReceipt = (item) => {
-        navigate(`${item.id}`);
-    };
+    const onAddReceipt = 'new';
+
+    // Link to receipt editor
+    const selectReceipt = (item) => `${item.id}`;
 
     const onRefresh = invalidateReceipts;
 

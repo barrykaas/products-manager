@@ -163,7 +163,7 @@ function RelatedLists({ event }) {
                     <Fragment key={list.id}>
                         <ReceiptsListItem
                             item={list}
-                            onSelect={() => {
+                            onClick={() => {
                                 setCurrentList(list);
                                 setListFormOpen(true);
                             }}

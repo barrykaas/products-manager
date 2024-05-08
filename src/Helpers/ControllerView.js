@@ -4,6 +4,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { useOutletContext } from "react-router-dom";
 
 import ToolbarSearch from "./ToolbarSearch";
+import { linkOrOnClick } from "./linkOrOnClick";
 
 
 export default function ControllerView({ children, title, onClose, onBack, onAdd, onRefresh, onFilter, initialSearch, handleNewSearch, maxWidth = "md" }) {
@@ -26,17 +27,17 @@ export default function ControllerView({ children, title, onClose, onBack, onAdd
 
             <Stack spacing={1} alignItems="center" sx={{ position: "fixed", bottom: "20px", right: "20px" }}>
                 {onFilter &&
-                    <Fab size="small" color="secondary" onClick={onFilter}>
+                    <Fab size="small" color="secondary" {...linkOrOnClick(onFilter)}>
                         <FilterAlt />
                     </Fab>
                 }
                 {onRefresh &&
-                    <Fab size="small" onClick={onRefresh}>
+                    <Fab size="small" {...linkOrOnClick(onRefresh)}>
                         <Refresh />
                     </Fab>
                 }
                 {onAdd &&
-                    <Fab color="primary" onClick={onAdd}>
+                    <Fab color="primary" {...linkOrOnClick(onAdd)}>
                         <Add />
                     </Fab>
                 }
@@ -55,7 +56,7 @@ function ControllerAppBar({ title, onClose, onBack, onMenu, initialSearch, handl
                         color="inherit"
                         aria-label="open drawer"
                         edge="start"
-                        onClick={onMenu}
+                        {...linkOrOnClick(onMenu)}
                         sx={{ mr: 2, display: { sm: 'none' } }}
                     >
                         <MenuIcon />
@@ -64,7 +65,7 @@ function ControllerAppBar({ title, onClose, onBack, onMenu, initialSearch, handl
                 {onClose &&
                     <IconButton
                         edge="start"
-                        onClick={onClose}
+                        {...linkOrOnClick(onClose)}
                         sx={{ mr: 2 }}
                     >
                         <Close />
@@ -73,7 +74,7 @@ function ControllerAppBar({ title, onClose, onBack, onMenu, initialSearch, handl
                 {onBack &&
                     <IconButton
                         edge="start"
-                        onClick={onBack}
+                        {...linkOrOnClick(onBack)}
                         sx={{ mr: 2 }}
                     >
                         <ArrowBack />

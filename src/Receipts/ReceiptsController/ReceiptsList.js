@@ -9,9 +9,10 @@ import InfiniteList from "../../Helpers/InfiniteList";
 import PersonAvatar from "../../Persons/Avatars/Avatars";
 import { isoToRelativeDate } from "../../Helpers/dateTime";
 import { removeEmpty } from "../../Helpers/objects";
+import { linkOrOnClick } from "../../Helpers/linkOrOnClick";
 
 
-export function ReceiptsListItem({ item, onSelect, ...args }) {
+export function ReceiptsListItem({ item, ...props }) {
   const { getMarket } = useMarkets();
   if (!item) return <CircularProgress />;
 
@@ -28,8 +29,8 @@ export function ReceiptsListItem({ item, onSelect, ...args }) {
   ];
 
   return (
-    <ListItemButton alignItems="flex-start" onClick={onSelect} divider
-      {...args}
+    <ListItemButton alignItems="flex-start" divider
+      {...props}
     >
       <ListItemAvatar>
         <PersonAvatar personId={item.payer} size={36} />
@@ -78,7 +79,8 @@ export default function ReceiptsList({ onSelectItem, searchQuery }) {
       {allReceipts.map((item) => (
         <Fragment key={item.id}>
           <ReceiptsListItem item={item}
-            onSelect={() => onSelectItem(item)} />
+            {...linkOrOnClick(onSelectItem(item))}
+            />
         </Fragment>
       ))}
     </InfiniteList>
