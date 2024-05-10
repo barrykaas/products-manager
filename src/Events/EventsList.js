@@ -8,12 +8,12 @@ import InfiniteList from "../Helpers/InfiniteList";
 import { formatEuro } from "../Helpers/monetary";
 import { isoToRelativeDate, weeksAhead } from "../Helpers/dateTime";
 import { PersonAvatarGroup } from "../Persons/Avatars/Avatars";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { removeEmpty } from "../Helpers/objects";
 
 
-function EventsListItem({ item, onEdit, onSelect }) {
-    const secondaryAction = (onSelect && onEdit) ?
+function EventsListItem({ item, onEdit, onSelect, linkTo, ...props }) {
+    const secondaryAction = onEdit ?
         <IconButton aria-label="comment" onClick={onEdit}>
             <EditIcon />
         </IconButton>
@@ -39,7 +39,12 @@ function EventsListItem({ item, onEdit, onSelect }) {
             divider
             alignItems="flex-start"
         >
-            <ListItemButton onClick={onSelect}>
+            <ListItemButton
+                onClick={onSelect}
+                component={linkTo && Link}
+                to={linkTo}
+                {...props}
+            >
                 <Stack alignItems="flex-start" width={1}
                     sx={{ pr: onEdit ? 2 : "none" }}
                 >
@@ -77,7 +82,9 @@ function EventsListItem({ item, onEdit, onSelect }) {
     );
 }
 
-export default function EventsList({ handleEditEvent, handleSelectedEvent, searchQuery }) {
+const defaultLinkTo = (event) => `/events/${event.id}`;
+
+export default function EventsList({ handleEditEvent, handleSelectedEvent, getLinkTo = defaultLinkTo, searchQuery, ItemProps }) {
     const [searchParams] = useSearchParams();
     const {
         data,
@@ -93,6 +100,10 @@ export default function EventsList({ handleEditEvent, handleSelectedEvent, searc
             ...searchParamsToApi(searchParams)
         }
     });
+
+    if (typeof ItemProps !== 'function') {
+        ItemProps = () => ItemProps;
+    }
 
     // TODO: fix subheaders
     const allEvents = data?.pages.flatMap((page) => page.results) || [];
@@ -138,7 +149,9 @@ export default function EventsList({ handleEditEvent, handleSelectedEvent, searc
                             <Fragment key={item.id}>
                                 <EventsListItem item={item}
                                     onSelect={handleSelectedEvent && (() => handleSelectedEvent(item))}
-                                    onEdit={handleEditEvent && (() => handleEditEvent(item))} />
+                                    onEdit={handleEditEvent && (() => handleEditEvent(item))}
+                                    linkTo={!handleSelectedEvent && getLinkTo(item)}
+                                />
                             </Fragment>
                         ))}
                     </ul>

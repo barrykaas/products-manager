@@ -5,7 +5,7 @@ import { useInvalidator, usePaginatedQuery } from "../Api/Common";
 import { listItemsQueryKey } from "../Lists/ListsApiQueries";
 
 
-const eventsQueryKey = 'events';
+export const eventsQueryKey = 'events';
 
 const deleteEventFn = async (itemId) => {
     return await ax.delete(`events/${itemId}/`);

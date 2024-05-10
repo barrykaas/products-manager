@@ -15,7 +15,7 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
-import { defaultQueryFn } from './Api/Common';
+import { defaultQueryFn, genericItemLoader } from './Api/Common';
 import { ErrorBoundary } from 'react-error-boundary';
 import Fallback from './ErrorBoundary/Fallback';
 import Root from './Root';
@@ -26,7 +26,10 @@ import ProductController from "./Products/ProductController";
 import BrandController from "./Brands/BrandController";
 import ScannedItemsController from "./ScannedItems/ScannedItemsController";
 import SettingsPage from "./Settings/SettingsPage";
-import ReceiptEditorView, { loader as receiptLoader } from "./Receipts/ReceiptEditor/ReceiptEditorView";
+import ReceiptEditorView from "./Receipts/ReceiptEditor/ReceiptEditorView";
+import EventFormView from './Events/EventFormView';
+import { listsQueryKey } from './Lists/ListsApiQueries';
+import { eventsQueryKey } from './Events/EventsApiQueries';
 
 
 const darkTheme = createTheme({
@@ -61,9 +64,9 @@ const router = createBrowserRouter([
         element: <ReceiptsController />
       },
       {
-        path: "receipts/:receiptId",
+        path: "receipts/:itemId",
         element: <ReceiptEditorView />,
-        loader: receiptLoader(queryClient)
+        loader: genericItemLoader(queryClient, listsQueryKey)
       },
       {
         path: "receipts/new",
@@ -74,6 +77,16 @@ const router = createBrowserRouter([
         path: "events",
         element: <EventController />
       },
+      {
+        path: "events/:itemId",
+        element: <EventFormView />,
+        loader: genericItemLoader(queryClient, eventsQueryKey)
+      },
+      {
+        path: "events/new",
+        element: <EventFormView />
+      },
+
       {
         path: "balance",
         element: <BalanceInfo />

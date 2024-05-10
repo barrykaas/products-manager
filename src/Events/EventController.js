@@ -27,10 +27,13 @@ export default function EventController({ handleSelectedEvent, onClose, onMenu, 
 
     const invalidateEvents = useEventsInvalidator();
 
-    const handleAddEvent = () => {
-        setFormOpen(true);
-        setCurrentEvent({});
-    };
+    let handleAddEvent = 'new';
+    if (handleSelectedEvent) {
+        handleAddEvent = () => {
+            setCurrentEvent({});
+            setFormOpen(true);
+        };
+    }
 
     const handleEditEvent = (event) => {
         setFormOpen(true);
@@ -47,7 +50,6 @@ export default function EventController({ handleSelectedEvent, onClose, onMenu, 
     const onRefresh = invalidateEvents;
 
     const showEditButtons = Boolean(handleSelectedEvent);
-    handleSelectedEvent = handleSelectedEvent ?? handleEditEvent;
 
     return (
         <>

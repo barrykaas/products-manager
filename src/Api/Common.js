@@ -17,7 +17,7 @@ export const defaultQueryFn = async ({ queryKey, pageParam = 1 }) => {
     } else {
         url = pageParam;
     }
-    
+
     const { data } = await ax.get(url, axOptions)
     return data
 }
@@ -30,3 +30,13 @@ export function usePaginatedQuery({ queryKey, ...args }) {
         ...args
     });
 }
+
+export const genericItemLoader = (queryClient, queryKey) =>
+    async ({ params }) => {
+        const { itemId } = params;
+        if (itemId) {
+            return queryClient.ensureQueryData({ queryKey: [queryKey, itemId] });
+        } else {
+            return
+        }
+    }
