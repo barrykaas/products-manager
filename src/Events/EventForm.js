@@ -33,15 +33,31 @@ const validationSchema = yup.object({
         .required('Name is required'),
 });
 
-export function EventForm({ onSuccessfulCreateEdit, initialValues = {} }) {
-    const mutateEvent = useEventMutator({
-        onSuccess: onSuccessfulCreateEdit
+export function EventForm({ onSuccessfulCreateEdit, onSuccessfulDelete, initialValues = {} }) {
+    const confirmDelete = useConfirm();
+    const deleteEvent = useEventDeleter({
+        onSuccess: onSuccessfulDelete
     });
+    const mutateEvent = useEventMutator({
+        onSuccess: (response) => {
+            const newItem = response.data;
+            onSuccessfulCreateEdit(newItem);
+        }
+    });
+    const onDelete = () => {
+        confirmDelete({ description: `Verwijderen van ${initialValues?.name}` })
+            .then(() => {
+                deleteEvent(initialValues?.id);
+            })
+            .catch(() => { });
+    };
 
     initialValues = {
         ...emptyForm(),
         ...initialValues
     };
+
+    const eventExists = Boolean(initialValues?.id);
 
     const formik = useFormik({
         initialValues: initialValues,
@@ -95,6 +111,12 @@ export function EventForm({ onSuccessfulCreateEdit, initialValues = {} }) {
                 <Button color="primary" variant="contained" fullWidth type="submit">
                     Save
                 </Button>
+
+                {eventExists &&
+                    <Button color="error" variant="contained" fullWidth onClick={onDelete}>
+                        Verwijder
+                    </Button>
+                }
             </Stack>
 
             <Divider />
