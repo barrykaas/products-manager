@@ -1,4 +1,4 @@
-import { Typography, ListItemButton, ListItemText, ListItemAvatar, CircularProgress, Stack } from "@mui/material";
+import { Typography, ListItemButton, ListItemText, ListItemAvatar, CircularProgress, Stack, ListItem } from "@mui/material";
 import { Fragment } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
@@ -31,8 +31,8 @@ export function ReceiptsListItem({ item, onSelect, linkTo, ...props }) {
   return (
     <ListItemButton alignItems="flex-start" divider
       onClick={onSelect}
-      component={linkTo && Link}
-      to={linkTo || `/receipts/${item.id}`}
+      component={Link}
+      to={!!onSelect || linkTo || `/receipts/${item.id}`}
       {...props}
     >
       <ListItemAvatar>
