@@ -1,6 +1,6 @@
 import { Typography, ListItemButton, ListItemText, ListItemAvatar, CircularProgress, Stack } from "@mui/material";
 import { Fragment } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import { useReceipts } from "../../Lists/ListsApiQueries";
 import { useMarkets } from "../../Markets/MarketsApiQueries";
@@ -12,7 +12,7 @@ import { removeEmpty } from "../../Helpers/objects";
 import { linkOrOnClick } from "../../Helpers/linkOrOnClick";
 
 
-export function ReceiptsListItem({ item, ...props }) {
+export function ReceiptsListItem({ item, onSelect, linkTo, ...props }) {
   const { getMarket } = useMarkets();
   if (!item) return <CircularProgress />;
 
@@ -30,6 +30,9 @@ export function ReceiptsListItem({ item, ...props }) {
 
   return (
     <ListItemButton alignItems="flex-start" divider
+      onClick={onSelect}
+      component={linkTo && Link}
+      to={linkTo || `/receipts/${item.id}`}
       {...props}
     >
       <ListItemAvatar>
@@ -80,7 +83,7 @@ export default function ReceiptsList({ onSelectItem, searchQuery }) {
         <Fragment key={item.id}>
           <ReceiptsListItem item={item}
             {...linkOrOnClick(onSelectItem(item))}
-            />
+          />
         </Fragment>
       ))}
     </InfiniteList>
@@ -106,6 +109,6 @@ function searchParamsToApi(params) {
     date_created__lte: params.get('created_before'),
     date_created__gte: params.get('created_after'),
   };
-  
+
   return removeEmpty(apiParams);
 }

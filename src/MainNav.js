@@ -9,7 +9,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { Balance, Groups, QrCode, ReceiptLong, Sell, Settings, ShoppingCart } from '@mui/icons-material';
+import { Balance, Dashboard, Groups, QrCode, ReceiptLong, Sell, Settings, ShoppingCart } from '@mui/icons-material';
 import { SwipeableDrawer } from '@mui/material';
 import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
 
@@ -20,6 +20,10 @@ const iOS =
 
 
 const views = [
+    {
+        id: "dashboard", title: "Dashboard", icon: <Dashboard />,
+        search: true
+    },
     {
         id: "receipts", title: "Bonnetjes", icon: <ReceiptLong />,
         search: true

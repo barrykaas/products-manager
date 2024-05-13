@@ -30,6 +30,7 @@ import ReceiptEditorView from "./Receipts/ReceiptEditor/ReceiptEditorView";
 import EventFormView from './Events/EventFormView';
 import { listsQueryKey } from './Lists/ListsApiQueries';
 import { eventsQueryKey } from './Events/EventsApiQueries';
+import Dashboard from './Dashboard';
 
 
 const darkTheme = createTheme({
@@ -57,6 +58,11 @@ const router = createBrowserRouter([
       {
         path: "products-manager",
         element: <Navigate to="/" replace />
+      },
+
+      {
+        path: "dashboard",
+        element: <Dashboard />
       },
 
       {
