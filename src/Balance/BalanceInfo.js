@@ -1,18 +1,20 @@
 import { Chip, CircularProgress, Paper, Table, TableCell, TableContainer, TableHead, TableRow, Box, Stack, Typography, TableBody } from "@mui/material";
 import { ArrowForward } from "@mui/icons-material";
+import { Fragment } from "react";
 
 import { formatEuro } from "../Helpers/monetary";
 import { balancesQueryKey, useBalances } from "./BalanceApiQueries";
 import ControllerView from "../Helpers/ControllerView";
 import { useInvalidator } from "../Api/Common";
-import { Fragment } from "react";
+import { useSettings } from "../Settings/settings";
 
 
 function PersonRow({ person }) {
     const balance = person.balance;
+    const [{ userId }] = useSettings();
 
     return (
-        <TableRow>
+        <TableRow selected={person.id === userId} hover>
             <TableCell>{person.name}</TableCell>
             <TableCell>
                 <Chip label={formatEuro(balance)} color={balance < 0 ? "error" : "success"} />
