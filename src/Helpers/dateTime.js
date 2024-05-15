@@ -73,3 +73,10 @@ export function isoToRelativeDate(isoString) {
 
     return relDate;
 }
+
+export function startOfWeek(date) {
+    const startOfWeek = date ? new Date(date) : new Date();
+    startOfWeek.setDate(startOfWeek.getDate() - (startOfWeek.getDay() + 6) % 7);
+    startOfWeek.setHours(0, 0, 0, 0);
+    return startOfWeek;
+}

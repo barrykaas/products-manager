@@ -9,6 +9,9 @@ import ControllerView from "../Helpers/ControllerView";
 import { usePersons } from "../Persons/PersonsApiQueries";
 import { listsQueryKey } from "../Lists/ListsApiQueries";
 import { ReceiptsListItem } from "../Receipts/ReceiptsController/ReceiptsList";
+import { eventsQueryKey } from "../Events/EventsApiQueries";
+import { startOfWeek } from "../Helpers/dateTime";
+import { EventsListItem } from "../Events/EventsList";
 
 
 export default function Dashboard() {
@@ -28,7 +31,7 @@ export default function Dashboard() {
             spacing={2}
             sx={{ p: 2 }}
         >
-            <Grid item>
+            <Grid item xs>
                 <Stack
                     justifyContent="space-between"
                     pb={1}
@@ -45,6 +48,25 @@ export default function Dashboard() {
                     </Button>
                 </Stack>
                 <MyRecentReceipts userId={userId} />
+            </Grid>
+
+            <Grid item xs>
+                <Stack
+                    justifyContent="space-between"
+                    pb={1}
+                    spacing={2}
+                    direction="row"
+                >
+                    <Typography variant="h6">Deze week</Typography>
+                    <Button
+                        component={Link} to="/events/new"
+                        variant="contained"
+                        startIcon={<Add />}
+                    >
+                        Nieuw event
+                    </Button>
+                </Stack>
+                <ThisWeek />
             </Grid>
         </Grid>
     </ControllerView>;
@@ -74,6 +96,42 @@ function MyRecentReceipts({ userId }) {
                     startIcon={<MoreHoriz />}
                 >
                     Al mijn bonnetjes
+                </Button>
+            </Stack>
+        </Stack>
+    );
+}
+
+function ThisWeek() {
+    const weekStart = startOfWeek();
+    const weekEnd = new Date(weekStart.valueOf() + (7 * 86400 - 1) * 1000);
+    const { data } = useQuery({
+        queryKey: [eventsQueryKey, null,
+            {
+                page_size: 100,
+                event_date__gte: weekStart.toISOString(),
+                event_date__lte: weekEnd.toISOString()
+            }
+        ]
+    })
+
+    const events = data?.results || [];
+
+    return (
+        <Stack spacing={1}>
+            <Stack component={Paper} variant="outlined">
+                <List disablePadding>
+                    {events.map((item) =>
+                        <Fragment key={item.id}>
+                            <EventsListItem item={item} />
+                        </Fragment>
+                    )}
+                </List>
+                <Button
+                    component={Link} to="/events"
+                    startIcon={<MoreHoriz />}
+                >
+                    Alle events
                 </Button>
             </Stack>
         </Stack>

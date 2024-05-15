@@ -12,7 +12,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { removeEmpty } from "../Helpers/objects";
 
 
-function EventsListItem({ item, onEdit, onSelect, linkTo, ...props }) {
+export function EventsListItem({ item, onEdit, onSelect, linkTo, ...props }) {
     const secondaryAction = onEdit ?
         <IconButton aria-label="comment" onClick={onEdit}>
             <EditIcon />
@@ -41,8 +41,8 @@ function EventsListItem({ item, onEdit, onSelect, linkTo, ...props }) {
         >
             <ListItemButton
                 onClick={onSelect}
-                component={linkTo && Link}
-                to={linkTo}
+                component={Link}
+                to={!!onSelect || linkTo || `/events/${item.id}`}
                 {...props}
             >
                 <Stack alignItems="flex-start" width={1}
