@@ -9,13 +9,16 @@ import { formatEuro } from "../../Helpers/monetary";
 import { PersonAvatarGroup } from "../../Persons/Avatars/Avatars";
 import { EventFormDialog } from "../../Events/EventForm";
 import QuickAddBox from "./QuickAddBox";
-import { useListItemMutator } from "../../Lists/ListsApiQueries";
+import { listsQueryKey, useListItemMutator } from "../../Lists/ListsApiQueries";
 
 
 export default function ReceiptEventBlock({ eventId, listId, listItems, onAddProduct, onAddDiscount }) {
     const eventQuery = useQuery({ queryKey: ['events', eventId], enabled: !!eventId });
     const [editingEvent, setEditingEvent] = useState(false);
     const createListItem = useListItemMutator();
+
+    const listQuery = useQuery({ queryKey: [listsQueryKey, listId] });
+    const marketId = listQuery.data?.market;
 
     const event = eventQuery.data;
 
@@ -65,7 +68,7 @@ export default function ReceiptEventBlock({ eventId, listId, listItems, onAddPro
 
                 {/* Footer */}
                 <Box sx={{ px: 2, py: 1 }}>
-                    <QuickAddBox handleListItem={handleAddedItem} />
+                    <QuickAddBox handleListItem={handleAddedItem} market={marketId} />
                 </Box>
 
                 <Stack direction="row" spacing={1} sx={{ px: 2, py: 1 }}>

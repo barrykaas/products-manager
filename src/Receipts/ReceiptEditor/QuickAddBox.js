@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { Box, Grid, Stack, Typography } from '@mui/material';
@@ -14,7 +14,7 @@ import { useBrands } from '../../Brands/BrandsApiQueries';
 import useHumanReadableProduct from '../../Products/HumanReadableProduct';
 
 
-export default function QuickAddBox({ handleListItem }) {
+export default function QuickAddBox({ handleListItem, market }) {
     const [inputValue, setInputValue] = useState('');
     const { getUnitType, isLoading, isError } = useUnitTypes();
 
@@ -23,7 +23,7 @@ export default function QuickAddBox({ handleListItem }) {
     const parsedInput = parseInput(inputValue);
     const search = parsedInput.description;
 
-    const productsQuery = useQuery([productsQueryKey, null, { search }],
+    const productsQuery = useQuery([productsQueryKey, null, { search, market }],
         { enabled: !!search });
     const products = productsQuery.data?.results || [];
 
@@ -77,7 +77,9 @@ export default function QuickAddBox({ handleListItem }) {
                 // <li {...props} key={option?.product?.id || -1}>
                 //     {getOptionLabel(option)}
                 // </li>
-                <RenderOption props={props} option={option} />
+                <Fragment key={option?.product?.id || -1}>
+                    <RenderOption props={props} option={option} />
+                </Fragment>
             }
             renderInput={(params) => (
                 <TextField {...params}
