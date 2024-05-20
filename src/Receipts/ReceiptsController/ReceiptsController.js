@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Autocomplete, Button, Stack, TextField, Typography } from "@mui/material";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 import ReceiptsList from "./ReceiptsList";
 import { useListsInvalidator } from "../../Lists/ListsApiQueries";
@@ -16,7 +16,6 @@ export default function ReceiptsController({ onMenu }) {
     const invalidateReceipts = useListsInvalidator();
     const [searchQuery, setSearchQuery] = useUrlSearchQuery();
     const [filterOpen, setFilterOpen] = useState(false);
-    const navigate = useNavigate();
 
     const onAddReceipt = 'new';
 

@@ -19,11 +19,10 @@ const deleteProductFn = async (itemId) => {
     return await ax.delete(`products/${itemId}/`);
 };
 
-
-export function useProducts(searchQuery) {
-    const params = {};
-    if (searchQuery) params.search = searchQuery;
-    return usePaginatedQuery({ queryKey: [productsQueryKey, null, params] });
+export function useProducts({ params = {} } = {}) {
+    return usePaginatedQuery({
+        queryKey: [productsQueryKey, null, params]
+    })
 }
 
 export function useProductMutator({ onSuccess, onError } = {}) {

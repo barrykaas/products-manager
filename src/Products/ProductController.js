@@ -6,6 +6,16 @@ import { ProductFormDialog } from './ProductsForm';
 import { useProductsInvalidator } from './ProductsApiQueries';
 import ControllerView from '../Helpers/ControllerView';
 import useUrlSearchQuery from '../Helpers/urlSearchQuery';
+import FilterDialog from '../Helpers/FilterDialog';
+
+
+const filterOptions = [
+    {
+        param: "market",
+        label: "Winkel",
+        type: "market"
+    }
+];
 
 
 export default function ProductController({ handleSelectedProduct, onClose, onMenu }) {
@@ -15,6 +25,7 @@ export default function ProductController({ handleSelectedProduct, onClose, onMe
     const [messageState] = useState(true);
     const [editOpen, setEditOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useUrlSearchQuery();
+    const [filterOpen, setFilterOpen] = useState(false);
 
     const invalidateProducts = useProductsInvalidator();
 
@@ -52,6 +63,7 @@ export default function ProductController({ handleSelectedProduct, onClose, onMe
                 onRefresh={onRefresh}
                 initialSearch={searchQuery}
                 handleNewSearch={setSearchQuery}
+                onFilter={() => setFilterOpen(true)}
             >
                 <ProductsList
                     handleEdit={handleEditProduct}
@@ -65,6 +77,10 @@ export default function ProductController({ handleSelectedProduct, onClose, onMe
                 onClose={() => setEditOpen(false)}
                 initialValues={currentProduct}
                 onSuccessfulCreateEdit={() => didSuccessfullyEdit("Gelukt!")}
+            />
+
+            <FilterDialog open={filterOpen} onClose={() => setFilterOpen(false)}
+                options={filterOptions}
             />
         </>
     );

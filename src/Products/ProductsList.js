@@ -1,12 +1,15 @@
 import { Divider } from "@mui/material";
 import React from "react";
+import { useSearchParams } from "react-router-dom";
 
 import { useProducts } from './ProductsApiQueries';
 import { ProductListItem } from "./ProductListItem";
 import InfiniteList from "../Helpers/InfiniteList";
+import { removeEmpty } from "../Helpers/objects";
 
 
 export default function ProductsList({ handleEdit, handleSelectedProduct, searchQuery }) {
+  const [searchParams] = useSearchParams();
   const {
     data,
     fetchNextPage,
@@ -15,7 +18,12 @@ export default function ProductsList({ handleEdit, handleSelectedProduct, search
     isFetchingNextPage,
     isError,
     error,
-  } = useProducts(searchQuery);
+  } = useProducts({
+    params: {
+      search: searchQuery,
+      ...searchParamsToApi(searchParams)
+    }
+  });
 
   const productsData = (data?.pages || []).flatMap((page) => page.results);
 
@@ -41,3 +49,15 @@ export default function ProductsList({ handleEdit, handleSelectedProduct, search
     </InfiniteList>
   );
 };
+
+function searchParamsToApi(params) {
+  const apiParams = {
+    ordering: params.get('ordering'),
+    market: params.get('market'),
+
+    date_added__lte: params.get('created_before'),
+    date_added__gte: params.get('created_after'),
+  };
+
+  return removeEmpty(apiParams);
+}
