@@ -170,6 +170,9 @@ function searchParamsToApi(params) {
 
         date_created__lte: params.get('created_before'),
         date_created__gte: params.get('created_after'),
+
+        participants_include: params.get('participants_include'),
+        participants_exclude: params.get('participants_exclude'),
     };
 
     return removeEmpty(apiParams);

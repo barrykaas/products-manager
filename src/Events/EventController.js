@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, Button, Snackbar, Stack, Autocomplete, TextField, Typography } from '@mui/material';
+import { Alert, Button, Snackbar, Stack, Autocomplete, TextField, Typography, Paper } from '@mui/material';
 import { useSearchParams } from 'react-router-dom';
 
 import EventsList from './EventsList';
@@ -9,6 +9,7 @@ import ControllerView from '../Helpers/ControllerView';
 import useUrlSearchQuery from '../Helpers/urlSearchQuery';
 import { DateRangeField } from '../Helpers/DateField';
 import FormDialog from '../Helpers/FormDialog';
+import SelectPersons from '../Persons/SelectPersons';
 
 
 const defaultTitle = "Events";
@@ -98,6 +99,8 @@ const allFilterParams = [
     "event_after",
     "created_before",
     "created_after",
+    "participants_include",
+    "participants_exclude",
 ];
 
 function FilterDialog({ open, onClose }) {
@@ -118,6 +121,8 @@ function FilterDialog({ open, onClose }) {
         }
         setSearchParams(searchParams);
     };
+
+    // const parIncl = 
 
     return (
         <FormDialog
@@ -173,6 +178,21 @@ function FilterDialog({ open, onClose }) {
                     onChangeBefore={value => updateParam("created_before", value?.toISOString())}
                 />
 
+                <Typography>Inclusief deelnemers</Typography>
+                <Paper variant="outlined">
+                    <SelectPersons
+                        selected={searchParams.get('participants_include')?.split(',')?.map(Number) || []}
+                        setSelected={newSelected => updateParam('participants_include', newSelected.sort().join(','))}
+                    />
+                </Paper>
+
+                <Typography>Exclusief deelnemers</Typography>
+                <Paper variant="outlined">
+                    <SelectPersons
+                        selected={searchParams.get('participants_exclude')?.split(',')?.map(Number) || []}
+                        setSelected={newSelected => updateParam('participants_exclude', newSelected.sort().join(','))}
+                    />
+                </Paper>
             </Stack>
         </FormDialog>
     );
