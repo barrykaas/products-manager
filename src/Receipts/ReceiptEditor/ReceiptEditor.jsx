@@ -1,5 +1,5 @@
 import { Fragment, useState } from "react";
-import { Box, Checkbox, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Box, Checkbox, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 
 import { listsQueryKey, useListItemDeleter, useListItemMutator, useListItems } from "../../Lists/ListsApiQueries";
@@ -9,6 +9,7 @@ import DeleteButton from "../../Common/DeleteButton";
 import QuickAddBox from "./QuickAddBox";
 import ReceiptItemRow from "./ReceiptItemRow";
 import ChooseEventButton from "../../Common/ChooseEventButton";
+import { formatEuro } from "../../Helpers/monetary";
 
 
 export default function ReceiptEditor({ receiptId }) {
@@ -20,6 +21,7 @@ export default function ReceiptEditor({ receiptId }) {
     const [currentEvent, setCurrentEvent] = useState();
 
     const allItems = [...(receiptItemsQuery?.data || [])].reverse();
+    const receiptTotal = allItems.reduce((s, item) => s + item.amount, 0);
     const allItemIds = new Set(allItems.map(item => item.id));
     const someChecked = selectedItems.size > 0;
     const onCheckAll = (state) => {
@@ -100,6 +102,22 @@ export default function ReceiptEditor({ receiptId }) {
                         </Fragment>
                     )}
                 </TableBody>
+                <TableFooter>
+                    <TableRow>
+                        <TableCell colSpan={3} />
+                        <TableCell>
+                            <Typography textAlign="end">
+                                Totaal
+                            </Typography>
+                        </TableCell>
+                        <TableCell>
+                            <Typography >
+                                {formatEuro(receiptTotal)}
+                            </Typography>
+                        </TableCell>
+                        <TableCell />
+                    </TableRow>
+                </TableFooter>
             </Table>
         </TableContainer>
     );
