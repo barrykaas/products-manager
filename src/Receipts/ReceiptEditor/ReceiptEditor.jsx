@@ -19,10 +19,8 @@ export default function ReceiptEditor({ receiptId }) {
     const [selectedItems, setSelectedItems] = useState(new Set());
     const [currentEvent, setCurrentEvent] = useState();
 
-
     const allItems = [...(receiptItemsQuery?.data || [])].reverse();
     const allItemIds = new Set(allItems.map(item => item.id));
-    // const allChecked = setEqual(allItemIds, selectedItems);
     const someChecked = selectedItems.size > 0;
     const onCheckAll = (state) => {
         state ? setSelectedItems(new Set([...allItemIds]))

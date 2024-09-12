@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Box, Checkbox, Icon, IconButton, InputAdornment, Skeleton, Stack, TableCell, TableRow, TextField, Typography } from "@mui/material";
-import { AddCircle, RemoveCircle } from "@mui/icons-material";
+import { Box, Checkbox, Icon, IconButton, InputAdornment, Skeleton, Stack, TableCell, TableRow, TextField, Tooltip, Typography } from "@mui/material";
+import { AddCircle, FindReplace, RemoveCircle } from "@mui/icons-material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { listItemsQueryKey, useListItemMutator } from "../../Lists/ListsApiQueries";
@@ -17,6 +17,8 @@ import ChooseEventButton from "../../Common/ChooseEventButton";
 import { useBrands } from "../../Brands/BrandsApiQueries";
 import ProductTooltip from "../../Products/ProductTooltip";
 import { ProductFormDialog } from "../../Products/ProductsForm";
+import ProductPicker from "../../Products/ProductPicker";
+import { constructListItem, finishListItem } from "./tools";
 
 
 export default function ReceiptItemRow({ item, selected, setSelected, setCurrentEvent }) {
@@ -59,10 +61,18 @@ export default function ReceiptItemRow({ item, selected, setSelected, setCurrent
                 <QuantityField item={item} showButtons={hover} />
             </TableCell>
             <TableCell width="300px">
-                {item?.product ?
-                    <ProductInfo product={item.product} />
-                    : <ReceiptItemDescription item={item} />
-                }
+                <Stack direction="row" alignItems="center">
+                    <Box sx={{ width: 1 }}>
+                        {item?.product ?
+                            <ProductInfo product={item.product} />
+                            : <ReceiptItemDescription item={item} />
+                        }
+                    </Box>
+                    {hover ?
+                        <ReplaceProductButton listItem={item} />
+                        : <Icon />
+                    }
+                </Stack>
             </TableCell>
             <TableCell sx={{ minWidth: '8rem' }}>
                 <CurrencyField
@@ -322,5 +332,59 @@ function ProductInfo({ product }) {
                 }}
             />
         </Stack>
+    );
+}
+
+function ReplaceProductButton({ listItem }) {
+    const [pickerOpen, setPickerOpen] = useState(false);
+    const { isError, isLoading, unitTypeInfo } = useUnitTypeInfo();
+    const updateListItem = useListItemMutator({
+        onSuccess: () => setPickerOpen(false)
+    });
+    const hasProduct = Boolean(listItem?.product);
+
+    const disabled = isLoading || isError;
+
+    const onClick = () => {
+        setPickerOpen(true);
+    };
+
+    const handleNewProduct = (product) => {
+        product.discrete = unitTypeInfo(product.unit_type)?.discrete;
+        let itemPatch;
+        if (hasProduct) {
+            itemPatch = { product_id: product.id };
+        } else {
+            itemPatch = constructListItem(product);
+            itemPatch.amount = listItem.amount;
+            if (product.discrete) {
+                delete itemPatch.product_price;
+            } else {
+                delete itemPatch.product_quantity;
+            }
+            finishListItem(itemPatch);
+        }
+        updateListItem({
+            id: listItem.id,
+            ...itemPatch
+        });
+    };
+
+    const tooltip = hasProduct ? "Kies ander product" : "Koppel een product";
+
+    return (
+        <>
+            <Tooltip title={tooltip}>
+                <IconButton onClick={onClick} disabled={disabled}>
+                    <FindReplace />
+                </IconButton>
+            </Tooltip>
+
+            <ProductPicker
+                handleSelectedProduct={handleNewProduct}
+                open={pickerOpen}
+                onClose={() => setPickerOpen(false)}
+            />
+        </>
     );
 }
