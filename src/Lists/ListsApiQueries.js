@@ -24,11 +24,13 @@ const mutateListFn = async (item) => {
 };
 
 const createMutateListItemFn = async (item) => {
+    let data;
     if (item.id) {
-        await ax.patch(`listitems/${item.id}/`, item);
+        data = await ax.patch(`listitems/${item.id}/`, item);
     } else {
-        await ax.post('listitems/', item);
+        data = await ax.post('listitems/', item);
     }
+    return data?.data;
 };
 
 const deleteListItemFn = async (itemId) => {

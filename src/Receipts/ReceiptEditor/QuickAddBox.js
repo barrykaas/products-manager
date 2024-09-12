@@ -9,7 +9,7 @@ import { getWords } from '../../Helpers/strings';
 import { isNumber, roundDigits } from '../../Helpers/numbers';
 import { useUnitTypes } from '../../UnitTypes/UnitTypeQueries';
 import { formatEuro } from '../../Helpers/monetary';
-import { constructListItem, finishListItem } from './ReceiptItem/tools';
+import { constructListItem, finishListItem } from './tools';
 import { useBrands } from '../../Brands/BrandsApiQueries';
 import useHumanReadableProduct from '../../Products/HumanReadableProduct';
 
@@ -29,13 +29,11 @@ export default function QuickAddBox({ handleListItem, market }) {
 
     // Construct list item from parsed input
     const freeformOption = {
+        product_quantity: parsedInput.quantity || 1,
         description: parsedInput.description,
-        product_price: parsedInput.amount || 0,
         amount: parsedInput.amount || 0,
     };
-    if (parsedInput.quantity) {
-        freeformOption.description = parsedInput.quantity + ' ' + freeformOption.description;
-    }
+    finishListItem(freeformOption);
 
     // Construct list items from product search
     const productOptions = products.map(apiProduct => {
@@ -74,9 +72,6 @@ export default function QuickAddBox({ handleListItem, market }) {
             options={options}
             getOptionLabel={getOptionLabel}
             renderOption={(props, option) =>
-                // <li {...props} key={option?.product?.id || -1}>
-                //     {getOptionLabel(option)}
-                // </li>
                 <Fragment key={option?.product?.id || -1}>
                     <RenderOption props={props} option={option} />
                 </Fragment>

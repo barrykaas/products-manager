@@ -26,7 +26,7 @@ import ProductController from "./Products/ProductController";
 import BrandController from "./Brands/BrandController";
 import ScannedItemsController from "./ScannedItems/ScannedItemsController";
 import SettingsPage from "./Settings/SettingsPage";
-import ReceiptEditorView from "./Receipts/ReceiptEditor/ReceiptEditorView";
+import ReceiptView from './Receipts/ReceiptView';
 import EventFormView from './Events/EventFormView';
 import { listsQueryKey } from './Lists/ListsApiQueries';
 import { eventsQueryKey } from './Events/EventsApiQueries';
@@ -71,12 +71,12 @@ const router = createBrowserRouter([
       },
       {
         path: "receipts/:itemId",
-        element: <ReceiptEditorView />,
+        element: <ReceiptView />,
         loader: genericItemLoader(queryClient, listsQueryKey)
       },
       {
         path: "receipts/new",
-        element: <ReceiptEditorView />
+        element: <ReceiptView />
       },
 
       {

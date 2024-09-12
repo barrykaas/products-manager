@@ -1,4 +1,4 @@
-import { isNumber } from "../../../Helpers/numbers";
+import { isNumber } from "../../Helpers/numbers";
 
 /**
  * Construct a list item with default quantity and price from a product.

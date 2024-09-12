@@ -1,9 +1,9 @@
-import { Stack, Button, Box, TextField, Divider, Typography } from "@mui/material";
+import { Stack, Button, TextField, Typography } from "@mui/material";
 import * as yup from "yup";
 import { useFormik } from "formik";
+import { useNavigate } from "react-router-dom";
 
 import { receiptListType, useListDeleter, useListMutator } from "../Lists/ListsApiQueries";
-import ReceiptEditor from "./ReceiptEditor/ReceiptEditor";
 import { PersonsIdField } from "../Persons/PersonsField";
 import FormDialog from "../Helpers/FormDialog";
 import { MarketIdField } from "../Markets/MarketField";
@@ -11,7 +11,6 @@ import { useSettings } from "../Settings/settings";
 import { useConfirm } from "material-ui-confirm";
 import { DateField } from "../Helpers/DateField";
 import { isoToRelativeDate } from "../Helpers/dateTime";
-import { useNavigate } from "react-router-dom";
 
 
 const emptyForm = () => ({
@@ -83,75 +82,63 @@ export default function ReceiptForm({ initialValues = {}, onSuccessfulCreateEdit
     });
 
     return (
-        <Box sx={{ width: 1, bgcolor: 'background.paper' }}>
-            <Stack
-                sx={{ p: 2 }}
-                component="form" spacing={2} onSubmit={formik.handleSubmit}>
-                <TextField
-                    fullWidth
-                    id="name"
-                    name="name"
-                    label="Naam van het bonnetje"
-                    value={formik.values.name}
-                    onChange={formik.handleChange}
-                    error={formik.touched.name && Boolean(formik.errors.name)}
-                    helperText={formik.touched.name && formik.errors.name}
-                />
+        <Stack
+            sx={{ p: 2, maxWidth: 'sm' }}
+            component="form" spacing={2} onSubmit={formik.handleSubmit}>
+            <TextField
+                fullWidth
+                id="name"
+                name="name"
+                label="Naam van het bonnetje"
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                error={formik.touched.name && Boolean(formik.errors.name)}
+                helperText={formik.touched.name && formik.errors.name}
+            />
 
-                <MarketIdField
-                    value={formik.values.market}
-                    setValue={(marketId) => formik.setFieldValue("market", marketId)}
-                />
+            <MarketIdField
+                value={formik.values.market}
+                setValue={(marketId) => formik.setFieldValue("market", marketId)}
+            />
 
-                <DateField
-                    id="transaction_date"
-                    name="transaction_date"
-                    label="Datum"
-                    value={formik.values.transaction_date}
-                    onChange={(value) => {
-                        formik.setFieldValue('transaction_date', value);
-                    }}
-                    slotProps={{
-                        textField: {
-                            helperText: formik.touched.transaction_date && formik.errors.transaction_date,
-                            error: formik.touched.transaction_date && Boolean(formik.errors.transaction_date)
-                        },
-                    }}
-                />
+            <DateField
+                id="transaction_date"
+                name="transaction_date"
+                label="Datum"
+                value={formik.values.transaction_date}
+                onChange={(value) => {
+                    formik.setFieldValue('transaction_date', value);
+                }}
+                slotProps={{
+                    textField: {
+                        helperText: formik.touched.transaction_date && formik.errors.transaction_date,
+                        error: formik.touched.transaction_date && Boolean(formik.errors.transaction_date)
+                    },
+                }}
+            />
 
-                <PersonsIdField
-                    label="Betaler"
-                    value={formik.values.payer}
-                    setValue={(payerId) => formik.setFieldValue("payer", payerId)}
-                />
+            <PersonsIdField
+                label="Betaler"
+                value={formik.values.payer}
+                setValue={(payerId) => formik.setFieldValue("payer", payerId)}
+            />
 
-                {initialValues?.date_created &&
-                    <Typography fontStyle="italic">
-                        Gecreëerd op {isoToRelativeDate(initialValues.date_created)}
-                    </Typography>
-                }
-
-                <Button color="primary" variant="contained" fullWidth type="submit">
-                    {existingReceiptId ? "Update" : "Creëer"}
-                </Button>
-
-                {existingReceiptId &&
-                    <Button color="error" variant="contained" fullWidth onClick={onDelete}>
-                        Verwijder
-                    </Button>
-                }
-            </Stack>
-
-            <Divider />
-
-            {existingReceiptId
-                ? (
-                    <ReceiptEditor receiptId={existingReceiptId} />
-                )
-                : null
+            {initialValues?.date_created &&
+                <Typography fontStyle="italic">
+                    Gecreëerd op {isoToRelativeDate(initialValues.date_created)}
+                </Typography>
             }
 
-        </Box>
+            <Button color="primary" variant="contained" fullWidth type="submit">
+                {existingReceiptId ? "Update" : "Creëer"}
+            </Button>
+
+            {existingReceiptId &&
+                <Button color="error" variant="contained" fullWidth onClick={onDelete}>
+                    Verwijder
+                </Button>
+            }
+        </Stack>
     );
 }
 
