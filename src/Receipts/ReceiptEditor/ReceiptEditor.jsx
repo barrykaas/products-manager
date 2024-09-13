@@ -17,17 +17,14 @@ export default function ReceiptEditor({ receiptId }) {
     const receiptQuery = useQuery({ queryKey: [listsQueryKey, receiptId] });
     const mutateListItem = useListItemMutator();
 
-    const [selectedItems, setSelectedItems] = useState(new Set());
+    const [selection, setSelection] = useState([]);
     const [currentEvent, setCurrentEvent] = useState();
 
     const allItems = [...(receiptItemsQuery?.data || [])].reverse();
     const receiptTotal = allItems.reduce((s, item) => s + item.amount, 0);
-    const allItemIds = new Set(allItems.map(item => item.id));
-    const someChecked = selectedItems.size > 0;
-    const onCheckAll = (state) => {
-        state ? setSelectedItems(new Set([...allItemIds]))
-            : setSelectedItems(new Set())
-    };
+    const allItemIds = allItems.map(item => item.id);
+    const someChecked = selection.length > 0;
+    const onCheckAll = (state) => setSelection(state ? [...allItemIds] : []);
 
     const handleNewItem = (listItem) => {
         listItem.list = receiptId;
@@ -41,8 +38,8 @@ export default function ReceiptEditor({ receiptId }) {
                 {someChecked &&
                     <SelectedActions
                         receiptId={receiptId}
-                        selectedItems={selectedItems}
-                        setSelectedItems={setSelectedItems}
+                        selection={selection}
+                        clearSelection={() => setSelection([])}
                     />
                 }
                 {
@@ -59,7 +56,7 @@ export default function ReceiptEditor({ receiptId }) {
                         <TableCell padding="checkbox">
                             <Checkbox
                                 checked={someChecked}
-                                indeterminate={selectedItems.size < allItemIds.size && someChecked}
+                                indeterminate={selection.length < allItemIds.length && someChecked}
                                 onChange={(event) => onCheckAll(event.target.checked)}
                             />
                         </TableCell>
@@ -85,17 +82,16 @@ export default function ReceiptEditor({ receiptId }) {
                         <Fragment key={item.id}>
                             <ReceiptItemRow
                                 item={item}
-                                selected={selectedItems.has(item.id)}
+                                selected={selection.includes(item.id)}
                                 setSelected={(state) => {
-                                    const newSet = new Set([...selectedItems]);
+                                    const newSelection = [...selection];
                                     if (state) {
-                                        newSet.add(item.id);
+                                        newSelection.push(item.id);
                                     } else {
-                                        newSet.delete(item.id);
+                                        const ind = newSelection.indexOf(item.id);
+                                        newSelection.splice(ind, 1);
                                     }
-                                    setSelectedItems(allItemIds.intersection(
-                                        newSet
-                                    ));
+                                    setSelection(newSelection);
                                 }}
                                 setCurrentEvent={setCurrentEvent}
                             />
@@ -123,24 +119,26 @@ export default function ReceiptEditor({ receiptId }) {
     );
 }
 
-function SelectedActions({ selectedItems, setSelectedItems }) {
+function SelectedActions({ selection, clearSelection }) {
     const [eventPickerOpen, setEventPickerOpen] = useState(false);
     const deleteListItem = useListItemDeleter();
     const mutateListItem = useListItemMutator();
 
     const onDelete = () => {
-        selectedItems.forEach((itemId) => deleteListItem(itemId));
-        setSelectedItems(new Set());
+        selection.forEach((itemId) => deleteListItem(itemId));
+        clearSelection();
     };
 
-    const handleSelectedEvent = (event) => selectedItems.forEach(
-        (itemId) => mutateListItem({
-            id: itemId,
-            event: event.id
-        }, {
-            onSuccess: () => setEventPickerOpen(false)
-        })
-    );
+    const handleSelectedEvent = (event) => {
+        selection.forEach(
+            (itemId) => mutateListItem({
+                id: itemId,
+                event: event.id
+            })
+        );
+        setEventPickerOpen(false);
+        clearSelection();
+    };
 
     return (
         <>

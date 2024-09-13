@@ -109,6 +109,14 @@ function QuantityField({ item, showButtons }) {
 
 function ReceiptItemDescription({ item }) {
     const [descriptionField, setDescriptionField] = useState(item.description || '');
+    const mutateListItem = useListItemMutator({
+        onSuccess: (data) => setDescriptionField(data.description)
+    });
+
+    const onBlur = () => mutateListItem({
+        id: item.id,
+        description: descriptionField
+    });
 
     return (
         <TextField
@@ -116,6 +124,7 @@ function ReceiptItemDescription({ item }) {
             value={descriptionField}
             onChange={(event) => setDescriptionField(event.target.value)}
             placeholder="Omschrijving"
+            onBlur={onBlur}
         />
     );
 }
