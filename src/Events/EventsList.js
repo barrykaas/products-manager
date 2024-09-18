@@ -1,4 +1,4 @@
-import { ListItemText, ListItemButton, IconButton, Stack, Typography, ListSubheader, Paper, ListItem } from "@mui/material";
+import { ListItemText, ListItemButton, IconButton, Stack, Typography, ListSubheader, Paper, ListItem, Box } from "@mui/material";
 import { Fragment } from "react";
 import EditIcon from '@mui/icons-material/Edit';
 import { Person } from "@mui/icons-material";
@@ -10,9 +10,12 @@ import { isoToRelativeDate, weeksAhead } from "../Helpers/dateTime";
 import { PersonAvatarGroup } from "../Persons/Avatars/Avatars";
 import { Link, useSearchParams } from "react-router-dom";
 import { removeEmpty } from "../Helpers/objects";
+import { useSettings } from "../Settings/settings";
+import IdLabel from "../Common/IdLabel";
 
 
 export function EventsListItem({ item, onEdit, onSelect, linkTo, ...props }) {
+    const [{ nerdInfo }] = useSettings();
     const secondaryAction = onEdit ?
         <IconButton aria-label="comment" onClick={onEdit}>
             <EditIcon />
@@ -51,8 +54,12 @@ export function EventsListItem({ item, onEdit, onSelect, linkTo, ...props }) {
                     <ListItemText
                         sx={{ width: 1 }}
                         primary={
-                            <Stack direction="row" justifyContent="space-between" spacing={1}>
+                            <Stack direction="row" spacing={1}>
+                                {nerdInfo &&
+                                    <IdLabel id={item.id} />
+                                }
                                 <Typography>{name}</Typography>
+                                <Box sx={{ flexGrow: 1 }} />
                                 {amount !== 0 &&
                                     <Typography align="right" sx={{ whiteSpace: "nowrap" }}>
                                         <b>{formatEuro(amount)}</b>

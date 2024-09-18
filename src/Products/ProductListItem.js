@@ -6,9 +6,12 @@ import useHumanReadableProduct from "./HumanReadableProduct";
 import { formatEuro } from "../Helpers/monetary";
 import useUnitTypeInfo from "../UnitTypes/UnitTypeInfo";
 import { formatPricePerUnit } from "../Helpers/productQuantity";
+import { useSettings } from "../Settings/settings";
+import IdLabel from "../Common/IdLabel";
 
 
 export function ProductListItem({ product, onSelect, onEdit, disabled = false, showBarcode = false }) {
+    const [{ nerdInfo }] = useSettings();
     const brands = useBrands();
     let brandName;
     const { formatProductDescription } = useHumanReadableProduct();
@@ -57,6 +60,7 @@ export function ProductListItem({ product, onSelect, onEdit, disabled = false, s
                                 {brandName}
                             </Typography>
                             <Stack direction="row" spacing={1}>
+                                {nerdInfo && <IdLabel id={product.id} />}
                                 <Typography>{name}</Typography>
                                 {price !== 0 &&
                                     <Typography align="right"

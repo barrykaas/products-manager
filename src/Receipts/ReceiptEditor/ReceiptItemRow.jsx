@@ -19,9 +19,12 @@ import ProductTooltip from "../../Products/ProductTooltip";
 import { ProductFormDialog } from "../../Products/ProductsForm";
 import ProductPicker from "../../Products/ProductPicker";
 import { constructListItem, finishListItem } from "./tools";
+import { useSettings } from "../../Settings/settings";
+import IdLabel from "../../Common/IdLabel";
 
 
 export default function ReceiptItemRow({ item, selected, setSelected, setCurrentEvent }) {
+    const [{ nerdInfo }] = useSettings();
     const mutateListItem = useListItemMutator();
     const { unitTypeInfo } = useUnitTypeInfo();
     const discrete = !item.product || unitTypeInfo(item.product.unit_type)?.discrete;
@@ -56,6 +59,7 @@ export default function ReceiptItemRow({ item, selected, setSelected, setCurrent
                     checked={selected}
                     onChange={(event) => setSelected(event.target.checked)}
                 />
+                {nerdInfo && <IdLabel id={item.id} />}
             </TableCell>
             <TableCell>
                 <QuantityField item={item} showButtons={hover} />

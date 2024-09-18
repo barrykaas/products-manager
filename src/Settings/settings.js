@@ -1,31 +1,23 @@
 import { useCookies } from "react-cookie";
 
 
-const settingsCookies = {
-    userId: "user",
-    defaultMarket: "defaultMarket"
-};
+const settingsCookie = 'kaasproductenSettings';
 
 export function useSettings() {
-    const [cookies, setCookie] = useCookies(
-        Object.values(settingsCookies)
-    );
+    const [cookies, setCookie] = useCookies();
+    const settings = cookies[settingsCookie] ?? {};
 
     const updateSettings = (newSettings) => {
-        for (const setting in newSettings) {
-            setCookie(
-                settingsCookies[setting],
-                newSettings[setting],
-                { expires: new Date("2030-01-01T00:00:00Z") }
-            )
-        }
+        newSettings = {
+            ...settings,
+            ...newSettings
+        };
+        setCookie(
+            settingsCookie,
+            JSON.stringify(newSettings),
+            { expires: new Date("2030-01-01T00:00:00Z") }
+        )
     };
 
-    return [
-        {
-            userId: cookies?.user && Number(cookies.user),
-            defaultMarket: cookies?.defaultMarket && Number(cookies.defaultMarket)
-        },
-        updateSettings
-    ];
+    return [settings, updateSettings];
 }

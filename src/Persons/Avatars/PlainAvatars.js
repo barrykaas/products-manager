@@ -2,6 +2,7 @@ import { Avatar, Tooltip } from "@mui/material";
 import { green, grey, red, orange, blue } from "@mui/material/colors";
 
 import { defaultSize } from "./Avatars";
+import { useSettings } from "../../Settings/settings";
 
 
 const kaasColors = {
@@ -12,12 +13,13 @@ const kaasColors = {
     "Cas": orange[300],
 }
 
-export function DefaultAvatar({ person, size = defaultSize }) {    
+export function DefaultAvatar({ person, size = defaultSize }) {
+    const [{ nerdInfo }] = useSettings();
     const initials = person.name.slice(0, 2);
     const color = kaasColors[person.name];
 
     return (
-        <Tooltip arrow title={person.name}>
+        <Tooltip arrow title={person.name + (nerdInfo ? ` (${person.id})` : '')}>
             <Avatar
                 sx={{ height: size, width: size, bgcolor: color }}
             >{initials}</Avatar>
@@ -25,7 +27,7 @@ export function DefaultAvatar({ person, size = defaultSize }) {
     );
 }
 
-export function LoadingAvatar({personId, size = defaultSize }) {
+export function LoadingAvatar({ personId, size = defaultSize }) {
     return (
         <Tooltip arrow title={`ID ${personId}`}>
             <Avatar
@@ -35,11 +37,11 @@ export function LoadingAvatar({personId, size = defaultSize }) {
     );
 }
 
-export function ErrorAvatar({personId, size = defaultSize }) {
+export function ErrorAvatar({ personId, size = defaultSize }) {
     return (
         <Tooltip arrow title={`ID ${personId}`}>
             <Avatar
-                sx={{ height: size, width: size, bgcolor: red[500]}}
+                sx={{ height: size, width: size, bgcolor: red[500] }}
             >!</Avatar>
         </Tooltip>
     );

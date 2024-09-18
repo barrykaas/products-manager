@@ -1,4 +1,4 @@
-import { Typography, ListItemButton, ListItemText, ListItemAvatar, CircularProgress, Stack } from "@mui/material";
+import { Typography, ListItemButton, ListItemText, ListItemAvatar, CircularProgress, Stack, Box } from "@mui/material";
 import { Fragment } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
@@ -10,9 +10,12 @@ import PersonAvatar from "../../Persons/Avatars/Avatars";
 import { isoToRelativeDate } from "../../Helpers/dateTime";
 import { removeEmpty } from "../../Helpers/objects";
 import { linkOrOnClick } from "../../Helpers/linkOrOnClick";
+import { useSettings } from "../../Settings/settings";
+import IdLabel from "../../Common/IdLabel";
 
 
 export function ReceiptsListItem({ item, onSelect, linkTo, ...props }) {
+  const [{ nerdInfo }] = useSettings();
   const { getMarket } = useMarkets();
   if (!item) return <CircularProgress />;
 
@@ -40,8 +43,12 @@ export function ReceiptsListItem({ item, onSelect, linkTo, ...props }) {
       </ListItemAvatar>
       <ListItemText
         primary={
-          <Stack direction="row" justifyContent="space-between" spacing={1}>
+          <Stack direction="row" spacing={1}>
+            {nerdInfo &&
+              <IdLabel id={item.id} />
+            }
             <Typography>{receiptName}</Typography>
+            <Box sx={{ flexGrow: 1 }} />
             {amount !== 0 &&
               <Typography align="right" sx={{ whiteSpace: "nowrap" }}><b>{formatEuro(amount)}</b></Typography>
             }

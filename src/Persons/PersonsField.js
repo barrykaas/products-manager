@@ -8,7 +8,7 @@ import { usePersons } from './PersonsApiQueries';
 const defaultLabel = "Persoon";
 // const noBrand = {name: "Merkloos", id: undefined}
 
-export default function PersonsField({ value, setValue, disabled = false, label = defaultLabel }) {
+export default function PersonsField({ value, setValue, disabled = false, label = defaultLabel, TextFieldProps }) {
     const personsQuery = usePersons();
 
     if (disabled) {
@@ -50,6 +50,7 @@ export default function PersonsField({ value, setValue, disabled = false, label 
                             </Fragment>
                         ),
                     }}
+                    {...TextFieldProps}
                 />
             )}
         />
@@ -57,15 +58,14 @@ export default function PersonsField({ value, setValue, disabled = false, label 
 }
 
 
-export function PersonsIdField({ value, setValue, disabled = false, label = defaultLabel }) {
+export function PersonsIdField({ value, setValue, ...props }) {
     const personsQuery = usePersons();
 
     return (
         <PersonsField
             value={value ? personsQuery.getPerson(value) : null}
             setValue={(person) => setValue(person?.id || null)}
-            disabled={disabled}
-            label={label}
+            {...props}
         />
     );
 }
