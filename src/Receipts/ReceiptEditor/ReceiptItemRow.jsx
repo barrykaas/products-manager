@@ -7,8 +7,6 @@ import { listItemsQueryKey, useListItemMutator } from "../../Lists/ListsApiQueri
 import { roundDigits } from "../../Helpers/numbers";
 import useUnitTypeInfo from "../../UnitTypes/UnitTypeInfo";
 import { eventsQueryKey } from "../../Events/EventsApiQueries";
-import { isoToRelativeDate } from "../../Helpers/dateTime";
-import { PersonAvatarGroup } from "../../Persons/Avatars/Avatars";
 import FormDialog from "../../Helpers/FormDialog";
 import EventController from "../../Events/EventController";
 import DeleteButton from "../../Common/DeleteButton";
@@ -21,6 +19,7 @@ import ProductPicker from "../../Products/ProductPicker";
 import { constructListItem, finishListItem } from "./tools";
 import { useSettings } from "../../Settings/settings";
 import IdLabel from "../../Common/IdLabel";
+import EventCard from "../../Events/EventCard";
 
 
 export default function ReceiptItemRow({ item, selected, setSelected, setCurrentEvent }) {
@@ -290,21 +289,6 @@ function EventPicker({ receiptItem, setCurrentEvent, showText = true }) {
         </>
     );
 }
-
-function EventCard({ event }) {
-    return (
-        <Stack>
-            <Typography noWrap variant="caption" sx={{ color: 'text.secondary' }}>
-                {isoToRelativeDate(event.event_date)}
-            </Typography>
-            <Typography noWrap >
-                {event.name}
-            </Typography>
-            <PersonAvatarGroup personIds={event.event_participants} />
-        </Stack>
-    );
-}
-
 
 function ProductInfo({ product }) {
     const brandsQuery = useBrands();

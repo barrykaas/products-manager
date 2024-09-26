@@ -1,4 +1,4 @@
-import { Typography, ListItemButton, ListItemText, ListItemAvatar, CircularProgress, Stack, Box } from "@mui/material";
+import { Typography, ListItemButton, ListItemText, ListItemAvatar, CircularProgress, Stack, Box, Badge } from "@mui/material";
 import { Fragment } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
@@ -31,6 +31,8 @@ export function ReceiptsListItem({ item, onSelect, linkTo, ...props }) {
     `${item.item_count} items`,
   ];
 
+  const market = getMarket(item.market);
+
   return (
     <ListItemButton alignItems="flex-start" divider
       onClick={onSelect}
@@ -39,7 +41,7 @@ export function ReceiptsListItem({ item, onSelect, linkTo, ...props }) {
       {...props}
     >
       <ListItemAvatar>
-        <PersonAvatar personId={item.payer} size={36} />
+        <ReceiptAvatar payerId={item.payer} market={market} />
       </ListItemAvatar>
       <ListItemText
         primary={
@@ -118,4 +120,18 @@ function searchParamsToApi(params) {
   };
 
   return removeEmpty(apiParams);
+}
+
+function ReceiptAvatar({ payerId, market }) {
+
+  if (!payerId) return;
+
+  return (
+    <Badge
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      badgeContent={<img src={market?.image} width={22} />}
+    >
+      <PersonAvatar personId={payerId} size={36} />
+    </Badge>
+  );
 }

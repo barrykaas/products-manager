@@ -1,12 +1,11 @@
-import { Fragment } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import CircularProgress from '@mui/material/CircularProgress';
 
 import { usePersons } from './PersonsApiQueries';
+import { InputAdornment, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
+import PersonAvatar from './Avatars/Avatars';
 
 const defaultLabel = "Persoon";
-// const noBrand = {name: "Merkloos", id: undefined}
 
 export default function PersonsField({ value, setValue, disabled = false, label = defaultLabel, TextFieldProps }) {
     const personsQuery = usePersons();
@@ -34,6 +33,16 @@ export default function PersonsField({ value, setValue, disabled = false, label 
             onChange={(event, newValue, reason) => setValue(newValue)}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             getOptionLabel={(option) => option.name}
+            renderOption={(props, option) =>
+                <ListItem {...props}>
+                    <ListItemAvatar>
+                        <PersonAvatar personId={option.id} />
+                    </ListItemAvatar>
+                    <ListItemText>
+                        {option.name}
+                    </ListItemText>
+                </ListItem>
+            }
             options={allPersons}
             loading={loading}
             renderInput={(params) => (
@@ -43,12 +52,12 @@ export default function PersonsField({ value, setValue, disabled = false, label 
                     fullWidth
                     InputProps={{
                         ...params.InputProps,
-                        endAdornment: (
-                            <Fragment>
-                                {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                                {params.InputProps.endAdornment}
-                            </Fragment>
-                        ),
+                        startAdornment:
+                            !!value && (
+                                <InputAdornment>
+                                    <PersonAvatar personId={value?.id} />
+                                </InputAdornment>
+                            )
                     }}
                     {...TextFieldProps}
                 />

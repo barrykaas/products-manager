@@ -1,16 +1,12 @@
 import { useFormik } from 'formik';
-import { Button, Box, TextField, Stack, Paper, Divider, Typography, List, CircularProgress } from '@mui/material';
+import { Button, Box, TextField, Stack, Paper, Typography } from '@mui/material';
 import { useConfirm } from 'material-ui-confirm';
 import * as yup from 'yup';
 import 'dayjs/locale/en-gb';
-import { useQuery } from '@tanstack/react-query';
 
 import { useEventDeleter, useEventMutator } from './EventsApiQueries';
 import ParticipantsList from './ParticipantList';
 import FormDialog from '../Helpers/FormDialog';
-import { Fragment, useState } from 'react';
-import { ReceiptFormDialog } from '../Receipts/ReceiptForm';
-import { ReceiptsListItem } from '../Receipts/ReceiptsController/ReceiptsList';
 import { DateField } from '../Helpers/DateField';
 import { isoToRelativeDate } from '../Helpers/dateTime';
 
@@ -118,12 +114,6 @@ export function EventForm({ onSuccessfulCreateEdit, onSuccessfulDelete, initialV
                     </Button>
                 }
             </Stack>
-
-            <Divider />
-
-            {initialValues?.lists &&
-                <RelatedLists event={initialValues} />
-            }
         </Box>
     );
 };
@@ -153,52 +143,5 @@ export function EventFormDialog({ initialValues = {}, onSuccessfulCreateEdit, op
         >
             <EventForm initialValues={initialValues} onSuccessfulCreateEdit={onSuccessfulCreateEdit} />
         </FormDialog>
-    );
-}
-
-
-function RelatedLists({ event }) {
-    const [listFormOpen, setListFormOpen] = useState(false);
-    const [currentList, setCurrentList] = useState();
-
-    const { isError, error, isLoading, data } = useQuery({
-        queryKey: ['lists', null, {
-            event: event.id,
-            page_size: 1000
-        }]
-    });
-
-    if (isError) {
-        return <p>{JSON.stringify(error)}</p>;
-    } else if (isLoading) {
-        return <CircularProgress />;
-    }
-
-    const lists = data.results || [];
-    if (lists.length === 0) return null;
-
-    return (
-        <Stack spacing={2} sx={{ py: 2 }}>
-            <Typography variant='h6'>Gerelateerde bonnetjes:</Typography>
-            <List component={Paper}>
-                {lists.map(list =>
-                    <Fragment key={list.id}>
-                        <ReceiptsListItem
-                            item={list}
-                            onSelect={() => {
-                                setCurrentList(list);
-                                setListFormOpen(true);
-                            }}
-                        />
-                    </Fragment>
-                )}
-            </List>
-
-            <ReceiptFormDialog
-                open={listFormOpen}
-                onClose={() => setListFormOpen(false)}
-                initialValues={currentList}
-            />
-        </Stack>
     );
 }

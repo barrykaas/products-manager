@@ -4,6 +4,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import { useMarkets } from './MarketsApiQueries';
+import { Avatar, InputAdornment, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
 
 const defaultLabel = "Winkel";
 
@@ -35,6 +36,16 @@ export default function MarketField({ value, setValue, disabled = false, label =
             getOptionLabel={(option) => option.name}
             options={allMarkets}
             loading={loading}
+            renderOption={(props, option) =>
+                <ListItem {...props}>
+                    <ListItemAvatar>
+                        <MarketAvatar market={option} />
+                    </ListItemAvatar>
+                    <ListItemText>
+                        {option.name}
+                    </ListItemText>
+                </ListItem>
+            }
             renderInput={(params) => (
                 <TextField
                     {...params}
@@ -42,12 +53,12 @@ export default function MarketField({ value, setValue, disabled = false, label =
                     fullWidth
                     InputProps={{
                         ...params.InputProps,
-                        endAdornment: (
-                            <Fragment>
-                                {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                                {params.InputProps.endAdornment}
-                            </Fragment>
-                        ),
+                        startAdornment:
+                            !!value && (
+                                <InputAdornment>
+                                    <MarketAvatar market={value} />
+                                </InputAdornment>
+                            )
                     }}
                 />
             )}
@@ -55,6 +66,9 @@ export default function MarketField({ value, setValue, disabled = false, label =
     );
 }
 
+function MarketAvatar({ market }) {
+    return market?.image && <Avatar variant='rounded' src={market.image} />;
+}
 
 export function MarketIdField({ value, setValue, disabled = false, label = defaultLabel }) {
     const { getMarket } = useMarkets();

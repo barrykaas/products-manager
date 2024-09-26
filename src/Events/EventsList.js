@@ -1,21 +1,16 @@
-import { ListItemText, ListItemButton, IconButton, Stack, Typography, ListSubheader, Paper, ListItem, Box } from "@mui/material";
+import { ListItemButton, IconButton, ListSubheader, Paper, ListItem } from "@mui/material";
 import { Fragment } from "react";
 import EditIcon from '@mui/icons-material/Edit';
-import { Person } from "@mui/icons-material";
 
 import { useEvents } from "./EventsApiQueries";
 import InfiniteList from "../Helpers/InfiniteList";
-import { formatEuro } from "../Helpers/monetary";
 import { isoToRelativeDate, weeksAhead } from "../Helpers/dateTime";
-import { PersonAvatarGroup } from "../Persons/Avatars/Avatars";
 import { Link, useSearchParams } from "react-router-dom";
 import { removeEmpty } from "../Helpers/objects";
-import { useSettings } from "../Settings/settings";
-import IdLabel from "../Common/IdLabel";
+import EventCard from "./EventCard";
 
 
 export function EventsListItem({ item, onEdit, onSelect, linkTo, ...props }) {
-    const [{ nerdInfo }] = useSettings();
     const secondaryAction = onEdit ?
         <IconButton aria-label="comment" onClick={onEdit}>
             <EditIcon />
@@ -40,7 +35,6 @@ export function EventsListItem({ item, onEdit, onSelect, linkTo, ...props }) {
             secondaryAction={secondaryAction}
             disablePadding
             divider
-            alignItems="flex-start"
         >
             <ListItemButton
                 onClick={onSelect}
@@ -48,42 +42,10 @@ export function EventsListItem({ item, onEdit, onSelect, linkTo, ...props }) {
                 to={!!onSelect || linkTo || `/events/${item.id}`}
                 {...props}
             >
-                <Stack alignItems="flex-start" width={1}
-                    sx={{ pr: onEdit ? 2 : "none" }}
-                >
-                    <ListItemText
-                        sx={{ width: 1 }}
-                        primary={
-                            <Stack direction="row" spacing={1}>
-                                {nerdInfo &&
-                                    <IdLabel id={item.id} />
-                                }
-                                <Typography>{name}</Typography>
-                                <Box sx={{ flexGrow: 1 }} />
-                                {amount !== 0 &&
-                                    <Typography align="right" sx={{ whiteSpace: "nowrap" }}>
-                                        <b>{formatEuro(amount)}</b>
-                                    </Typography>
-                                }
-                            </Stack>
-                        }
-                        secondaryTypographyProps={{ component: "div" }}
-                        secondary={
-                            <Stack direction="row" justifyContent="space-between" spacing={1}>
-                                {secondaryInfo.filter(Boolean).join("  -  ")}
-                                {amount !== 0 && amountPerPerson &&
-                                    <Stack direction="row" alignItems="center" spacing={0.5}>
-                                        <Person fontSize="inherit" />
-                                        <Typography variant="inherit" align="right" sx={{ whiteSpace: "nowrap" }}>
-                                            {formatEuro(amountPerPerson)}
-                                        </Typography>
-                                    </Stack>
-                                }
-                            </Stack>
-                        }
-                    />
-                    <PersonAvatarGroup personIds={participants} />
-                </Stack>
+                <EventCard
+                    event={item}
+                    showStats
+                />
             </ListItemButton>
         </ListItem>
     );
