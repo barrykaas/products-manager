@@ -1,7 +1,5 @@
-import { Fragment } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import CircularProgress from '@mui/material/CircularProgress';
 
 import { useMarkets } from './MarketsApiQueries';
 import { Avatar, InputAdornment, ListItem, ListItemAvatar, ListItemText } from '@mui/material';

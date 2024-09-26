@@ -129,7 +129,7 @@ function ReceiptAvatar({ payerId, market }) {
   return (
     <Badge
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      badgeContent={<img src={market?.image} width={22} />}
+      badgeContent={<img src={market?.image} alt="logo" width={22} />}
     >
       <PersonAvatar personId={payerId} size={36} />
     </Badge>

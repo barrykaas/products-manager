@@ -4,7 +4,7 @@ import EditIcon from '@mui/icons-material/Edit';
 
 import { useEvents } from "./EventsApiQueries";
 import InfiniteList from "../Helpers/InfiniteList";
-import { isoToRelativeDate, weeksAhead } from "../Helpers/dateTime";
+import { weeksAhead } from "../Helpers/dateTime";
 import { Link, useSearchParams } from "react-router-dom";
 import { removeEmpty } from "../Helpers/objects";
 import EventCard from "./EventCard";
@@ -16,19 +16,6 @@ export function EventsListItem({ item, onEdit, onSelect, linkTo, ...props }) {
             <EditIcon />
         </IconButton>
         : null;
-
-    const name = item.name;
-    const listCount = item.lists.length;
-    const participants = item.event_participants;
-    const amount = item.amount;
-    const amountPerPerson = participants.length >= 2 ?
-        amount / participants.length
-        : null;
-
-    const secondaryInfo = [
-        isoToRelativeDate(item.event_date),
-        listCount === 0 ? null : `${listCount} lijst${listCount === 1 ? '' : 'en'}`,
-    ];
 
     return (
         <ListItem
