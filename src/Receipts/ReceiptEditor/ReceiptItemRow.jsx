@@ -334,45 +334,24 @@ function ProductInfo({ product }) {
 
 function ReplaceProductButton({ listItem }) {
     const [pickerOpen, setPickerOpen] = useState(false);
-    const { isError, isLoading, unitTypeInfo } = useUnitTypeInfo();
     const updateListItem = useListItemMutator({
         onSuccess: () => setPickerOpen(false)
     });
     const hasProduct = Boolean(listItem?.product);
 
-    const disabled = isLoading || isError;
+    const onClick = () => setPickerOpen(true);
 
-    const onClick = () => {
-        setPickerOpen(true);
-    };
-
-    const handleNewProduct = (product) => {
-        product.discrete = unitTypeInfo(product.unit_type)?.discrete;
-        let itemPatch;
-        if (hasProduct) {
-            itemPatch = { product_id: product.id };
-        } else {
-            itemPatch = constructListItem(product);
-            itemPatch.amount = listItem.amount;
-            if (product.discrete) {
-                delete itemPatch.product_price;
-            } else {
-                delete itemPatch.product_quantity;
-            }
-            finishListItem(itemPatch);
-        }
-        updateListItem({
-            id: listItem.id,
-            ...itemPatch
-        });
-    };
+    const handleNewProduct = (product) => updateListItem({
+        id: listItem.id,
+        product_id: product.id
+    });
 
     const tooltip = hasProduct ? "Kies ander product" : "Koppel een product";
 
     return (
         <>
             <Tooltip title={tooltip}>
-                <IconButton onClick={onClick} disabled={disabled}>
+                <IconButton onClick={onClick}>
                     <FindReplace />
                 </IconButton>
             </Tooltip>

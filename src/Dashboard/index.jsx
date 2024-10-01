@@ -92,6 +92,8 @@ function Card({ title, button, children }) {
     );
 }
 
+const isKaas = (person) => person.id <= 5;
+
 function Balance({ userId }) {
     const { isError, error, isLoading, data } = useBalances();
 
@@ -112,7 +114,7 @@ function Balance({ userId }) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {data.map(person =>
+                    {data.filter(isKaas).map(person =>
                         <Fragment key={person.id}>
                             <TableRow selected={person.id === userId} hover>
                                 <TableCell>{person.name}</TableCell>

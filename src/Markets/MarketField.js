@@ -65,7 +65,15 @@ export default function MarketField({ value, setValue, disabled = false, label =
 }
 
 function MarketAvatar({ market }) {
-    return market?.image && <Avatar variant='rounded' src={market.image} />;
+    if (!market?.image) return;
+    return (
+        <Avatar
+            variant='rounded'
+            sx={{ background: 'none' }}
+        >
+            <img src={market.image} alt="sfgdf" style={{ width: '100%' }} />
+        </Avatar>
+    );
 }
 
 export function MarketIdField({ value, setValue, disabled = false, label = defaultLabel }) {

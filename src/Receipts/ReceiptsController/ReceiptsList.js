@@ -123,13 +123,15 @@ function searchParamsToApi(params) {
 }
 
 function ReceiptAvatar({ payerId, market }) {
-
   if (!payerId) return;
 
   return (
     <Badge
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      badgeContent={<img src={market?.image} alt="logo" width={22} />}
+      badgeContent={
+        market?.image &&
+        <img src={market?.image} alt={market?.name} width={22} />
+      }
     >
       <PersonAvatar personId={payerId} size={36} />
     </Badge>
