@@ -16,7 +16,6 @@ import { useBrands } from "../../Brands/BrandsApiQueries";
 import ProductTooltip from "../../Products/ProductTooltip";
 import { ProductFormDialog } from "../../Products/ProductsForm";
 import ProductPicker from "../../Products/ProductPicker";
-import { constructListItem, finishListItem } from "./tools";
 import { useSettings } from "../../Settings/settings";
 import IdLabel from "../../Common/IdLabel";
 import EventCard from "../../Events/EventCard";
