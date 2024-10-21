@@ -2,13 +2,11 @@ import { Typography, ListItemButton, ListItemText, ListItemAvatar, CircularProgr
 import { Fragment } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
-import { useReceipts } from "../../Lists/ListsApiQueries";
 import { useMarkets } from "../../Markets/MarketsApiQueries";
 import { formatEuro } from "../../Helpers/monetary";
 import InfiniteList from "../../Helpers/InfiniteList";
 import PersonAvatar from "../../Persons/Avatars/Avatars";
 import { isoToRelativeDate } from "../../Helpers/dateTime";
-import { removeEmpty } from "../../Helpers/objects";
 import { linkOrOnClick } from "../../Helpers/linkOrOnClick";
 import { useSettings } from "../../Settings/settings";
 import IdLabel from "../../Common/IdLabel";
