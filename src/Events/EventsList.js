@@ -1,13 +1,13 @@
 import { ListItemButton, IconButton, ListSubheader, Paper, ListItem } from "@mui/material";
 import { Fragment } from "react";
 import EditIcon from '@mui/icons-material/Edit';
+import { Link } from "react-router-dom";
 
-import { useEvents } from "./EventsApiQueries";
 import InfiniteList from "../Helpers/InfiniteList";
 import { weeksAhead } from "../Helpers/dateTime";
-import { Link, useSearchParams } from "react-router-dom";
-import { removeEmpty } from "../Helpers/objects";
 import EventCard from "./EventCard";
+import { apiLocations, usePaginatedQuery } from "../Api/Common";
+import { searchParamsToObject } from "../Helpers/searchParams";
 
 
 export function EventsListItem({ item, onEdit, onSelect, linkTo, ...props }) {
@@ -40,8 +40,7 @@ export function EventsListItem({ item, onEdit, onSelect, linkTo, ...props }) {
 
 const defaultLinkTo = (event) => `/events/${event.id}`;
 
-export default function EventsList({ handleEditEvent, handleSelectedEvent, getLinkTo = defaultLinkTo, searchQuery, ItemProps }) {
-    const [searchParams] = useSearchParams();
+export default function EventsList({ handleEditEvent, handleSelectedEvent, getLinkTo = defaultLinkTo, searchParams, ItemProps }) {
     const {
         data,
         isFetching,
@@ -50,11 +49,11 @@ export default function EventsList({ handleEditEvent, handleSelectedEvent, getLi
         isError,
         error,
         fetchNextPage
-    } = useEvents({
-        params: {
-            search: searchQuery,
-            ...searchParamsToApi(searchParams)
-        }
+    } = usePaginatedQuery({
+        queryKey: [
+            apiLocations.events,
+            searchParamsToObject(searchParams)
+        ]
     });
 
     if (typeof ItemProps !== 'function') {
@@ -64,9 +63,9 @@ export default function EventsList({ handleEditEvent, handleSelectedEvent, getLi
     // TODO: fix subheaders
     const allEvents = data?.pages.flatMap((page) => page.results) || [];
     const groupedEvents = allEvents.reduce((grouped, event) => {
-        const weeks = weeksAhead(event.event_date);
+        const weeks = weeksAhead(event.date);
         let id;
-        if (!event.event_date) {
+        if (!event.date) {
             id = "Geen datum";
         } else if (weeks > 2) {
             id = "Over meer dan twee weken";
@@ -116,20 +115,3 @@ export default function EventsList({ handleEditEvent, handleSelectedEvent, getLi
         </InfiniteList>
     );
 };
-
-function searchParamsToApi(params) {
-    const apiParams = {
-        ordering: params.get('ordering'),
-
-        event_date__lte: params.get('event_before'),
-        event_date__gte: params.get('event_after'),
-
-        date_created__lte: params.get('created_before'),
-        date_created__gte: params.get('created_after'),
-
-        participants_include: params.get('participants_include'),
-        participants_exclude: params.get('participants_exclude'),
-    };
-
-    return removeEmpty(apiParams);
-}

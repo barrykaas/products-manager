@@ -2,7 +2,6 @@ import { Fragment, useState } from "react";
 import { Box, Checkbox, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 
-import { listsQueryKey, useListItemDeleter, useListItemMutator, useListItems } from "../../Lists/ListsApiQueries";
 import FormDialog from "../../Helpers/FormDialog";
 import EventController from "../../Events/EventController";
 import DeleteButton from "../../Common/DeleteButton";
@@ -10,18 +9,24 @@ import QuickAddBox from "./QuickAddBox";
 import ReceiptItemRow from "./ReceiptItemRow";
 import ChooseEventButton from "../../Common/ChooseEventButton";
 import { formatEuro } from "../../Helpers/monetary";
+import { apiLocations, useApiDeleter, useApiMutation } from "../../Api/Common";
+import { useReceiptItems } from "../../Api/receipts";
 
 
 export default function ReceiptEditor({ receiptId }) {
-    const receiptItemsQuery = useListItems({ listId: receiptId });
-    const receiptQuery = useQuery({ queryKey: [listsQueryKey, receiptId] });
-    const mutateListItem = useListItemMutator();
+    const receiptItemsQuery = useReceiptItems(receiptId);
+    const receiptQuery = useQuery({ queryKey: [apiLocations.receipts, receiptId] });
+    const mutateListItem = useApiMutation({
+        queryKey: [apiLocations.receipts, receiptId, 'items']
+    }).mutate;
 
     const [selection, setSelection] = useState([]);
     const [currentEvent, setCurrentEvent] = useState();
 
+    const receipt = receiptQuery.data;
+
     const allItems = [...(receiptItemsQuery?.data || [])].reverse();
-    const receiptTotal = allItems.reduce((s, item) => s + item.amount, 0);
+    const receiptTotal = allItems.reduce((s, item) => s + Number(item.amount), 0);
     const allItemIds = allItems.map(item => item.id);
     const someChecked = selection.length > 0;
     const onCheckAll = (state) => setSelection(state ? [...allItemIds] : []);
@@ -46,7 +51,7 @@ export default function ReceiptEditor({ receiptId }) {
                     someChecked ||
                     <QuickAddBox
                         handleListItem={handleNewItem}
-                        market={receiptQuery.data?.market}
+                        marketId={receipt?.market}
                     />
                 }
             </Box>
@@ -119,10 +124,14 @@ export default function ReceiptEditor({ receiptId }) {
     );
 }
 
-function SelectedActions({ selection, clearSelection }) {
+function SelectedActions({ receiptId, selection, clearSelection }) {
     const [eventPickerOpen, setEventPickerOpen] = useState(false);
-    const deleteListItem = useListItemDeleter();
-    const mutateListItem = useListItemMutator();
+    const deleteListItem = useApiDeleter({
+        queryKey: [apiLocations.receipts, receiptId, 'items']
+    }).mutate;
+    const mutateListItem = useApiMutation({
+        queryKey: [apiLocations.receipts, receiptId, 'items']
+    }).mutate;
 
     const onDelete = () => {
         selection.forEach((itemId) => deleteListItem(itemId));

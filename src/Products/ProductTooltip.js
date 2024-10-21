@@ -6,6 +6,8 @@ import useHumanReadableProduct from "./HumanReadableProduct";
 export default function ProductTooltip({ product, children }) {
     const { formatProductDescription } = useHumanReadableProduct();
 
+    if (!product) return <>{children}</>;
+
     const tooltip = (
         <>
             <Typography variant="caption" fontFamily="monospace">

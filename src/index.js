@@ -15,7 +15,7 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
-import { defaultQueryFn, genericItemLoader } from './Api/Common';
+import { apiLocations, defaultQueryFn, genericItemLoader } from './Api/Common';
 import { ErrorBoundary } from 'react-error-boundary';
 import Fallback from './ErrorBoundary/Fallback';
 import Root from './Root';
@@ -28,8 +28,6 @@ import ScannedItemsController from "./ScannedItems/ScannedItemsController";
 import SettingsPage from "./Settings/SettingsPage";
 import ReceiptView from './Receipts/ReceiptView';
 import EventFormView from './Events/EventFormView';
-import { listsQueryKey } from './Lists/ListsApiQueries';
-import { eventsQueryKey } from './Events/EventsApiQueries';
 import Dashboard from './Dashboard';
 
 
@@ -72,7 +70,7 @@ const router = createBrowserRouter([
       {
         path: "receipts/:itemId",
         element: <ReceiptView />,
-        loader: genericItemLoader(queryClient, listsQueryKey)
+        loader: genericItemLoader(queryClient, apiLocations.receipts)
       },
       {
         path: "receipts/new",
@@ -86,7 +84,7 @@ const router = createBrowserRouter([
       {
         path: "events/:itemId",
         element: <EventFormView />,
-        loader: genericItemLoader(queryClient, eventsQueryKey)
+        loader: genericItemLoader(queryClient, apiLocations.events)
       },
       {
         path: "events/new",

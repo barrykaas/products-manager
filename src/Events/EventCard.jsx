@@ -1,19 +1,19 @@
 import { Stack, Typography } from "@mui/material";
+import { Person } from "@mui/icons-material";
 
 import { isoToRelativeDate } from "../Helpers/dateTime";
 import { PersonAvatarGroup } from "../Persons/Avatars/Avatars";
 import { formatEuro } from "../Helpers/monetary";
 import { useSettings } from "../Settings/settings";
-import { Person } from "@mui/icons-material";
 import IdLabel from "../Common/IdLabel";
 
 
 export default function EventCard({ event, showStats = false }) {
     const [{ nerdInfo }] = useSettings();
 
-    const listCount = event.lists.length;
-    const participants = event.event_participants;
-    const amount = event.amount;
+    const listCount = event.list_count;
+    const participants = event.participations.map(p => p.participant);
+    const amount = Number(event.total);
     const amountPerPerson = participants.length >= 2 ?
         amount / participants.length
         : null;
@@ -41,7 +41,7 @@ export default function EventCard({ event, showStats = false }) {
                 }}
             >
                 <Typography noWrap variant="caption" sx={{ color: 'text.secondary' }}>
-                    {isoToRelativeDate(event.event_date)}
+                    {isoToRelativeDate(event.date)}
                 </Typography>
 
                 <Typography noWrap sx={{ width: 1 }}>
@@ -50,13 +50,13 @@ export default function EventCard({ event, showStats = false }) {
                     }
                     {event.name}
                 </Typography>
-                <PersonAvatarGroup personIds={event.event_participants} />
+                <PersonAvatarGroup personIds={participants} />
             </Stack>
 
             {showStats && amount !== 0 &&
                 <Stack alignItems="end" sx={{ whiteSpace: "nowrap" }}>
                     <Typography>
-                        <b>{formatEuro(event.amount)}</b>
+                        <b>{formatEuro(amount)}</b>
                     </Typography>
 
                     {amountPerPerson &&

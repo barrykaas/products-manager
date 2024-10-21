@@ -4,49 +4,41 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { Box, Grid, Stack, Typography } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 
-import { productsQueryKey } from '../../Products/ProductsApiQueries';
 import { getWords } from '../../Helpers/strings';
-import { isNumber, roundDigits } from '../../Helpers/numbers';
-import { useUnitTypes } from '../../UnitTypes/UnitTypeQueries';
+import { isInteger, isNumber, roundDigits } from '../../Helpers/numbers';
 import { formatEuro } from '../../Helpers/monetary';
-import { constructListItem, finishListItem } from './tools';
-import { useBrands } from '../../Brands/BrandsApiQueries';
-import useHumanReadableProduct from '../../Products/HumanReadableProduct';
+import { apiLocations } from '../../Api/Common';
+import { BrandLabel } from './ReceiptItemRow';
+import { productQuantityDescription } from '../../Helpers/productQuantity';
 
 
-export default function QuickAddBox({ handleListItem, market }) {
+export default function QuickAddBox({ handleListItem, marketId }) {
     const [inputValue, setInputValue] = useState('');
-    const { getUnitType, isLoading, isError } = useUnitTypes();
-
-    const disabled = isLoading || isError;
-
     const parsedInput = parseInput(inputValue);
     const search = parsedInput.description;
-
-    const productsQuery = useQuery([productsQueryKey, null, { search, market }],
+    const productsQuery = useQuery([apiLocations.products, { search, market: marketId }],
         { enabled: !!search });
     const products = productsQuery.data?.results || [];
 
     // Construct list item from parsed input
     const freeformOption = {
-        product_quantity: parsedInput.quantity || 1,
+        quantity: parsedInput.quantity || 1,
         description: parsedInput.description,
-        amount: parsedInput.amount || 0,
+        price: (parsedInput.amount || 0) / (parsedInput.quantity || 1),
     };
-    finishListItem(freeformOption);
-
     // Construct list items from product search
-    const productOptions = products.map(apiProduct => {
-        const unitType = getUnitType(apiProduct.unit_type);
-        const product = {
-            discrete: unitType.discrete,
-            physical_unit: unitType.physical_unit,
-            ...apiProduct
-        };
-        // todo: annotate in api? ^
+    const productOptions = products.map(product =>
+        mergeInputAndProduct(product, parsedInput)
+    );
 
-        return mergeInputAndProduct(product, parsedInput);
-    });
+    const onSelect = (option) => {
+        const listItem = { ...option };
+        if (option.product) {
+            listItem.product = option.product.id;
+        }
+        console.log("SELECTED", listItem)
+        handleListItem(listItem);
+    };
 
     const options = inputValue ? [freeformOption, ...productOptions] : [];
 
@@ -54,11 +46,10 @@ export default function QuickAddBox({ handleListItem, market }) {
         <Autocomplete
             fullWidth
             freeSolo
-            disabled={disabled}
             filterOptions={(x) => x}
             value={null}
             onChange={(event, newValue) => {
-                handleListItem(newValue);
+                onSelect(newValue);
                 setInputValue('');
             }}
             inputValue={inputValue}
@@ -126,13 +117,13 @@ function parseInput(input) {
 
 
 const getOptionLabel = (option) => {
-    const { product, amount, description } = option;
+    const { product, quantity, price, description } = option;
     const name = product?.name || `"${description}"`;
-    const unit = (!product || product.discrete) ? 'x' : product.physical_unit;
-    const parts = [];
-    if (option.product_quantity) {
-        parts.push(option.product_quantity + unit);
-    }
+    const unit = (!product || product.unit_type.discrete) ? 'x' : product.unit_type.physical_unit;
+    const amount = quantity * price;
+    const parts = [
+        quantity + unit
+    ];
     if (option.description || product?.name) {
         parts.push(name);
     }
@@ -143,39 +134,35 @@ const getOptionLabel = (option) => {
 
 
 const mergeInputAndProduct = (product, parsedInput) => {
-    const option = constructListItem(product);
-    if (parsedInput.quantity) {
-        let q = parsedInput.quantity;
-        if (q < 1) q *= 1000;
-        option.product_quantity = q;
-    }
-    if (parsedInput.amount) option.amount = parsedInput.amount;
+    const option = { product };
+    if (product.unit_type.discrete) {
+        let q = parsedInput.quantity || 1;
+        q = roundDigits(q, 3);
+        option.quantity = q;
+        let p = parsedInput.amount ? parsedInput.amount / q : product.price;
+        option.price = roundDigits(p, 2);
 
-    if (parsedInput.quantity && parsedInput.amount) {
-        delete option.product_price;
-    } else if (parsedInput.quantity) {
-        delete option.amount;
-    } else if (parsedInput.amount) {
-        if (product.discrete) {
-            delete option.product_price;
-        } else {
-            delete option.product_quantity;
-        }
+    } else {
+        let q = parsedInput.quantity || product.volume / 1000;
+        if (isInteger(parsedInput.quantity)) q /= 1000;
+        q = roundDigits(q, 3);
+        option.quantity = q;
+        let p = parsedInput.amount ? parsedInput.amount / q : product.unit_price;
+        option.price = roundDigits(p, 2);
     }
-
-    finishListItem(option)
     return option;
 };
 
 
 function RenderOption({ props = {}, option }) {
     const product = option?.product;
-    const unit = (!product || product.discrete) ? 'x' : product.physical_unit;
+    const unit = (!product || product.unit_type.discrete) ? 'x' : product.unit_type.physical_unit;
+    const amount = option.quantity * option.price;
 
     return <li {...props} key={option?.product?.id || -1}>
         <Stack direction="row" alignItems="center" spacing={2} width={1}>
-            {option.product_quantity &&
-                <Typography width="50px">{option.product_quantity + unit}</Typography>
+            {option.quantity &&
+                <Typography width="50px">{option.quantity + unit}</Typography>
             }
 
             {option?.product ?
@@ -185,30 +172,27 @@ function RenderOption({ props = {}, option }) {
 
             <Box flexGrow={1} />
             <Typography sx={{ whiteSpace: "nowrap" }}>
-                {formatEuro(option.amount)}
+                {formatEuro(amount)}
             </Typography>
         </Stack>
     </li>;
 }
 
 function ProductLabel({ product }) {
-    const { getBrand } = useBrands();
-    const { formatProductDescription } = useHumanReadableProduct();
-
-    const brandName = getBrand(product.brand)?.name;
-
     return <Stack width={1}>
-        <Typography variant="subtitle2" color="text.secondary">
-            {brandName}
-        </Typography>
-        <Grid container spacing={1} alignItems="end" >
+        <BrandLabel
+            brandId={product?.brand}
+            variant="subtitle2"
+            color="text.secondary"
+        />
+        <Grid container spacing={1} alignItems="end">
             <Grid item>
 
                 <Typography>{product.name}</Typography>
             </Grid>
             <Grid item>
                 <Typography variant="subtitle2" color="text.secondary">
-                    {formatProductDescription(product)}
+                    {productQuantityDescription(product)}
                 </Typography>
             </Grid>
         </Grid>

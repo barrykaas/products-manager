@@ -5,8 +5,8 @@ import ProductsList from './ProductsList';
 import { ProductFormDialog } from './ProductsForm';
 import { useProductsInvalidator } from './ProductsApiQueries';
 import ControllerView from '../Helpers/ControllerView';
-import useUrlSearchQuery from '../Helpers/urlSearchQuery';
 import FilterDialog from '../Helpers/FilterDialog';
+import useLocalSearchParams from '../Helpers/localSearchParams';
 
 
 const filterOptions = [
@@ -24,7 +24,7 @@ export default function ProductController({ handleSelectedProduct, onClose, onMe
     const [messageText, setMessageText] = useState("");
     const [messageState] = useState(true);
     const [editOpen, setEditOpen] = useState(false);
-    const [searchQuery, setSearchQuery] = useUrlSearchQuery();
+    const [searchParams, setSearchParams] = useLocalSearchParams(!!onClose);
     const [filterOpen, setFilterOpen] = useState(false);
 
     const invalidateProducts = useProductsInvalidator();
@@ -47,6 +47,15 @@ export default function ProductController({ handleSelectedProduct, onClose, onMe
 
     const onRefresh = invalidateProducts;
 
+    const handleNewSearch = (newSearch) => {
+        if (newSearch) {
+            searchParams.set('search', newSearch);
+        } else {
+            searchParams.delete('search')
+        }
+        setSearchParams(searchParams);
+    };
+
     return (
         <>
             <Snackbar open={messageOpen} autoHideDuration={1500} onClose={() => setMessageOpen(false)}>
@@ -61,14 +70,14 @@ export default function ProductController({ handleSelectedProduct, onClose, onMe
                 onClose={onClose}
                 onMenu={onMenu}
                 onRefresh={onRefresh}
-                initialSearch={searchQuery}
-                handleNewSearch={setSearchQuery}
+                initialSearch={searchParams.get('search') || ''}
+                handleNewSearch={handleNewSearch}
                 onFilter={() => setFilterOpen(true)}
             >
                 <ProductsList
                     handleEdit={handleEditProduct}
                     handleSelectedProduct={handleSelectedProduct}
-                    searchQuery={searchQuery}
+                    searchParams={searchParams}
                 />
             </ControllerView>
 
@@ -79,8 +88,12 @@ export default function ProductController({ handleSelectedProduct, onClose, onMe
                 onSuccessfulCreateEdit={() => didSuccessfullyEdit("Gelukt!")}
             />
 
-            <FilterDialog open={filterOpen} onClose={() => setFilterOpen(false)}
+            <FilterDialog
+                open={filterOpen}
+                onClose={() => setFilterOpen(false)}
                 options={filterOptions}
+                searchParams={searchParams}
+                setSearchParams={setSearchParams}
             />
         </>
     );

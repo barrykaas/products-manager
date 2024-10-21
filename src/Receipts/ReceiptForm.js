@@ -3,7 +3,7 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 
-import { receiptListType, useListDeleter, useListMutator } from "../Lists/ListsApiQueries";
+import { receiptListType, useListDeleter } from "../Lists/ListsApiQueries";
 import { PersonsIdField } from "../Persons/PersonsField";
 import FormDialog from "../Helpers/FormDialog";
 import { MarketIdField } from "../Markets/MarketField";
@@ -11,11 +11,12 @@ import { useSettings } from "../Settings/settings";
 import { useConfirm } from "material-ui-confirm";
 import { DateField } from "../Helpers/DateField";
 import { isoToRelativeDate } from "../Helpers/dateTime";
+import { apiLocations, useApiDeleter, useApiMutation } from "../Api/Common";
 
 
 const emptyForm = () => ({
     type: receiptListType,
-    transaction_date: new Date(),
+    date: new Date(),
 
     name: null,
     market: null,
@@ -23,9 +24,9 @@ const emptyForm = () => ({
 });
 
 const validationSchema = yup.object({
-    transaction_date: yup
-        .date('Enter transaction date')
-        .required('Transaction date is required'),
+    date: yup
+        .date()
+        .nullable(true),
     name: yup
         .string('Enter name')
         .required('Name is required'),
@@ -50,16 +51,18 @@ export default function ReceiptForm({ initialValues = {}, onSuccessfulCreateEdit
 
     const existingReceiptId = initialValues?.id;
 
-    const mutateList = useListMutator({
+    const mutateList = useApiMutation({
+        queryKey: [apiLocations.receipts],
         onSuccess: (response) => {
             const newList = response.data;
             onSuccessfulCreateEdit(newList);
         }
-    });
+    }).mutate;
 
-    const deleteList = useListDeleter({
+    const deleteList = useApiDeleter({
+        queryKey: [apiLocations.receipts],
         onSuccess: onSuccessfulDelete
-    });
+    }).mutate;
 
     const confirmDelete = useConfirm();
     const onDelete = () => {
@@ -105,14 +108,14 @@ export default function ReceiptForm({ initialValues = {}, onSuccessfulCreateEdit
                 id="transaction_date"
                 name="transaction_date"
                 label="Datum"
-                value={formik.values.transaction_date}
+                value={formik.values.date}
                 onChange={(value) => {
-                    formik.setFieldValue('transaction_date', value);
+                    formik.setFieldValue('date', value);
                 }}
                 slotProps={{
                     textField: {
-                        helperText: formik.touched.transaction_date && formik.errors.transaction_date,
-                        error: formik.touched.transaction_date && Boolean(formik.errors.transaction_date)
+                        helperText: formik.touched.date && formik.errors.date,
+                        error: formik.touched.date && Boolean(formik.errors.date)
                     },
                 }}
             />

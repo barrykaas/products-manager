@@ -7,6 +7,7 @@ import { MoreHoriz } from "@mui/icons-material";
 import ControllerView from "../Helpers/ControllerView";
 import { EventForm } from "./EventForm";
 import { ReceiptsListItem } from "../Receipts/ReceiptsController/ReceiptsList";
+import { apiLocations } from "../Api/Common";
 
 
 export default function EventFormView() {
@@ -25,7 +26,7 @@ export default function EventFormView() {
                 onSuccessfulDelete={() => navigate('..', { replace: true, relative: 'path' })}
             />
 
-            {initialValues && initialValues.lists.length > 0 &&
+            {initialValues && initialValues.list_count > 0 &&
                 <>
                     <Divider />
                     <RelatedLists event={initialValues} />
@@ -38,7 +39,7 @@ export default function EventFormView() {
 
 function RelatedLists({ event }) {
     const { isError, error, isLoading, data } = useQuery({
-        queryKey: ['lists', null, {
+        queryKey: [apiLocations.receipts, {
             event: event.id,
             page_size: 5
         }]
@@ -54,11 +55,11 @@ function RelatedLists({ event }) {
     const lists = data.results || [];
 
     return (
-        <Box sx={{ mb: 5 }}>
+        <Box sx={{ mb: 5, mx: 2 }}>
             <Typography variant='h6'
                 sx={{ my: 2 }}
             >
-                Gerelateerde bonnetjes:
+                Bonnetjes met dit event
             </Typography>
             <Stack component={Paper}>
                 <List disablePadding>

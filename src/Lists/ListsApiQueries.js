@@ -1,7 +1,7 @@
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 
 import ax from "../Api/axios";
-import { useInvalidator, usePaginatedQuery } from "../Api/Common";
+import { apiLocations, useInvalidator, usePaginatedQuery } from "../Api/Common";
 
 
 export const listsQueryKey = 'lists';
@@ -72,12 +72,11 @@ export function useListMutator({ onSuccess, onError } = {}) {
     const mutateList = useMutation({
         mutationFn: mutateListFn,
         onSuccess: (...args) => {
-            queryClient.invalidateQueries({ queryKey: [listsQueryKey] });
+            queryClient.invalidateQueries({ queryKey: [apiLocations.receipts] });
             if (onSuccess) onSuccess(...args);
         },
         onError: onError
     });
-
     return mutateList.mutate;
 }
 

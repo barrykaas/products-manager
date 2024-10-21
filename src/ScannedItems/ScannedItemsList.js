@@ -1,16 +1,22 @@
 import { Divider } from "@mui/material";
 import { Fragment } from "react";
 
-import { useScannedItems } from './ScannedItemsApiQueries';
 import { BarcodeListItem } from "./BarcodeListItem";
 import { ProductListItem } from '../Products/ProductListItem';
 import InfiniteList from "../Helpers/InfiniteList";
+import { useQuery } from "@tanstack/react-query";
+import { apiLocations, usePaginatedQuery } from "../Api/Common";
 
 
 function ScannedItemsListItem({ item, onSelect }) {
-  const product = item.product;
+  const productId = item.product;
+  const productQuery = useQuery({
+    queryKey: [apiLocations.products, productId],
+    enabled: !!productId
+  });
+  const product = productQuery.data;
 
-  if (!product) {
+  if (productQuery.isLoading) {
     return (
       <BarcodeListItem barcode={item.barcode} onSelect={onSelect} />
     );
@@ -31,7 +37,11 @@ export default function ScannedItemsList({ selectBarcode, disableKnownProducts =
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage
-  } = useScannedItems(disableKnownProducts);
+  } = usePaginatedQuery({
+    queryKey: [apiLocations.scannedItems, {
+      product_unknown: disableKnownProducts || undefined
+    }]
+  });
 
   const scannedItemsData = data?.pages.flatMap((page) => page.results) || [];
 

@@ -14,16 +14,22 @@ import { isoToRelativeDate } from '../Helpers/dateTime';
 const defaultParticipants = [1, 2, 4, 5];
 
 export const emptyForm = () => ({
-    event_date: new Date(),
-    event_participants: [...defaultParticipants],
+    date: new Date(),
+    participations: defaultParticipants.map(
+        p => ({ participant: p })
+    ),
     name: '',
 });
 
 const validationSchema = yup.object({
-    event_date: yup
+    date: yup
         .date('Enter date of event')
         .nullable(),
-    event_participants: yup.array(yup.number()),
+    participations: yup.array(
+        yup.object({
+            participant: yup.number()
+        })
+    ),
     name: yup
         .string('Enter name')
         .required('Name is required'),
@@ -82,20 +88,25 @@ export function EventForm({ onSuccessfulCreateEdit, onSuccessfulDelete, initialV
                     name="event_date"
                     label="Datum"
                     clearable
-                    value={formik.values.event_date}
+                    value={formik.values.date}
                     onChange={(value) => {
-                        formik.setFieldValue('event_date', value);
+                        formik.setFieldValue('date', value);
                     }}
                     slotProps={{
                         textField: {
-                            helperText: formik.touched.event_date && formik.errors.event_date,
-                            error: formik.touched.event_date && Boolean(formik.errors.event_date)
+                            helperText: formik.touched.date && formik.errors.date,
+                            error: formik.touched.date && Boolean(formik.errors.date)
                         },
                     }}
                 />
 
                 <Paper variant="outlined" >
-                    <ParticipantsList setChecked={(value) => formik.setFieldValue('event_participants', value)} checked={formik.values.event_participants} />
+                    <ParticipantsList
+                        setChecked={(participants) => formik.setFieldValue('participations', participants.map(
+                            participant => ({ participant })
+                        ))}
+                        checked={formik.values.participations.map(p => p.participant)}
+                    />
                 </Paper>
 
                 {initialValues?.date_created &&

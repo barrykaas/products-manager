@@ -1,15 +1,13 @@
 import { Divider } from "@mui/material";
-import React from "react";
-import { useSearchParams } from "react-router-dom";
+import { Fragment } from "react";
 
-import { useProducts } from './ProductsApiQueries';
 import { ProductListItem } from "./ProductListItem";
 import InfiniteList from "../Helpers/InfiniteList";
-import { removeEmpty } from "../Helpers/objects";
+import { apiLocations, usePaginatedQuery } from "../Api/Common";
+import { searchParamsToObject } from "../Helpers/searchParams";
 
 
-export default function ProductsList({ handleEdit, handleSelectedProduct, searchQuery }) {
-  const [searchParams] = useSearchParams();
+export default function ProductsList({ handleEdit, handleSelectedProduct, searchParams }) {
   const {
     data,
     fetchNextPage,
@@ -18,11 +16,10 @@ export default function ProductsList({ handleEdit, handleSelectedProduct, search
     isFetchingNextPage,
     isError,
     error,
-  } = useProducts({
-    params: {
-      search: searchQuery,
-      ...searchParamsToApi(searchParams)
-    }
+  } = usePaginatedQuery({
+    queryKey: [apiLocations.products,
+      searchParamsToObject(searchParams)
+    ]
   });
 
   const productsData = (data?.pages || []).flatMap((page) => page.results);
@@ -33,7 +30,7 @@ export default function ProductsList({ handleEdit, handleSelectedProduct, search
       error={isError ? error : null}
     >
       {productsData.map((item) => (
-        <React.Fragment key={item.id}>
+        <Fragment key={item.id}>
           <ProductListItem
             product={item}
             onEdit={handleSelectedProduct && (() => handleEdit(item))}
@@ -44,20 +41,8 @@ export default function ProductsList({ handleEdit, handleSelectedProduct, search
             )}
           />
           <Divider component="li" />
-        </React.Fragment>
+        </Fragment>
       ))}
     </InfiniteList>
   );
 };
-
-function searchParamsToApi(params) {
-  const apiParams = {
-    ordering: params.get('ordering'),
-    market: params.get('market'),
-
-    date_added__lte: params.get('created_before'),
-    date_added__gte: params.get('created_after'),
-  };
-
-  return removeEmpty(apiParams);
-}

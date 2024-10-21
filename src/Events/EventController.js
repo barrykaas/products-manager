@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import { Alert, Button, Snackbar, Stack, Autocomplete, TextField, Typography, Paper } from '@mui/material';
-import { useSearchParams } from 'react-router-dom';
 
 import EventsList from './EventsList';
 import { EventFormDialog } from './EventForm';
 import { useEventsInvalidator } from './EventsApiQueries';
 import ControllerView from '../Helpers/ControllerView';
-import useUrlSearchQuery from '../Helpers/urlSearchQuery';
 import { DateRangeField } from '../Helpers/DateField';
 import FormDialog from '../Helpers/FormDialog';
 import SelectPersons from '../Persons/SelectPersons';
+import useLocalSearchParams from '../Helpers/localSearchParams';
 
 
 const defaultTitle = "Events";
@@ -22,11 +21,21 @@ export default function EventController({ handleSelectedEvent, onClose, onMenu, 
 
     const [messageText, setMessageText] = useState("");
     const [messageState, setMessageState] = useState(true);
+    const isMainView = !onClose;
+    const [searchParams, setSearchParams] = useLocalSearchParams(!isMainView);
 
-    const [searchQuery, setSearchQuery] = useUrlSearchQuery();
     const [filterOpen, setFilterOpen] = useState(false);
 
     const invalidateEvents = useEventsInvalidator();
+
+    const handleNewSearch = (newSearch) => {
+        if (newSearch) {
+            searchParams.set('search', newSearch);
+        } else {
+            searchParams.delete('search')
+        }
+        setSearchParams(searchParams);
+    };
 
     let handleAddEvent = 'new';
     if (handleSelectedEvent) {
@@ -67,13 +76,13 @@ export default function EventController({ handleSelectedEvent, onClose, onMenu, 
                 onAdd={handleAddEvent}
                 onFilter={() => setFilterOpen(true)}
                 onMenu={onMenu}
-                initialSearch={searchQuery}
-                handleNewSearch={setSearchQuery}
+                initialSearch={searchParams.get('search') || ''}
+                handleNewSearch={handleNewSearch}
             >
                 <EventsList
                     handleEditEvent={showEditButtons && handleEditEvent}
                     handleSelectedEvent={handleSelectedEvent}
-                    searchQuery={searchQuery}
+                    searchParams={searchParams}
                 />
             </ControllerView>
 
@@ -87,6 +96,8 @@ export default function EventController({ handleSelectedEvent, onClose, onMenu, 
             <FilterDialog
                 open={filterOpen}
                 onClose={() => setFilterOpen(false)}
+                searchParams={searchParams}
+                setSearchParams={setSearchParams}
             />
         </>
     );
@@ -95,17 +106,17 @@ export default function EventController({ handleSelectedEvent, onClose, onMenu, 
 
 const allFilterParams = [
     "ordering",
-    "event_before",
-    "event_after",
+    "date_before",
+    "date_after",
     "created_before",
     "created_after",
-    "participants_include",
-    "participants_exclude",
+    "modified_before",
+    "modified_after",
+    "participants",
+    "participants_not",
 ];
 
-function FilterDialog({ open, onClose }) {
-    const [searchParams, setSearchParams] = useSearchParams();
-
+function FilterDialog({ open, onClose, searchParams, setSearchParams }) {
     const updateParam = (key, value) => {
         if (!value && value !== 0) {
             searchParams.delete(key);
@@ -121,8 +132,6 @@ function FilterDialog({ open, onClose }) {
         }
         setSearchParams(searchParams);
     };
-
-    // const parIncl = 
 
     return (
         <FormDialog
@@ -163,10 +172,10 @@ function FilterDialog({ open, onClose }) {
                 <Typography>Datum van het event</Typography>
                 <DateRangeField
                     clearable
-                    valueAfter={searchParams.get("event_after")}
-                    onChangeAfter={value => updateParam("event_after", value?.toISOString())}
-                    valueBefore={searchParams.get("event_before")}
-                    onChangeBefore={value => updateParam("event_before", value?.toISOString())}
+                    valueAfter={searchParams.get("date_after")}
+                    onChangeAfter={value => updateParam("date_after", value?.toISOString())}
+                    valueBefore={searchParams.get("date_before")}
+                    onChangeBefore={value => updateParam("date_before", value?.toISOString())}
                 />
 
                 <Typography>Datum gecreëerd</Typography>
@@ -181,16 +190,16 @@ function FilterDialog({ open, onClose }) {
                 <Typography>Inclusief deelnemers</Typography>
                 <Paper variant="outlined">
                     <SelectPersons
-                        selected={searchParams.get('participants_include')?.split(',')?.map(Number) || []}
-                        setSelected={newSelected => updateParam('participants_include', newSelected.sort().join(','))}
+                        selected={searchParams.get('participants')?.split(',')?.map(Number) || []}
+                        setSelected={newSelected => updateParam('participants', newSelected.sort().join(','))}
                     />
                 </Paper>
 
                 <Typography>Exclusief deelnemers</Typography>
                 <Paper variant="outlined">
                     <SelectPersons
-                        selected={searchParams.get('participants_exclude')?.split(',')?.map(Number) || []}
-                        setSelected={newSelected => updateParam('participants_exclude', newSelected.sort().join(','))}
+                        selected={searchParams.get('participants_not')?.split(',')?.map(Number) || []}
+                        setSelected={newSelected => updateParam('participants_not', newSelected.sort().join(','))}
                     />
                 </Paper>
             </Stack>

@@ -1,43 +1,41 @@
 import { useState } from "react";
 import { Box, Checkbox, Icon, IconButton, InputAdornment, Skeleton, Stack, TableCell, TableRow, TextField, Tooltip, Typography } from "@mui/material";
 import { AddCircle, FindReplace, RemoveCircle } from "@mui/icons-material";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
-import { listItemsQueryKey, useListItemMutator } from "../../Lists/ListsApiQueries";
 import { roundDigits } from "../../Helpers/numbers";
-import useUnitTypeInfo from "../../UnitTypes/UnitTypeInfo";
-import { eventsQueryKey } from "../../Events/EventsApiQueries";
 import FormDialog from "../../Helpers/FormDialog";
 import EventController from "../../Events/EventController";
 import DeleteButton from "../../Common/DeleteButton";
 import CurrencyField from "../../Common/CurrencyField";
 import ChooseEventButton from "../../Common/ChooseEventButton";
-import { useBrands } from "../../Brands/BrandsApiQueries";
 import ProductTooltip from "../../Products/ProductTooltip";
 import { ProductFormDialog } from "../../Products/ProductsForm";
 import ProductPicker from "../../Products/ProductPicker";
 import { useSettings } from "../../Settings/settings";
 import IdLabel from "../../Common/IdLabel";
 import EventCard from "../../Events/EventCard";
+import { apiLocations, useApiMutation } from "../../Api/Common";
+import { useReceiptItemMutation } from "../api";
 
 
 export default function ReceiptItemRow({ item, selected, setSelected, setCurrentEvent }) {
     const [{ nerdInfo }] = useSettings();
-    const mutateListItem = useListItemMutator();
-    const { unitTypeInfo } = useUnitTypeInfo();
-    const discrete = !item.product || unitTypeInfo(item.product.unit_type)?.discrete;
+    const receiptId = item.list;
+    const mutateListItem = useApiMutation({
+        queryKey: [apiLocations.receipts, receiptId, 'items']
+    }).mutate;
     const [hover, setHover] = useState(false);
 
     const setPrice = (price) => mutateListItem({
         id: item.id,
-        product_price: price / (discrete ? 1 : 1000)
+        price
     });
     const setAmount = (amount) => {
-        const q = item.product_quantity || 1;
+        const q = item.quantity || 1;
         mutateListItem({
             id: item.id,
-            product_quantity: q,
-            product_price: amount / q
+            price: amount / q
         });
     };
 
@@ -66,7 +64,7 @@ export default function ReceiptItemRow({ item, selected, setSelected, setCurrent
                 <Stack direction="row" alignItems="center">
                     <Box sx={{ width: 1 }}>
                         {item?.product ?
-                            <ProductInfo product={item.product} />
+                            <ProductInfo productId={item.product} />
                             : <ReceiptItemDescription item={item} />
                         }
                     </Box>
@@ -78,7 +76,7 @@ export default function ReceiptItemRow({ item, selected, setSelected, setCurrent
             </TableCell>
             <TableCell sx={{ minWidth: '8rem' }}>
                 <CurrencyField
-                    value={item.product_price * (discrete ? 1 : 1000)}
+                    value={item.price}
                     setValue={setPrice}
                     size="small"
                 />
@@ -97,23 +95,28 @@ export default function ReceiptItemRow({ item, selected, setSelected, setCurrent
 }
 
 function QuantityField({ item, showButtons }) {
-    const { isError, isLoading, unitTypeInfo } = useUnitTypeInfo();
-    if (isLoading) {
+    const { isError, isLoading, data } = useQuery({
+        queryKey: [apiLocations.products, item.product],
+        enabled: !!item.product
+    });
+
+    if (item.product && isLoading) {
         return "Loading";
     } else if (isError) {
         return "ERROR";
-    } else if (!item.product || unitTypeInfo(item.product.unit_type)?.discrete) {
-        return <DiscreteQuantityField item={item} showButtons={showButtons} />;
-    } else {
+    } else if (item.product && !data.unit_type.discrete) {
         return <ScalarQuantityField item={item} />;
+    } else {
+        return <DiscreteQuantityField item={item} showButtons={showButtons} />;
     }
 }
 
 function ReceiptItemDescription({ item }) {
     const [descriptionField, setDescriptionField] = useState(item.description || '');
-    const mutateListItem = useListItemMutator({
+    const mutateListItem = useApiMutation({
+        queryKey: [apiLocations.receipts, item.id, 'items'],
         onSuccess: (data) => setDescriptionField(data.description)
-    });
+    }).mutate;
 
     const onBlur = () => mutateListItem({
         id: item.id,
@@ -132,14 +135,16 @@ function ReceiptItemDescription({ item }) {
 }
 
 function ScalarQuantityField({ item }) {
-    const mutateListItem = useListItemMutator();
-    const [input, setInput] = useState(item?.product_quantity / 1000);
+    const mutateListItem = useApiMutation({
+        queryKey: [apiLocations.receipts, item.list, 'items']
+    }).mutate;
+    const [input, setInput] = useState(item.quantity);
 
     const onBlur = () => mutateListItem({
         id: item.id,
-        product_quantity: roundDigits(Number(input) * 1000, 0)
+        quantity: roundDigits(Number(input), 3)
     }, {
-        onSuccess: (data) => setInput(data.product_quantity / 1000)
+        onSuccess: (data) => setInput(data.quantity)
     });
 
     return (
@@ -160,26 +165,28 @@ function ScalarQuantityField({ item }) {
 }
 
 function DiscreteQuantityField({ item, showButtons }) {
-    const mutateListItem = useListItemMutator();
-    const [input, setInput] = useState(item?.product_quantity);
+    const mutateListItem = useApiMutation({
+        queryKey: [apiLocations.receipts, item.list, 'items']
+    }).mutate;
+    const [input, setInput] = useState(Number(item.quantity));
 
     const onBlur = () => mutateListItem({
         id: item.id,
-        product_quantity: Number(input)
+        quantity: Number(input)
     });
 
-    const disabledDecrease = item.product_quantity <= 1;
+    const disabledDecrease = item.quantity <= 1;
     const decreaseQuantity = () => mutateListItem({
         id: item.id,
-        product_quantity: item.product_quantity - 1
+        quantity: Number(item.quantity) - 1
     }, {
-        onSuccess: (data) => setInput(data.product_quantity)
+        onSuccess: (data) => setInput(String(Number(data.quantity)))
     });
     const increaseQuantity = () => mutateListItem({
         id: item.id,
-        product_quantity: (item.product_quantity || 1) + 1
+        quantity: Number(item.quantity || 1) + 1
     }, {
-        onSuccess: (data) => setInput(data.product_quantity)
+        onSuccess: (data) => setInput(String(Number(data.quantity)))
     });
 
     return (
@@ -219,11 +226,13 @@ function DiscreteQuantityField({ item, showButtons }) {
 }
 
 function EventPicker({ receiptItem, setCurrentEvent, showText = true }) {
-    const eventQuery = useQuery({ queryKey: [eventsQueryKey, receiptItem.event], enabled: !!receiptItem.event });
+    const eventQuery = useQuery({ queryKey: [apiLocations.events, receiptItem.event], enabled: !!receiptItem.event });
     const event = eventQuery.data;
     const [hover, setHover] = useState(false);
     const [eventPickerOpen, setEventPickerOpen] = useState(false);
-    const mutateListItem = useListItemMutator();
+    const mutateListItem = useApiMutation({
+        queryKey: [apiLocations.receipts, receiptItem.list, 'items']
+    }).mutate;
 
     const handleSelectedEvent = (event) => mutateListItem({
         id: receiptItem.id,
@@ -276,12 +285,12 @@ function EventPicker({ receiptItem, setCurrentEvent, showText = true }) {
             </Box>
             <FormDialog
                 hasToolbar={false}
-                title={"Selecteer event"}
                 open={eventPickerOpen}
                 onClose={() => setEventPickerOpen(false)}
             >
                 <EventController
                     handleSelectedEvent={handleSelectedEvent}
+                    title="Kies event"
                     onClose={() => setEventPickerOpen(false)}
                 />
             </FormDialog>
@@ -289,60 +298,80 @@ function EventPicker({ receiptItem, setCurrentEvent, showText = true }) {
     );
 }
 
-function ProductInfo({ product }) {
-    const brandsQuery = useBrands();
-    const brandName = brandsQuery.getBrand(product.brand)?.name;
-    const [editorOpen, setEditorOpen] = useState(false);
-    const queryClient = useQueryClient();
-    const invalidateListItems = () => queryClient.invalidateQueries([listItemsQueryKey]);
+export function BrandLabel({ brandId, ...props }) {
+    const { isLoading, data } = useQuery({
+        queryKey: [apiLocations.brands, brandId],
+        enabled: !!brandId
+    });
+    const brand = data;
 
-    const isLoading = brandsQuery.isLoading;
-    const isError = brandsQuery.isError;
-
-    if (isLoading || isError) {
-        return <Skeleton />
-    }
+    if (!brandId) return;
 
     return (
-        <Stack direction="row" spacing={1} justifyContent="flex-start" alignItems="center">
-            <Stack alignItems="flex-start" onClick={() => setEditorOpen(true)}>
-                {brandName &&
-                    <Typography variant="subtitle2" color="text.secondary">
-                        {brandName}
-                    </Typography>
-                }
-                <ProductTooltip product={product}>
-                    <Typography>
-                        {product.name}
-                    </Typography>
-                </ProductTooltip>
+        <Typography {...props}>
+            {isLoading ?
+                <Skeleton />
+                : brand.name
+            }
+        </Typography>
+    );
+}
+
+function ProductInfo({ productId }) {
+    const { isLoading, isError, error, data } = useQuery({
+        queryKey: [apiLocations.products, productId]
+    });
+    const product = data;
+
+    const [editorOpen, setEditorOpen] = useState(false);
+
+    if (isError) return <div>Error: {JSON.stringify(error)}</div>;
+
+    return (
+        <>
+            <Stack
+                onClick={() => setEditorOpen(true)}
+                sx={{ width: 1 }}
+            >
+                <BrandLabel
+                    brandId={product?.brand}
+                    variant="subtitle2"
+                    color="text.secondary"
+                />
+                <Typography>
+                    {isLoading ?
+                        <Skeleton />
+                        :
+                        <ProductTooltip product={product}>
+                            {product.name}
+                        </ProductTooltip>
+                    }
+                </Typography>
             </Stack>
 
             <ProductFormDialog
                 initialValues={product}
                 open={editorOpen}
                 onClose={() => setEditorOpen(false)}
-                onSuccessfulCreateEdit={() => {
-                    invalidateListItems();
-                    setEditorOpen(false);
-                }}
+                onSuccessfulCreateEdit={() => setEditorOpen(false)}
             />
-        </Stack>
+        </>
     );
 }
 
 function ReplaceProductButton({ listItem }) {
     const [pickerOpen, setPickerOpen] = useState(false);
-    const updateListItem = useListItemMutator({
+    const updateListItem = useReceiptItemMutation({
+        queryKey: [apiLocations.receipts, listItem.list, 'items'],
         onSuccess: () => setPickerOpen(false)
-    });
+    }).mutate;
     const hasProduct = Boolean(listItem?.product);
 
     const onClick = () => setPickerOpen(true);
 
     const handleNewProduct = (product) => updateListItem({
         id: listItem.id,
-        product_id: product.id
+        product: product.id
     });
 
     const tooltip = hasProduct ? "Kies ander product" : "Koppel een product";

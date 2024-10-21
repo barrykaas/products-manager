@@ -2,13 +2,18 @@ import { Fragment } from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useQuery } from '@tanstack/react-query';
 
 import { useUnitTypes } from './UnitTypeQueries';
+import { apiLocations } from '../Api/Common';
+
 
 const defaultLabel = "Eenheid";
 
 export default function UnitTypeField({ value, setValue, disabled = false, label = defaultLabel }) {
-    const unitTypesQuery = useUnitTypes();
+    const unitTypesQuery = useQuery({
+        queryKey: [apiLocations.unitTypes]
+    });
 
     if (disabled) {
         return <TextField disabled fullWidth label={
@@ -32,7 +37,7 @@ export default function UnitTypeField({ value, setValue, disabled = false, label
             value={value}
             onChange={(event, newValue, reason) => setValue(newValue)}
             isOptionEqualToValue={(option, value) => option.id === value.id}
-            getOptionLabel={(option) => option.type}
+            getOptionLabel={(option) => option.name}
             options={allUnitTypes}
             loading={loading}
             renderInput={(params) => (

@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 
-const personsQueryKey = 'persons';
+export const personsQueryKey = 'persons';
 
 export const usePersons = () => {
     const queryClient = useQueryClient();
@@ -12,5 +12,5 @@ export const usePersons = () => {
         return matches[0] || null;
     };
     const invalidate = () => queryClient.invalidateQueries({ queryKey: [personsQueryKey] });
-    return {isError, error, isLoading, data: actualData, getPerson, invalidate};
+    return { isError, error, isLoading, data: actualData, getPerson, invalidate };
 };

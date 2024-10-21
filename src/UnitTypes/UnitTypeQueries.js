@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import ax from "../Api/axios";
+import { apiLocations } from "../Api/Common";
 
 const unitTypesQueryKey = "unittypes";
 
@@ -10,7 +11,7 @@ export const getUnitTypesFn = async () => {
 
 
 export function useUnitTypes() {
-    const { isLoading, isError, error, data } = useQuery({ queryKey: [unitTypesQueryKey] });
+    const { isLoading, isError, error, data } = useQuery({ queryKey: [apiLocations.unitTypes] });
     const actualData = data || [];
     const getUnitType = (id) => {
         const matches = actualData.filter((item) => id === item.id);

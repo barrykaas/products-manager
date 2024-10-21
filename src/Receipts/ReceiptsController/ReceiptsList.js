@@ -12,6 +12,8 @@ import { removeEmpty } from "../../Helpers/objects";
 import { linkOrOnClick } from "../../Helpers/linkOrOnClick";
 import { useSettings } from "../../Settings/settings";
 import IdLabel from "../../Common/IdLabel";
+import { apiLocations, usePaginatedQuery } from "../../Api/Common";
+import { searchParamsToObject } from "../../Helpers/searchParams";
 
 
 export function ReceiptsListItem({ item, onSelect, linkTo, ...props }) {
@@ -20,9 +22,9 @@ export function ReceiptsListItem({ item, onSelect, linkTo, ...props }) {
   if (!item) return <CircularProgress />;
 
   const receiptName = item.name;
-  const formattedDate = isoToRelativeDate(item.transaction_date);
-  const eventCount = item.events.length;
-  const amount = item.amount;
+  const formattedDate = isoToRelativeDate(item.date);
+  const eventCount = item.event_count;
+  const amount = item.total;
 
   const secondaryInfo = [
     formattedDate,
@@ -73,12 +75,14 @@ export default function ReceiptsList({ onSelectItem, searchQuery }) {
     isError,
     error,
     fetchNextPage
-  } = useReceipts({
-    params: {
-      search: searchQuery,
-      page_size: 20,
-      ...searchParamsToApi(searchParams)
-    }
+  } = usePaginatedQuery({
+    queryKey: [apiLocations.receipts,
+      {
+        search: searchQuery,
+        page_size: 20,
+        ...searchParamsToObject(searchParams)
+      }
+    ]
   });
 
   const allReceipts = data?.pages.flatMap((page) => page.results) || [];
@@ -100,27 +104,6 @@ export default function ReceiptsList({ onSelectItem, searchQuery }) {
 
 }
 
-function searchParamsToApi(params) {
-  const apiParams = {
-    ordering: params.get('ordering'),
-
-    event: params.get('event'),
-
-    payer: params.get('payer'),
-    payer__in: params.get('payer_in'),
-
-    market: params.get('market'),
-    market__in: params.get('market_in'),
-
-    transaction_date__lte: params.get('transaction_before'),
-    transaction_date__gte: params.get('transaction_after'),
-
-    date_created__lte: params.get('created_before'),
-    date_created__gte: params.get('created_after'),
-  };
-
-  return removeEmpty(apiParams);
-}
 
 function ReceiptAvatar({ payerId, market }) {
   if (!payerId) return;

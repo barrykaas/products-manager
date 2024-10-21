@@ -3,5 +3,9 @@ export function isNumber(value) {
 }
 
 export function roundDigits(number, digits) {
-    return Number(number.toFixed(digits));
+    return Number(Number(number).toFixed(digits));
+}
+
+export function isInteger(value) {
+    return Math.round(value) === Number(value);
 }

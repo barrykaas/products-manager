@@ -35,7 +35,7 @@ export default function MarketField({ value, setValue, disabled = false, label =
             options={allMarkets}
             loading={loading}
             renderOption={(props, option) =>
-                <ListItem {...props}>
+                <ListItem {...props} key={option.id}>
                     <ListItemAvatar>
                         <MarketAvatar market={option} />
                     </ListItemAvatar>

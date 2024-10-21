@@ -7,13 +7,11 @@ import { Button, Chip, CircularProgress, Grid, List, Paper, Stack, Table, TableB
 import { useSettings } from "../Settings/settings";
 import ControllerView from "../Helpers/ControllerView";
 import { usePersons } from "../Persons/PersonsApiQueries";
-import { listsQueryKey } from "../Lists/ListsApiQueries";
 import { ReceiptsListItem } from "../Receipts/ReceiptsController/ReceiptsList";
-import { eventsQueryKey } from "../Events/EventsApiQueries";
 import { startOfWeek } from "../Helpers/dateTime";
 import { EventsListItem } from "../Events/EventsList";
-import { useBalances } from "../Balance/BalanceApiQueries";
 import { formatEuro } from "../Helpers/monetary";
+import { apiLocations } from "../Api/Common";
 
 
 export default function Dashboard() {
@@ -95,7 +93,7 @@ function Card({ title, button, children }) {
 const isKaas = (person) => person.id <= 5;
 
 function Balance({ userId }) {
-    const { isError, error, isLoading, data } = useBalances();
+    const { isError, error, isLoading, data } = useQuery({ queryKey: [apiLocations.balance] });
 
     if (isLoading) {
         return <CircularProgress />;
@@ -133,7 +131,7 @@ function Balance({ userId }) {
 
 function MyRecentReceipts({ userId }) {
     const { data } = useQuery({
-        queryKey: [listsQueryKey, null,
+        queryKey: [apiLocations.receipts,
             {
                 page_size: 5, type: 2, payer: userId,
                 ordering: '-date_created'
@@ -168,11 +166,11 @@ function ThisWeek() {
     const weekStart = startOfWeek();
     const weekEnd = new Date(weekStart.valueOf() + (7 * 86400 - 1) * 1000);
     const { data } = useQuery({
-        queryKey: [eventsQueryKey, null,
+        queryKey: [apiLocations.events,
             {
                 page_size: 100,
-                event_date__gte: weekStart.toISOString(),
-                event_date__lte: weekEnd.toISOString()
+                date_after: weekStart.toISOString(),
+                date_before: weekEnd.toISOString()
             }
         ]
     })

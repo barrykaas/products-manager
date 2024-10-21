@@ -53,8 +53,8 @@ const allFilterParams = [
     "market",
     "event",
     "ordering",
-    "transaction_before",
-    "transaction_after",
+    "date_before",
+    "date_after",
     "created_before",
     "created_after",
 ];
@@ -111,8 +111,8 @@ function FilterDialog({ open, onClose }) {
                     isOptionEqualToValue={(option, value) => option === value}
                     getOptionLabel={(option) => option}
                     options={[
-                        "-transaction_date",
-                        "transaction_date",
+                        "-date",
+                        "date",
                         "-date_created",
                         "date_created",
                     ]}
@@ -125,13 +125,13 @@ function FilterDialog({ open, onClose }) {
                     )}
                 />
 
-                <Typography>Transactiedatum</Typography>
+                <Typography>Datum</Typography>
                 <DateRangeField
                     clearable
-                    valueAfter={searchParams.get("transaction_after")}
-                    onChangeAfter={value => updateParam("transaction_after", value?.toISOString())}
-                    valueBefore={searchParams.get("transaction_before")}
-                    onChangeBefore={value => updateParam("transaction_before", value?.toISOString())}
+                    valueAfter={searchParams.get("date_after")}
+                    onChangeAfter={value => updateParam("date_after", value?.toISOString())}
+                    valueBefore={searchParams.get("date_before")}
+                    onChangeBefore={value => updateParam("date_before", value?.toISOString())}
                 />
 
                 <Typography>Datum gecreëerd</Typography>

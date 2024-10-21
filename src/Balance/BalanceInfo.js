@@ -3,10 +3,11 @@ import { ArrowForward } from "@mui/icons-material";
 import { Fragment } from "react";
 
 import { formatEuro } from "../Helpers/monetary";
-import { balancesQueryKey, useBalances } from "./BalanceApiQueries";
+import { balancesQueryKey } from "./BalanceApiQueries";
 import ControllerView from "../Helpers/ControllerView";
 import { useInvalidator } from "../Api/Common";
 import { useSettings } from "../Settings/settings";
+import { useQuery } from "@tanstack/react-query";
 
 
 function PersonRow({ person }) {
@@ -26,7 +27,9 @@ function PersonRow({ person }) {
 }
 
 function BalanceInfoContent() {
-    const { isError, error, isLoading, data, getPerson } = useBalances();
+    const { isError, error, isLoading, data, getPerson } = useQuery({
+        queryKey: ['balance']
+    })
 
 
     if (isLoading) {
@@ -38,7 +41,7 @@ function BalanceInfoContent() {
 
     const toSettle = data.flatMap(person => person?.to_settle ?? [])
 
-    const totalExpenses = data.reduce((part, person) => part + person.expenses, 0);
+    const totalExpenses = data.reduce((part, person) => part + Number(person.expenses), 0);
 
     return (
         <Stack spacing={2}>

@@ -12,18 +12,16 @@ import ScannedItemsController from '../ScannedItems/ScannedItemsController';
 import FormDialog from '../Helpers/FormDialog';
 import { BrandsIdField } from '../Brands/BrandsField';
 import { UnitTypeIdField } from '../UnitTypes/UnitTypeField';
-import { useUnitTypes } from '../UnitTypes/UnitTypeQueries';
 import { isoToRelativeDate } from '../Helpers/dateTime';
+import { useQuery } from '@tanstack/react-query';
+import { apiLocations } from '../Api/Common';
 
 
 const validationSchema = yup.object({
-    // date_added: yup
-    //     .date('Enter transaction date')
-    //     .required('Transaction date is required'),
     name: yup
         .string('Enter name')
         .required('Name is required'),
-    unit_number: yup
+    pieces: yup
         .number('Enter unit number')
         .when('unit_type', ([unit_type], schema) => {
             if (unit_type === 2) {
@@ -32,16 +30,16 @@ const validationSchema = yup.object({
                 return schema.required('Unit number is required');
             }
         }),
-    unit_price: yup
-        .number('Enter unit price')
-        .required('Unit price is required'),
-    unit_type: yup
+    price: yup
+        .number('Enter price')
+        .required('Prijs is verplicht'),
+    unit_type_id: yup
         .number('Select unit type')
         .required('Unit type is required'),
-    unit_weightvol: yup
+    volume: yup
         .number('Enter unit weight/volume')
-        .when('unit_type', ([unit_type], schema) => {
-            if (unit_type === 3) {
+        .when('unit_type', ([unit_type_id], schema) => {
+            if (unit_type_id === 3) {
                 return schema;
             } else {
                 return schema.required('Unit weight/volume is required');
@@ -57,10 +55,10 @@ export function ProductForm({
     const emptyForm = {
         name: '',
         brand: null,
-        unit_number: 1,
-        unit_weightvol: '',
-        unit_price: '',
-        unit_type: 5, // per stuk met gewicht
+        pieces: 1,
+        volume: '',
+        price: '',
+        unit_type_id: 5, // per stuk met gewicht
         barcode: null,
     };
 
@@ -68,14 +66,18 @@ export function ProductForm({
         ...emptyForm,
         ...initialValues
     };
+    if (initialValues.unit_type) {
+        initialValues.unit_type_id = initialValues.unit_type.id;
+        delete initialValues.unit_type;
+    }
 
     const formik = useFormik({
         initialValues: initialValues,
         validationSchema: validationSchema,
         onSubmit: (values) => {
-            if (values.unit_type === 2) { // Per gewicht -> Verkocht voor een prijs per kilo (met eventueel een vast aantal per verpakking)
+            if (values.unit_type_id === 2) { // Per gewicht -> Verkocht voor een prijs per kilo (met eventueel een vast aantal per verpakking)
                 values.unit_number = null;
-            } else if (values.unit_type === 3) { // Per stuk, zonder gewicht -> Verkocht per stuk, zonder aanduiding van gewicht. 
+            } else if (values.unit_type_id === 3) { // Per stuk, zonder gewicht -> Verkocht per stuk, zonder aanduiding van gewicht. 
                 values.unit_weightvol = null;
             }
 
@@ -93,19 +95,17 @@ export function ProductForm({
 
     const [barcodeSelectOpen, setBarcodeSelectOpen] = useState(false);
 
-    const { isLoading, isError, getUnitType } = useUnitTypes();
-    const unitType = getUnitType(formik.values.unit_type);
+    const unitType = useQuery({
+        queryKey: [apiLocations.unitTypes, formik.values.unit_type_id]
+    }).data;
 
-    if (isLoading || isError) {
-        return <Skeleton />
-    }
 
-    const unitNumberDisabled = formik.values.unit_type === 2;
-    const decrementUnitNumber = () => formik.setFieldValue('unit_number',
-        formik.values.unit_number - 1
+    const unitNumberDisabled = formik.values.unit_type_id === 2;
+    const decrementUnitNumber = () => formik.setFieldValue('pieces',
+        formik.values.pieces - 1
     );
-    const incrementUnitNumber = () => formik.setFieldValue('unit_number',
-        formik.values.unit_number + 1
+    const incrementUnitNumber = () => formik.setFieldValue('pieces',
+        formik.values.pieces + 1
     );
 
     return (
@@ -132,30 +132,30 @@ export function ProductForm({
                 />
 
                 <UnitTypeIdField
-                    value={formik.values.unit_type}
-                    setValue={(unitTypeId) => formik.setFieldValue("unit_type", unitTypeId)}
+                    value={formik.values.unit_type_id}
+                    setValue={(unitTypeId) => formik.setFieldValue("unit_type_id", unitTypeId)}
                 />
 
                 <TextField
                     fullWidth
-                    id="unit_number"
-                    name="unit_number"
+                    id="pieces"
+                    name="pieces"
                     label="Aantal"
-                    value={formik.values.unit_type === 2 ? '' : formik.values.unit_number}
+                    value={formik.values.unit_type === 2 ? '' : formik.values.pieces}
                     disabled={unitNumberDisabled}
                     onChange={formik.handleChange}
                     onFocus={(event) => event.target.select()}
                     error={
-                        formik.touched.unit_number && Boolean(formik.errors.unit_number)
+                        formik.touched.pieces && Boolean(formik.errors.pieces)
                     }
                     helperText={
-                        formik.touched.unit_number && formik.errors.unit_number
+                        formik.touched.pieces && formik.errors.pieces
                     }
                     InputProps={{
                         startAdornment:
                             <IconButton
                                 onClick={decrementUnitNumber}
-                                disabled={unitNumberDisabled || formik.values.unit_number <= 1}
+                                disabled={unitNumberDisabled || formik.values.pieces <= 1}
                             >
                                 <RemoveCircle />
                             </IconButton>,
@@ -170,14 +170,14 @@ export function ProductForm({
                 />
                 <TextField
                     fullWidth
-                    disabled={unitType === null || formik.values.unit_type === 3}
-                    id="unit_weightvol"
-                    name="unit_weightvol"
+                    disabled={formik.values.unit_type === 3}
+                    id="volume"
+                    name="volume"
                     label="Gewicht/inhoud"
-                    value={formik.values.unit_type === 3 ? '' : formik.values.unit_weightvol}
+                    value={formik.values.unit_type === 3 ? '' : formik.values.volume}
                     onChange={formik.handleChange}
                     InputProps={{
-                        endAdornment: <InputAdornment position="start">{unitType?.physical_unit}</InputAdornment>,
+                        endAdornment: <InputAdornment position="start">{unitType?.physical_unit || '?'}</InputAdornment>,
                     }}
                     error={
                         formik.touched.unit_weightvol &&
@@ -189,8 +189,8 @@ export function ProductForm({
                 />
                 <TextField
                     fullWidth
-                    id="unit_price"
-                    name="unit_price"
+                    id="price"
+                    name="price"
                     label="Prijs"
                     value={formik.values.unit_price}
                     onChange={formik.handleChange}

@@ -1,5 +1,5 @@
 import { Button, Stack, Typography } from "@mui/material";
-import { useSearchParams } from "react-router-dom";
+import { Fragment } from "react";
 
 import FormDialog from "./FormDialog";
 import { MarketIdField } from "../Markets/MarketField";
@@ -7,9 +7,7 @@ import { PersonsIdField } from "../Persons/PersonsField";
 import { DateRangeField } from "./DateField";
 
 
-export default function FilterDialog({ open, onClose, options }) {
-    const [searchParams, setSearchParams] = useSearchParams();
-
+export default function FilterDialog({ open, onClose, options, searchParams, setSearchParams }) {
     const updateParam = (key, value) => {
         if (!value && value !== 0) {
             searchParams.delete(key);
@@ -45,11 +43,15 @@ export default function FilterDialog({ open, onClose, options }) {
             <Stack component="form" p={2} spacing={1.5}
                 sx={{ bgcolor: 'background.paper' }}
             >
-                {options.map((option) => optionToElement(
-                    option,
-                    (param) => searchParams.get(param),
-                    updateParam
-                ))}
+                {options.map((option) =>
+                    <Fragment key={option.param}>
+                        {optionToElement(
+                            option,
+                            (param) => searchParams.get(param),
+                            updateParam
+                        )}
+                    </Fragment>
+                )}
             </Stack>
         </FormDialog>
     );

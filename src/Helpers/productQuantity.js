@@ -1,6 +1,15 @@
 import { formatEuro } from "./monetary";
 
 
+export function productQuantityDescription(product) {
+    return formatProductQuantity({
+        unit: product.unit_type.physical_unit,
+        volume: product.volume,
+        pieces: product.pieces
+    });
+}
+
+
 export function formatProductQuantity({ unit, volume, pieces }) {
     const piecesStr = pieces ? `${pieces} stuk` + (pieces === 1 ? '' : 's') : '';
     const volumeStr = volume ? `${volume} ${unit}` : '';

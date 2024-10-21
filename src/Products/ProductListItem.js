@@ -1,44 +1,25 @@
 import { Typography, ListItem, ListItemText, ListItemButton, IconButton, Stack } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 
-import { useBrands } from "../Brands/BrandsApiQueries";
-import useHumanReadableProduct from "./HumanReadableProduct";
 import { formatEuro } from "../Helpers/monetary";
-import useUnitTypeInfo from "../UnitTypes/UnitTypeInfo";
-import { formatPricePerUnit } from "../Helpers/productQuantity";
+import { productQuantityDescription } from "../Helpers/productQuantity";
 import { useSettings } from "../Settings/settings";
 import IdLabel from "../Common/IdLabel";
+import { BrandLabel } from "../Receipts/ReceiptEditor/ReceiptItemRow";
+import { formatUnitPrice } from "./friendlyInfo";
 
 
 export function ProductListItem({ product, onSelect, onEdit, disabled = false, showBarcode = false }) {
     const [{ nerdInfo }] = useSettings();
-    const brands = useBrands();
-    let brandName;
-    const { formatProductDescription } = useHumanReadableProduct();
-    const { unitTypeInfo } = useUnitTypeInfo();
-
-    if (brands.isLoading) {
-        brandName = "Merk wordt geladen...";
-    } else if (brands.isError) {
-        brandName = "ERROR loading brands";
-    } else {
-        const filteredBrand = brands.data.filter(brandItem => product.brand === brandItem.id);
-        brandName = filteredBrand.length > 0 ? filteredBrand[0].name : null;
-    }
 
     const name = product.name;
-    const price = product.unit_price;
+    const price = product.price;
 
-    const unitType = unitTypeInfo(product.unit_type);
-    const pricePerUnitString = unitType ? formatPricePerUnit({
-        unit: unitType.physical_unit,
-        volumeOrPieces: product.unit_weightvol || product.unit_number,
-        price
-    }) : null;
+    const pricePerUnitString = formatUnitPrice(product);
     const barcode = product.barcode;
 
     const secondaryInfo = [
-        formatProductDescription(product),
+        productQuantityDescription(product),
     ];
 
     const editButton = onEdit ?
@@ -51,14 +32,16 @@ export function ProductListItem({ product, onSelect, onEdit, disabled = false, s
         <ListItem alignItems="flex-start" disablePadding
             secondaryAction={editButton}
         >
-            <ListItemButton onClick={onSelect} disabled={disabled}>
+            <ListItemButton onClick={() => onSelect(product)} disabled={disabled}>
                 <ListItemText
                     sx={onEdit && { pr: 2 }}
                     primary={
                         <Stack>
-                            <Typography variant="subtitle2" color="text.secondary">
-                                {brandName}
-                            </Typography>
+                            <BrandLabel
+                                brandId={product?.brand}
+                                variant="subtitle2"
+                                color="text.secondary"
+                            />
                             <Stack direction="row" spacing={1}>
                                 {nerdInfo && <IdLabel id={product.id} />}
                                 <Typography>{name}</Typography>
