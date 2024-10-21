@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import ax from "../Api/axios";
 import { apiLocations } from "../Api/Common";
 
-const unitTypesQueryKey = "unittypes";
 
 export const getUnitTypesFn = async () => {
     return await ax.get('unittypes/');

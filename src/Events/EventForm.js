@@ -32,7 +32,6 @@ const validationSchema = yup.object({
     ),
     name: yup
         .string('Enter name')
-        .required('Name is required'),
 });
 
 export function EventForm({ onSuccessfulCreateEdit, onSuccessfulDelete, initialValues = {} }) {

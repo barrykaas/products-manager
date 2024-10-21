@@ -10,6 +10,7 @@ export const apiLocations = {
     unitTypes: 'unit_types',
     scannedItems: 'scanned_items',
     balance: 'balance',
+    persons: 'persons',
 }
 
 export function useInvalidator(queryKey) {

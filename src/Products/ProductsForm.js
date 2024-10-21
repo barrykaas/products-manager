@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, InputAdornment, Skeleton, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, IconButton, InputAdornment, Stack, TextField, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import { useState } from 'react';
 import { AddCircle, QrCodeScanner, RemoveCircle } from '@mui/icons-material';

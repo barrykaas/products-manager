@@ -1,4 +1,4 @@
-import { Stack, Typography } from "@mui/material";
+import { Skeleton, Stack, Typography } from "@mui/material";
 import { Person } from "@mui/icons-material";
 
 import { isoToRelativeDate } from "../Helpers/dateTime";
@@ -6,6 +6,9 @@ import { PersonAvatarGroup } from "../Persons/Avatars/Avatars";
 import { formatEuro } from "../Helpers/monetary";
 import { useSettings } from "../Settings/settings";
 import IdLabel from "../Common/IdLabel";
+import { useQuery } from "@tanstack/react-query";
+import { usePersons } from "../Persons/PersonsApiQueries";
+import { capitalize } from "../Helpers/strings";
 
 
 export default function EventCard({ event, showStats = false }) {
@@ -48,7 +51,7 @@ export default function EventCard({ event, showStats = false }) {
                     {nerdInfo &&
                         <IdLabel id={event.id} />
                     }
-                    {event.name}
+                    {event.name || <BackupTitle event={event} />}
                 </Typography>
                 <PersonAvatarGroup personIds={participants} />
             </Stack>
@@ -83,4 +86,29 @@ export default function EventCard({ event, showStats = false }) {
             }
         </Stack>
     );
+}
+
+
+const kaasFood = [1, 2, 4, 5];
+
+function BackupTitle({ event }) {
+    const { isLoading, getPerson } = usePersons();
+
+    if (isLoading) return <Skeleton />;
+
+    const participants = event.participations.map(p => p.participant);
+    const missing = kaasFood.filter(k => !participants.includes(k));
+    const extra = participants.filter(p => !kaasFood.includes(p));
+
+    let str = '';
+    if (missing.length) {
+        console.log('missing')
+        str += 'zonder ' + missing.map(p => getPerson(p).name).join(', ');
+        if (extra.length) str += '; ';
+    }
+    if (extra.length) {
+        str += 'met ' + extra.map(p => getPerson(p).name).join(', ');
+    }
+
+    return <i>{capitalize(str)}</i>;
 }
