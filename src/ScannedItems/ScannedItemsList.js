@@ -9,7 +9,7 @@ import { apiLocations, usePaginatedQuery } from "../Api/Common";
 
 
 function ScannedItemsListItem({ item, onSelect }) {
-  const productId = item.product;
+  const productId = item.product?.id;
   const productQuery = useQuery({
     queryKey: [apiLocations.products, productId],
     enabled: !!productId
