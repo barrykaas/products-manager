@@ -192,10 +192,10 @@ export function ProductForm({
                     id="price"
                     name="price"
                     label="Prijs"
-                    value={formik.values.unit_price}
+                    value={formik.values.price}
                     onChange={formik.handleChange}
-                    error={formik.touched.unit_price && Boolean(formik.errors.unit_price)}
-                    helperText={formik.touched.unit_price && formik.errors.unit_price}
+                    error={formik.touched.price && Boolean(formik.errors.price)}
+                    helperText={formik.touched.price && formik.errors.price}
                     InputProps={{
                         startAdornment: <InputAdornment position="start">€</InputAdornment>,
                     }}

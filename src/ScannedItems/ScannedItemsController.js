@@ -15,7 +15,7 @@ export default function ScannedItemsController({ onClose, title = "Gescand", sel
     if (!customSelectHandler) {
         selectBarcode = (barcodeItem) => {
             if (barcodeItem.product) {
-                const product = queryClient.getQueryData([apiLocations.products, barcodeItem.product]);
+                const product = barcodeItem.product;
                 setEditingProduct(product);
             } else {
                 setEditingProduct({
