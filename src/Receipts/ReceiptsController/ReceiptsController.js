@@ -1,21 +1,43 @@
 import { useState } from "react";
-import { Autocomplete, Button, Stack, TextField, Typography } from "@mui/material";
-import { useSearchParams } from "react-router-dom";
 
 import ReceiptsList from "./ReceiptsList";
 import { useListsInvalidator } from "../../Lists/ListsApiQueries";
 import ControllerView from "../../Helpers/ControllerView";
 import useUrlSearchQuery from "../../Helpers/urlSearchQuery";
-import FormDialog from "../../Helpers/FormDialog";
-import { PersonsIdField } from "../../Persons/PersonsField";
-import { MarketIdField } from "../../Markets/MarketField";
-import { DateRangeField } from "../../Helpers/DateField";
+import FilterDialog from "../../Helpers/FilterDialog";
+import useLocalSearchParams from "../../Helpers/localSearchParams";
+
+
+const filterOptions = [
+    {
+        type: 'person',
+        param: 'payer',
+        label: 'Betaler',
+    },
+    {
+        type: 'market',
+        param: 'market',
+    },
+    {
+        type: 'ordering',
+        param: 'ordering',
+        options: {
+            date: 'Datum',
+            date_created: 'Datum gecreëerd',
+            total: 'Totaalbedrag',
+            event_count: 'Aantal Events',
+            item_count: 'Aantal items',
+        }
+        
+    }
+];
 
 
 export default function ReceiptsController({ onMenu }) {
     const invalidateReceipts = useListsInvalidator();
     const [searchQuery, setSearchQuery] = useUrlSearchQuery();
     const [filterOpen, setFilterOpen] = useState(false);
+    const [searchParams, setSearchParams] = useLocalSearchParams(false)
 
     const onAddReceipt = 'new';
 
@@ -42,108 +64,10 @@ export default function ReceiptsController({ onMenu }) {
             <FilterDialog
                 open={filterOpen}
                 onClose={() => setFilterOpen(false)}
+                options={filterOptions}
+                searchParams={searchParams}
+                setSearchParams={setSearchParams}
             />
         </ControllerView>
-    );
-}
-
-
-const allFilterParams = [
-    "payer",
-    "market",
-    "event",
-    "ordering",
-    "date_before",
-    "date_after",
-    "created_before",
-    "created_after",
-];
-
-function FilterDialog({ open, onClose }) {
-    const [searchParams, setSearchParams] = useSearchParams();
-
-    const updateParam = (key, value) => {
-        if (!value && value !== 0) {
-            searchParams.delete(key);
-        } else {
-            searchParams.set(key, value);
-        }
-        setSearchParams(searchParams);
-    };
-
-    const onReset = () => {
-        for (const param of allFilterParams) {
-            searchParams.delete(param);
-        }
-        setSearchParams(searchParams);
-    };
-
-    return (
-        <FormDialog
-            open={open}
-            title="Filter"
-            onClose={onClose}
-            secondaryButtons={
-                <Button variant="contained" onClick={onReset}>
-                    Reset
-                </Button>
-            }
-        >
-            <Stack component="form" p={2} spacing={1.5}
-                sx={{ bgcolor: 'background.paper' }}
-            >
-                <PersonsIdField
-                    label="Betaler"
-                    value={Number(searchParams.get("payer"))}
-                    setValue={value => updateParam("payer", value)}
-                />
-
-                <MarketIdField
-                    value={Number(searchParams.get("market"))}
-                    setValue={value => updateParam("market", value)}
-                />
-
-                <Autocomplete
-                    id="ordering"
-                    autoHighlight
-                    value={searchParams.get("ordering")}
-                    onChange={(event, newValue, reason) => updateParam("ordering", newValue)}
-                    isOptionEqualToValue={(option, value) => option === value}
-                    getOptionLabel={(option) => option}
-                    options={[
-                        "-date",
-                        "date",
-                        "-date_created",
-                        "date_created",
-                    ]}
-                    renderInput={(params) => (
-                        <TextField
-                            {...params}
-                            label="Sorteer op"
-                            fullWidth
-                        />
-                    )}
-                />
-
-                <Typography>Datum</Typography>
-                <DateRangeField
-                    clearable
-                    valueAfter={searchParams.get("date_after")}
-                    onChangeAfter={value => updateParam("date_after", value?.toISOString())}
-                    valueBefore={searchParams.get("date_before")}
-                    onChangeBefore={value => updateParam("date_before", value?.toISOString())}
-                />
-
-                <Typography>Datum gecreëerd</Typography>
-                <DateRangeField
-                    clearable
-                    valueAfter={searchParams.get("created_after")}
-                    onChangeAfter={value => updateParam("created_after", value?.toISOString())}
-                    valueBefore={searchParams.get("created_before")}
-                    onChangeBefore={value => updateParam("created_before", value?.toISOString())}
-                />
-
-            </Stack>
-        </FormDialog>
     );
 }

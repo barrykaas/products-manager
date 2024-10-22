@@ -6,7 +6,6 @@ import { PersonAvatarGroup } from "../Persons/Avatars/Avatars";
 import { formatEuro } from "../Helpers/monetary";
 import { useSettings } from "../Settings/settings";
 import IdLabel from "../Common/IdLabel";
-import { useQuery } from "@tanstack/react-query";
 import { usePersons } from "../Persons/PersonsApiQueries";
 import { capitalize } from "../Helpers/strings";
 

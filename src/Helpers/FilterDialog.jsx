@@ -1,10 +1,12 @@
-import { Button, Stack, Typography } from "@mui/material";
+import { Autocomplete, Button, Paper, Stack, TextField, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import { Fragment } from "react";
+import { ArrowDownward, ArrowUpward } from "@mui/icons-material";
 
 import FormDialog from "./FormDialog";
 import { MarketIdField } from "../Markets/MarketField";
 import { PersonsIdField } from "../Persons/PersonsField";
 import { DateRangeField } from "./DateField";
+import SelectPersons from '../Persons/SelectPersons';
 
 
 export default function FilterDialog({ open, onClose, options, searchParams, setSearchParams }) {
@@ -57,7 +59,7 @@ export default function FilterDialog({ open, onClose, options, searchParams, set
     );
 }
 
-function optionToElement({ label, type, param }, getParam, updateParam) {
+function optionToElement({ label, type, param, ...extra }, getParam, updateParam) {
     if (type === 'market') {
         return <MarketIdField label={label}
             value={Number(getParam(param))}
@@ -79,5 +81,67 @@ function optionToElement({ label, type, param }, getParam, updateParam) {
                 onChangeBefore={value => updateParam(param + '_before', value?.toISOString())}
             />
         </>;
+    } else if (type === 'persons') {
+        return (
+            <>
+                <Typography>{label}</Typography>
+                <Paper variant="outlined">
+                    <SelectPersons
+                        selected={getParam(param)?.split(',')?.map(Number) || []}
+                        setSelected={newSelected => updateParam(param, newSelected.sort().join(','))}
+                    />
+                </Paper>
+            </>
+        );
+    } else if (type === 'ordering') {
+        const { options } = extra;
+        const orderingField = getParam(param);
+        const descending = orderingField && orderingField.startsWith('-');
+        const field = descending ? orderingField.slice(1) : orderingField;
+
+        return (
+            <Stack
+                direction="row"
+                spacing={2}
+            >
+                <Autocomplete
+                    id="ordering"
+                    autoHighlight
+                    fullWidth
+                    value={field}
+                    onChange={(event, newValue) => updateParam(
+                        param,
+                        (descending && newValue) ? '-' + newValue : newValue
+                    )}
+                    isOptionEqualToValue={(option, value) => option === value}
+                    getOptionLabel={(option) => options[option]}
+                    options={Object.keys(options)}
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            label={label || 'Sorteer op'}
+                        />
+                    )}
+                />
+                <ToggleButtonGroup
+                    value={descending ? 'desc' : 'asc'}
+                    exclusive
+                    onChange={(event, value) => {
+                        if (value === 'desc') {
+                            updateParam(param, '-' + field);
+                        } else if (value === 'asc') {
+                            updateParam(param, field);
+                        }
+                    }}
+                >
+                    <ToggleButton value="asc">
+                        <ArrowUpward />
+                    </ToggleButton>
+                    <ToggleButton value="desc">
+                        <ArrowDownward />
+                    </ToggleButton>
+                </ToggleButtonGroup>
+            </Stack>
+        );
     }
 }

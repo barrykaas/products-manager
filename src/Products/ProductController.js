@@ -14,7 +14,19 @@ const filterOptions = [
         param: "market",
         label: "Winkel",
         type: "market"
-    }
+    },
+    {
+        type: 'ordering',
+        param: 'ordering',
+        options: {
+            date_created: 'Datum gecreëerd',
+            list_occurrences: 'Aantal bonnetjes/lijsten',
+            pieces: 'Aantal stuks',
+            volume: 'Gewicht/volume',
+            unit_price: 'Prijs per eenheid',
+            price: 'Prijs',
+        }
+    },
 ];
 
 
