@@ -101,7 +101,6 @@ function BackupTitle({ event }) {
 
     let str = '';
     if (missing.length) {
-        console.log('missing')
         str += 'zonder ' + missing.map(p => getPerson(p).name).join(', ');
         if (extra.length) str += '; ';
     }

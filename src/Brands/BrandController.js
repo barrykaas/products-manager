@@ -9,16 +9,11 @@ import useUrlSearchQuery from "../Helpers/urlSearchQuery";
 export default function BrandController({ onClose, onMenu }) {
     const [searchQuery, setSearchQuery] = useUrlSearchQuery();
 
-    const deleteBrand = useBrandDeleter({
-        onSuccess: () => console.log("Brand deleted"),
-        onError: (error, variables, context) => console.log(`Error deleting brand:`, error)
-    });
+    const deleteBrand = useBrandDeleter();
 
     const confirm = useConfirm();
 
     function handleDelete(brand) {
-        console.log("delete brand", brand);
-
         confirm({
             title: "Weet je zeker dat je dit merk wilt verwijderen?",
             description: `${brand.name}`

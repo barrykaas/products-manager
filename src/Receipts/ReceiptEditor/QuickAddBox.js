@@ -36,7 +36,6 @@ export default function QuickAddBox({ handleListItem, marketId }) {
         if (option.product) {
             listItem.product = option.product.id;
         }
-        console.log("SELECTED", listItem)
         handleListItem(listItem);
     };
 

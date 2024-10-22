@@ -4,7 +4,13 @@ import { useSearchParams } from "react-router-dom";
 
 export default function useLocalSearchParams(local = true) {
     const globalSet = useSearchParams();
-    const localSet = useState(new URLSearchParams());
+    const [localParams, setLocalParams] = useState(new URLSearchParams());
 
-    return local ? localSet : globalSet;
+    if (local) {
+        return [localParams, (params) => setLocalParams(
+            new URLSearchParams([...params.entries()])
+        )];
+    } else {
+        return globalSet;
+    }
 }

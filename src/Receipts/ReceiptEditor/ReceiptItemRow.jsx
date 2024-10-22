@@ -261,7 +261,7 @@ function EventPicker({ receiptItem, setCurrentEvent, showText = true }) {
     } else {
         content = (
             <Box onClick={() => setEventPickerOpen(true)}>
-                <EventCard event={event} onDelete={() => console.log('del')} />
+                <EventCard event={event} />
             </Box>
         );
     }
