@@ -1,23 +1,12 @@
-import { Tooltip, Typography } from "@mui/material";
+import { Tooltip } from "@mui/material";
 
-import useHumanReadableProduct from "./HumanReadableProduct";
+import { productQuantityDescription } from "../Helpers/productQuantity";
 
 
 export default function ProductTooltip({ product, children }) {
-    const { formatProductDescription } = useHumanReadableProduct();
-
     if (!product) return <>{children}</>;
 
-    const tooltip = (
-        <>
-            <Typography variant="caption" fontFamily="monospace">
-                ID: {product.id}
-            </Typography>
-            <Typography>
-                {formatProductDescription(product)}
-            </Typography>
-        </>
-    );
+    const tooltip = productQuantityDescription(product);
 
     return (
         <Tooltip arrow title={tooltip}>

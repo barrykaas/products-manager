@@ -9,6 +9,7 @@ import ParticipantsList from './ParticipantList';
 import FormDialog from '../Helpers/FormDialog';
 import { DateField } from '../Helpers/DateField';
 import { isoToRelativeDate } from '../Helpers/dateTime';
+import MultiplePersonsField from '../Persons/MultiplePersonsField';
 
 
 const defaultParticipants = [1, 2, 4, 5];
@@ -19,6 +20,7 @@ export const emptyForm = () => ({
         p => ({ participant: p })
     ),
     name: '',
+    organizers: []
 });
 
 const validationSchema = yup.object({
@@ -31,7 +33,8 @@ const validationSchema = yup.object({
         })
     ),
     name: yup
-        .string('Enter name')
+        .string('Enter name'),
+    organizers: yup.array(yup.number())
 });
 
 export function EventForm({ onSuccessfulCreateEdit, onSuccessfulDelete, initialValues = {} }) {
@@ -107,6 +110,12 @@ export function EventForm({ onSuccessfulCreateEdit, onSuccessfulDelete, initialV
                         checked={formik.values.participations.map(p => p.participant)}
                     />
                 </Paper>
+
+                <MultiplePersonsField
+                    label="Georganiseerd door"
+                    selected={formik.values.organizers || []}
+                    setSelected={(ids) => formik.setFieldValue('organizers', ids)}
+                />
 
                 {initialValues?.date_created &&
                     <Typography fontStyle="italic">

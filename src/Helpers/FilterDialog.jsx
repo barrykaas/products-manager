@@ -1,4 +1,4 @@
-import { Autocomplete, Button, Paper, Stack, TextField, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
+import { Autocomplete, Button, Stack, TextField, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import { Fragment } from "react";
 import { ArrowDownward, ArrowUpward } from "@mui/icons-material";
 
@@ -6,7 +6,7 @@ import FormDialog from "./FormDialog";
 import { MarketIdField } from "../Markets/MarketField";
 import { PersonsIdField } from "../Persons/PersonsField";
 import { DateRangeField } from "./DateField";
-import SelectPersons from '../Persons/SelectPersons';
+import MultiplePersonsField from "../Persons/MultiplePersonsField";
 
 
 export default function FilterDialog({ open, onClose, options, searchParams, setSearchParams }) {
@@ -83,15 +83,11 @@ function optionToElement({ label, type, param, ...extra }, getParam, updateParam
         </>;
     } else if (type === 'persons') {
         return (
-            <>
-                <Typography>{label}</Typography>
-                <Paper variant="outlined">
-                    <SelectPersons
-                        selected={getParam(param)?.split(',')?.map(Number) || []}
-                        setSelected={newSelected => updateParam(param, newSelected.sort().join(','))}
-                    />
-                </Paper>
-            </>
+            <MultiplePersonsField
+                label={label}
+                selected={getParam(param)?.split(',')?.map(Number) || []}
+                setSelected={newSelected => updateParam(param, newSelected.sort().join(','))}
+            />
         );
     } else if (type === 'ordering') {
         const { options } = extra;

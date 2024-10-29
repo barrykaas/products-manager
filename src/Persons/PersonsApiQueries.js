@@ -14,3 +14,5 @@ export const usePersons = () => {
     const invalidate = () => queryClient.invalidateQueries({ queryKey: [apiLocations.persons] });
     return { isError, error, isLoading, data: actualData, getPerson, invalidate };
 };
+
+export const usePerson = (personId) => useQuery({ queryKey: [apiLocations.persons, personId], enabled: !!personId });

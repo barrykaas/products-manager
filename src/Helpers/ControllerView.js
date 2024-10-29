@@ -11,7 +11,7 @@ export default function ControllerView({ children, title, onClose, onBack, onAdd
     const { onMenu } = useOutletContext();
 
     return (
-        <Box>
+        <>
             <ControllerAppBar
                 title={title}
                 onClose={onClose}
@@ -42,8 +42,7 @@ export default function ControllerView({ children, title, onClose, onBack, onAdd
                     </Fab>
                 }
             </Stack>
-
-        </Box>
+        </>
     );
 }
 

@@ -42,6 +42,11 @@ const filterOptions = [
         type: 'persons',
         param: 'participants_not',
     },
+    {
+        label: 'Georganiseerd door',
+        type: 'persons',
+        param: 'organizers',
+    },
 ];
 
 

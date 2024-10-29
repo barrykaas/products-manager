@@ -1,8 +1,6 @@
-import { Stack, Typography } from "@mui/material";
-
 import SelectMultiple from "../Helpers/SelectMultiple";
-import PersonAvatar from "./Avatars/Avatars";
 import { usePersons } from "./PersonsApiQueries";
+import PersonNameTag from "./PersonNameTag";
 
 
 export default function SelectPersons({ selected, setSelected }) {
@@ -11,7 +9,7 @@ export default function SelectPersons({ selected, setSelected }) {
     const persons = data || [];
     const options = persons.map(p => p.id);
     const renderOption = personId =>
-        <PersonOption person={persons.find(p => p.id === personId)} />;
+        <PersonNameTag person={persons.find(p => p.id === personId)} />;
 
     return <SelectMultiple
         options={options}
@@ -19,11 +17,4 @@ export default function SelectPersons({ selected, setSelected }) {
         selected={selected}
         setSelected={setSelected}
     />;
-}
-
-function PersonOption({ person }) {
-    return <Stack direction="row" alignItems="center" spacing={1.5}>
-        <PersonAvatar personId={person.id} />
-        <Typography>{person.name}</Typography>
-    </Stack>;
 }
