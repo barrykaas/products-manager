@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, InputAdornment, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, IconButton, InputAdornment, Stack, TextField } from '@mui/material';
 import { useFormik } from 'formik';
 import { useState } from 'react';
 import { AddCircle, QrCodeScanner, RemoveCircle } from '@mui/icons-material';
@@ -12,9 +12,9 @@ import ScannedItemsController from '../ScannedItems/ScannedItemsController';
 import FormDialog from '../Helpers/FormDialog';
 import { BrandsIdField } from '../Brands/BrandsField';
 import { UnitTypeIdField } from '../UnitTypes/UnitTypeField';
-import { isoToRelativeDate } from '../Helpers/dateTime';
 import { useQuery } from '@tanstack/react-query';
 import { apiLocations } from '../Api/Common';
+import DateLabel from '../Common/DateLabel';
 
 
 const validationSchema = yup.object({
@@ -226,11 +226,10 @@ export function ProductForm({
                     }}
                 />
 
-                {initialValues?.date_added &&
-                    <Typography fontStyle="italic">
-                        Toegevoegd op {isoToRelativeDate(initialValues.date_added)}
-                    </Typography>
-                }
+                <DateLabel
+                    created={initialValues.date_created}
+                    modified={initialValues.date_modified}
+                />
 
                 <Button color="primary" variant="contained" fullWidth type="submit">
                     Save

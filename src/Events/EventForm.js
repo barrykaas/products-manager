@@ -1,5 +1,5 @@
 import { useFormik } from 'formik';
-import { Button, Box, TextField, Stack, Paper, Typography } from '@mui/material';
+import { Button, Box, TextField, Stack, Paper } from '@mui/material';
 import { useConfirm } from 'material-ui-confirm';
 import * as yup from 'yup';
 import 'dayjs/locale/en-gb';
@@ -8,8 +8,8 @@ import { useEventDeleter, useEventMutator } from './EventsApiQueries';
 import ParticipantsList from './ParticipantList';
 import FormDialog from '../Helpers/FormDialog';
 import { DateField } from '../Helpers/DateField';
-import { isoToRelativeDate } from '../Helpers/dateTime';
 import MultiplePersonsField from '../Persons/MultiplePersonsField';
+import DateLabel from '../Common/DateLabel';
 
 
 const defaultParticipants = [1, 2, 4, 5];
@@ -117,11 +117,10 @@ export function EventForm({ onSuccessfulCreateEdit, onSuccessfulDelete, initialV
                     setSelected={(ids) => formik.setFieldValue('organizers', ids)}
                 />
 
-                {initialValues?.date_created &&
-                    <Typography fontStyle="italic">
-                        Gecreëerd op {isoToRelativeDate(initialValues.date_created)}
-                    </Typography>
-                }
+                <DateLabel
+                    created={initialValues.date_created}
+                    modified={initialValues.date_modified}
+                />
 
                 <Button color="primary" variant="contained" fullWidth type="submit">
                     Save

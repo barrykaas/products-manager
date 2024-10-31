@@ -74,6 +74,14 @@ export function isoToRelativeDate(isoString) {
     return relDate;
 }
 
+export function isoToRelativeDateTime(isoString) {
+    const timeStr = (new Date(isoString)).toLocaleTimeString(
+        locale,
+        { hour: '2-digit', minute: '2-digit' }
+    );
+    return isoToRelativeDate(isoString) + ', ' + timeStr;
+}
+
 export function startOfWeek(date) {
     const startOfWeek = date ? new Date(date) : new Date();
     startOfWeek.setDate(startOfWeek.getDate() - (startOfWeek.getDay() + 6) % 7);
