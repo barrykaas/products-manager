@@ -54,7 +54,7 @@ export default function ReceiptForm({ initialValues = {}, onSuccessfulCreateEdit
     const mutateList = useApiMutation({
         queryKey: [apiLocations.receipts],
         onSuccess: (response) => {
-            const newList = response.data;
+            const newList = response;
             onSuccessfulCreateEdit(newList);
         }
     }).mutate;
