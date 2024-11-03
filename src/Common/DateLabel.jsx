@@ -11,6 +11,7 @@ export default function DateLabel({ created, modified }) {
         <Stack
             direction="row"
             spacing={1}
+            overflow="scroll"
         >
             {created &&
                 <Chip
