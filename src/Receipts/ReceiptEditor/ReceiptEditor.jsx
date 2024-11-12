@@ -32,7 +32,7 @@ export default function ReceiptEditor({ receiptId }) {
     const onCheckAll = (state) => setSelection(state ? [...allItemIds] : []);
 
     const handleNewItem = (listItem) => {
-        listItem.list = receiptId;
+        listItem.receipt = receiptId;
         listItem.event = currentEvent;
         mutateListItem(listItem);
     };

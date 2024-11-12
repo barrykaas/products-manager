@@ -21,7 +21,7 @@ import ProductCard from "../../Products/ProductCard";
 
 export default function ReceiptItemRow({ item, selected, setSelected, setCurrentEvent }) {
     const [{ nerdInfo }] = useSettings();
-    const receiptId = item.list;
+    const receiptId = item.receipt;
     const mutateListItem = useApiMutation({
         queryKey: [apiLocations.receipts, receiptId, 'items']
     }).mutate;
@@ -136,7 +136,7 @@ function ReceiptItemDescription({ item }) {
 
 function ScalarQuantityField({ item }) {
     const mutateListItem = useApiMutation({
-        queryKey: [apiLocations.receipts, item.list, 'items']
+        queryKey: [apiLocations.receipts, item.receipt, 'items']
     }).mutate;
     const [input, setInput] = useState(item.quantity);
 
@@ -166,7 +166,7 @@ function ScalarQuantityField({ item }) {
 
 function DiscreteQuantityField({ item, showButtons }) {
     const mutateListItem = useApiMutation({
-        queryKey: [apiLocations.receipts, item.list, 'items']
+        queryKey: [apiLocations.receipts, item.receipt, 'items']
     }).mutate;
     const [input, setInput] = useState(Number(item.quantity));
 
@@ -231,7 +231,7 @@ function EventPicker({ receiptItem, setCurrentEvent, showText = true }) {
     const [hover, setHover] = useState(false);
     const [eventPickerOpen, setEventPickerOpen] = useState(false);
     const mutateListItem = useApiMutation({
-        queryKey: [apiLocations.receipts, receiptItem.list, 'items']
+        queryKey: [apiLocations.receipts, receiptItem.receipt, 'items']
     }).mutate;
 
     const handleSelectedEvent = (event) => mutateListItem({
@@ -328,7 +328,7 @@ function ProductInfo({ productId }) {
 function ReplaceProductButton({ listItem }) {
     const [pickerOpen, setPickerOpen] = useState(false);
     const updateListItem = useReceiptItemMutation({
-        queryKey: [apiLocations.receipts, listItem.list, 'items'],
+        queryKey: [apiLocations.receipts, listItem.receipt, 'items'],
         onSuccess: () => setPickerOpen(false)
     }).mutate;
     const hasProduct = Boolean(listItem?.product);

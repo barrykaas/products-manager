@@ -95,12 +95,6 @@ export function useListDeleter({ onSuccess, onError } = {}) {
     return deleteMutation.mutate;
 }
 
-export function useListItems({ listId, eventId, params = {} } = {}) {
-    if (listId) params.list = listId;
-    if (eventId) params.event = eventId;
-    return useQuery({ queryKey: [listItemsQueryKey, null, params] })
-}
-
 
 export function useListItemMutator({ onSuccess, onError } = {}) {
     const queryClient = useQueryClient();
