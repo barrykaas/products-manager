@@ -1,11 +1,15 @@
 import { useQueryClient } from "@tanstack/react-query";
 
-import { apiLocations, useApiMutation } from "../Api/Common";
+import { useApiMutation } from "../Api/Common";
+import { useModelInstance } from "../Common/api";
 
+
+export const receiptsQueryKey = 'receipts';
+export const receiptItemsQueryKey = 'receipt_items';
 
 export function useReceiptItemMutation({ receiptId, onSuccess, ...props }) {
     const queryClient = useQueryClient();
-    const queryKey = [apiLocations.receipts, receiptId, 'items'];
+    const queryKey = [receiptsQueryKey, receiptId, 'items'];
     return useApiMutation({
         queryKey,
         onSuccess: (...args) => {
@@ -15,3 +19,5 @@ export function useReceiptItemMutation({ receiptId, onSuccess, ...props }) {
         ...props
     })
 }
+
+export const useReceipt = (id) => useModelInstance(receiptsQueryKey, id);

@@ -49,6 +49,7 @@ export default function ScannedItemsList({ selectBarcode, disableKnownProducts =
     <InfiniteList onMore={fetchNextPage} hasMore={hasNextPage}
       isLoading={isFetching || isFetchingNextPage}
       error={isError ? error : null}
+      sx={{ width: 1 }}
     >
       {scannedItemsData.map((item) => (
         <Fragment key={item.id}>

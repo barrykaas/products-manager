@@ -28,6 +28,7 @@ export default function ProductsList({ handleEdit, handleSelectedProduct, search
     <InfiniteList onMore={fetchNextPage} hasMore={hasNextPage}
       isLoading={isFetching || isFetchingNextPage}
       error={isError ? error : null}
+      sx={{ width: 1 }}
     >
       {productsData.map((item) => (
         <Fragment key={item.id}>

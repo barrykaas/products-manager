@@ -8,6 +8,7 @@ import { weeksAhead } from "../Helpers/dateTime";
 import EventCard from "./EventCard";
 import { apiLocations, usePaginatedQuery } from "../Api/Common";
 import { searchParamsToObject } from "../Helpers/searchParams";
+import { partition } from "../Helpers/arrays";
 
 
 export function EventsListItem({ item, onEdit, onSelect, linkTo, ...props }) {
@@ -22,6 +23,7 @@ export function EventsListItem({ item, onEdit, onSelect, linkTo, ...props }) {
             secondaryAction={secondaryAction}
             disablePadding
             divider
+            sx={{ width: 1 }}
         >
             <ListItemButton
                 onClick={onSelect}
@@ -60,58 +62,58 @@ export default function EventsList({ handleEditEvent, handleSelectedEvent, getLi
         ItemProps = () => ItemProps;
     }
 
-    // TODO: fix subheaders
     const allEvents = data?.pages.flatMap((page) => page.results) || [];
-    const groupedEvents = allEvents.reduce((grouped, event) => {
-        const weeks = weeksAhead(event.date);
-        let id;
-        if (!event.date) {
-            id = "Geen datum";
-        } else if (weeks > 2) {
-            id = "Over meer dan twee weken";
-        } else if (weeks === 2) {
-            id = "Over twee weken";
-        } else if (weeks === 1) {
-            id = "Volgende week";
-        } else if (weeks === 0) {
-            id = "Deze week";
-        } else if (weeks === -1) {
-            id = "Vorige week";
-        } else if (weeks === -2) {
-            id = "Twee weken geleden";
-        } else if (weeks < -2) {
-            id = "Meer dan twee weken geleden";
-        }
-        if (grouped[id]) {
-            grouped[id].push(event);
-        } else {
-            grouped[id] = [event];
-        }
-        return grouped;
-    }, {});
+    const groupedEvents = partition(
+        allEvents,
+        (eventA, eventB) => timePeriod(eventA.date) === timePeriod(eventB.date)
+    );
 
     return (
         <InfiniteList onMore={fetchNextPage} hasMore={hasNextPage}
             isLoading={isFetching || isFetchingNextPage}
             error={isError ? error : null}
-            ListProps={{ subheader: (<li />) }}
+            subheader={<li />}
+            sx={{ width: 1 }}
         >
-            {Object.keys(groupedEvents).map((period, index) => (
-                <li key={`section-${index}`}>
-                    <ul>
-                        <ListSubheader disableSticky component={Paper}>{period}</ListSubheader>
-                        {groupedEvents[period].map((item) => (
-                            <Fragment key={item.id}>
-                                <EventsListItem item={item}
-                                    onSelect={handleSelectedEvent && (() => handleSelectedEvent(item))}
-                                    onEdit={handleEditEvent && (() => handleEditEvent(item))}
-                                    linkTo={!handleSelectedEvent && getLinkTo(item)}
-                                />
-                            </Fragment>
-                        ))}
-                    </ul>
-                </li>
-            ))}
+            {groupedEvents.map(events =>
+                <Fragment key={`section-${events[0].id}`}>
+                    <ListSubheader disableSticky component={Paper} >
+                        {timePeriod(events[0].date)}
+                    </ListSubheader>
+                    {events.map(event =>
+                        <Fragment key={event.id}>
+                            <EventsListItem item={event}
+                                onSelect={handleSelectedEvent && (() => handleSelectedEvent(event))}
+                                onEdit={handleEditEvent && (() => handleEditEvent(event))}
+                                linkTo={!handleSelectedEvent && getLinkTo(event)}
+                            />
+                        </Fragment>
+                    )}
+                </Fragment>
+            )}
         </InfiniteList>
     );
 };
+
+function timePeriod(date) {
+    const weeks = weeksAhead(date);
+    let id;
+    if (!date) {
+        id = "Geen datum";
+    } else if (weeks > 2) {
+        id = "Over meer dan twee weken";
+    } else if (weeks === 2) {
+        id = "Over twee weken";
+    } else if (weeks === 1) {
+        id = "Volgende week";
+    } else if (weeks === 0) {
+        id = "Deze week";
+    } else if (weeks === -1) {
+        id = "Vorige week";
+    } else if (weeks === -2) {
+        id = "Twee weken geleden";
+    } else if (weeks < -2) {
+        id = "Meer dan twee weken geleden";
+    }
+    return id;
+}

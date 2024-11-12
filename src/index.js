@@ -29,6 +29,7 @@ import SettingsPage from "./Settings/SettingsPage";
 import ReceiptView from './Receipts/ReceiptView';
 import EventFormView from './Events/EventFormView';
 import Dashboard from './Dashboard';
+import ReceiptItemsView from './Receipts/ReceiptItemsView';
 
 
 const darkTheme = createTheme({
@@ -110,6 +111,10 @@ const router = createBrowserRouter([
       {
         path: "settings",
         element: <SettingsPage />
+      },
+      {
+        path: "receipt-items",
+        element: <ReceiptItemsView />
       },
     ]
   },

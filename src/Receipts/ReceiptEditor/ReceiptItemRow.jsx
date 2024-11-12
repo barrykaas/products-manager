@@ -17,6 +17,7 @@ import IdLabel from "../../Common/IdLabel";
 import EventCard from "../../Events/EventCard";
 import { apiLocations, useApiMutation } from "../../Api/Common";
 import { useReceiptItemMutation } from "../api";
+import ProductCard from "../../Products/ProductCard";
 
 
 export default function ReceiptItemRow({ item, selected, setSelected, setCurrentEvent }) {
@@ -298,25 +299,6 @@ function EventPicker({ receiptItem, setCurrentEvent, showText = true }) {
     );
 }
 
-export function BrandLabel({ brandId, ...props }) {
-    const { isLoading, data } = useQuery({
-        queryKey: [apiLocations.brands, brandId],
-        enabled: !!brandId
-    });
-    const brand = data;
-
-    if (!brandId) return;
-
-    return (
-        <Typography {...props}>
-            {isLoading ?
-                <Skeleton />
-                : brand.name
-            }
-        </Typography>
-    );
-}
-
 function ProductInfo({ productId }) {
     const { isLoading, isError, error, data } = useQuery({
         queryKey: [apiLocations.products, productId]
@@ -329,25 +311,10 @@ function ProductInfo({ productId }) {
 
     return (
         <>
-            <Stack
+            <ProductCard
+                productId={productId}
                 onClick={() => setEditorOpen(true)}
-                sx={{ width: 1 }}
-            >
-                <BrandLabel
-                    brandId={product?.brand}
-                    variant="subtitle2"
-                    color="text.secondary"
-                />
-                <Typography>
-                    {isLoading ?
-                        <Skeleton />
-                        :
-                        <ProductTooltip product={product}>
-                            {product.name}
-                        </ProductTooltip>
-                    }
-                </Typography>
-            </Stack>
+            />
 
             <ProductFormDialog
                 initialValues={product}

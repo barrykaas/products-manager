@@ -5,7 +5,7 @@ import { formatEuro } from "../Helpers/monetary";
 import { productQuantityDescription } from "../Helpers/productQuantity";
 import { useSettings } from "../Settings/settings";
 import IdLabel from "../Common/IdLabel";
-import { BrandLabel } from "../Receipts/ReceiptEditor/ReceiptItemRow";
+import BrandLabel from "../Brands/BrandLabel";
 import { formatUnitPrice } from "./friendlyInfo";
 
 

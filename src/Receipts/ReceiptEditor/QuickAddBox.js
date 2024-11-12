@@ -8,7 +8,7 @@ import { getWords } from '../../Helpers/strings';
 import { isInteger, isNumber, roundDigits } from '../../Helpers/numbers';
 import { formatEuro } from '../../Helpers/monetary';
 import { apiLocations } from '../../Api/Common';
-import { BrandLabel } from './ReceiptItemRow';
+import BrandLabel from '../../Brands/BrandLabel';
 import { productQuantityDescription } from '../../Helpers/productQuantity';
 
 

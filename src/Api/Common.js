@@ -11,6 +11,8 @@ export const apiLocations = {
     scannedItems: 'scanned_items',
     balance: 'balance',
     persons: 'persons',
+    receiptItems: 'receipt_items',
+    markets: 'markets',
 }
 
 export function useInvalidator(queryKey) {

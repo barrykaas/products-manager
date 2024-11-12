@@ -21,7 +21,11 @@ export default function ControllerView({ children, title, onClose, onBack, onAdd
                 handleNewSearch={handleNewSearch}
             />
 
-            <Container disableGutters maxWidth={maxWidth}>
+            <Container
+                disableGutters
+                maxWidth={maxWidth}
+                sx={{ pb: 20 }}
+            >
                 {children}
             </Container>
 

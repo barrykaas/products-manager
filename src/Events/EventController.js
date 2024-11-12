@@ -19,7 +19,7 @@ const filterOptions = [
             date: 'Datum',
             date_created: 'Datum gecreëerd',
             list_count: 'Aantal bonnetjes/lijsten',
-            total: 'Totaalbedrag',
+            'total,id': 'Totaalbedrag',
         }
     },
     {

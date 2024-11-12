@@ -12,6 +12,7 @@ import { useSettings } from "../../Settings/settings";
 import IdLabel from "../../Common/IdLabel";
 import { apiLocations, usePaginatedQuery } from "../../Api/Common";
 import { searchParamsToObject } from "../../Helpers/searchParams";
+import { useMarket } from "../../Markets/api";
 
 
 export function ReceiptsListItem({ item, onSelect, linkTo, ...props }) {
@@ -31,8 +32,6 @@ export function ReceiptsListItem({ item, onSelect, linkTo, ...props }) {
     `${item.item_count} items`,
   ];
 
-  const market = getMarket(item.market);
-
   return (
     <ListItemButton alignItems="flex-start" divider
       onClick={onSelect}
@@ -41,7 +40,7 @@ export function ReceiptsListItem({ item, onSelect, linkTo, ...props }) {
       {...props}
     >
       <ListItemAvatar>
-        <ReceiptAvatar payerId={item.payer} market={market} />
+        <ReceiptAvatar payerId={item.payer} marketId={item.market} />
       </ListItemAvatar>
       <ListItemText
         primary={
@@ -75,11 +74,11 @@ export default function ReceiptsList({ onSelectItem, searchQuery }) {
     fetchNextPage
   } = usePaginatedQuery({
     queryKey: [apiLocations.receipts,
-      {
-        search: searchQuery,
-        page_size: 20,
-        ...searchParamsToObject(searchParams)
-      }
+    {
+      search: searchQuery,
+      page_size: 20,
+      ...searchParamsToObject(searchParams)
+    }
     ]
   });
 
@@ -89,6 +88,7 @@ export default function ReceiptsList({ onSelectItem, searchQuery }) {
     <InfiniteList onMore={fetchNextPage} hasMore={hasNextPage}
       isLoading={isFetching || isFetchingNextPage}
       error={isError ? error : null}
+      sx={{ width: 1 }}
     >
       {allReceipts.map((item) => (
         <Fragment key={item.id}>
@@ -99,11 +99,11 @@ export default function ReceiptsList({ onSelectItem, searchQuery }) {
       ))}
     </InfiniteList>
   );
-
 }
 
+export function ReceiptAvatar({ payerId, marketId }) {
+  const market = useMarket(marketId).data;
 
-function ReceiptAvatar({ payerId, market }) {
   if (!payerId) return;
 
   return (
