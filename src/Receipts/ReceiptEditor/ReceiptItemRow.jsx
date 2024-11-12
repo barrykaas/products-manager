@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Checkbox, Icon, IconButton, InputAdornment, Skeleton, Stack, TableCell, TableRow, TextField, Tooltip, Typography } from "@mui/material";
+import { Box, Checkbox, Icon, IconButton, InputAdornment, Stack, TableCell, TableRow, TextField, Tooltip } from "@mui/material";
 import { AddCircle, FindReplace, RemoveCircle } from "@mui/icons-material";
 import { useQuery } from "@tanstack/react-query";
 
@@ -9,7 +9,6 @@ import EventController from "../../Events/EventController";
 import DeleteButton from "../../Common/DeleteButton";
 import CurrencyField from "../../Common/CurrencyField";
 import ChooseEventButton from "../../Common/ChooseEventButton";
-import ProductTooltip from "../../Products/ProductTooltip";
 import { ProductFormDialog } from "../../Products/ProductsForm";
 import ProductPicker from "../../Products/ProductPicker";
 import { useSettings } from "../../Settings/settings";
@@ -300,7 +299,7 @@ function EventPicker({ receiptItem, setCurrentEvent, showText = true }) {
 }
 
 function ProductInfo({ productId }) {
-    const { isLoading, isError, error, data } = useQuery({
+    const { isError, error, data } = useQuery({
         queryKey: [apiLocations.products, productId]
     });
     const product = data;
