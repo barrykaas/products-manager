@@ -11,6 +11,7 @@ import ChooseEventButton from "../../Common/ChooseEventButton";
 import { formatEuro } from "../../Helpers/monetary";
 import { apiLocations, useApiDeleter, useApiMutation } from "../../Api/Common";
 import { useReceiptItems } from "../../Api/receipts";
+import ProductPicker from "../../Products/ProductPicker";
 
 
 export default function ReceiptEditor({ receiptId }) {
@@ -22,6 +23,8 @@ export default function ReceiptEditor({ receiptId }) {
 
     const [selection, setSelection] = useState([]);
     const [currentEvent, setCurrentEvent] = useState();
+    const [itemPickingProduct, setItemPickingProduct] = useState();
+    const [initialProductSearch, setInitialProductSearch] = useState('');
 
     const receipt = receiptQuery.data;
 
@@ -37,90 +40,111 @@ export default function ReceiptEditor({ receiptId }) {
         mutateListItem(listItem);
     };
 
+    const onReplaceProduct = (receiptItem) => {
+        setInitialProductSearch(receiptItem.description || '');
+        setItemPickingProduct(receiptItem.id);
+    };
+    const handleSelectedProduct = (product) => mutateListItem({
+        id: itemPickingProduct,
+        product: product.id
+    }, {
+        onSuccess: () => setItemPickingProduct(null)
+    });
+
     return (
-        <TableContainer component={Paper} sx={{ my: 2 }}>
-            <Box sx={{ height: '4rem', m: 1 }}>
-                {someChecked &&
-                    <SelectedActions
-                        receiptId={receiptId}
-                        selection={selection}
-                        clearSelection={() => setSelection([])}
-                    />
-                }
-                {
-                    someChecked ||
-                    <QuickAddBox
-                        handleListItem={handleNewItem}
-                        marketId={receipt?.market}
-                    />
-                }
-            </Box>
-            <Table size="small">
-                <TableHead>
-                    <TableRow>
-                        <TableCell padding="checkbox">
-                            <Checkbox
-                                checked={someChecked}
-                                indeterminate={selection.length < allItemIds.length && someChecked}
-                                onChange={(event) => onCheckAll(event.target.checked)}
-                            />
-                        </TableCell>
-                        <TableCell>
-                            Aantal
-                        </TableCell>
-                        <TableCell>
-                            Omschrijving
-                        </TableCell>
-                        <TableCell>
-                            Prijs
-                        </TableCell>
-                        <TableCell>
-                            Bedrag
-                        </TableCell>
-                        <TableCell>
-                            Event
-                        </TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody >
-                    {allItems.map(item =>
-                        <Fragment key={item.id}>
-                            <ReceiptItemRow
-                                item={item}
-                                selected={selection.includes(item.id)}
-                                setSelected={(state) => {
-                                    const newSelection = [...selection];
-                                    if (state) {
-                                        newSelection.push(item.id);
-                                    } else {
-                                        const ind = newSelection.indexOf(item.id);
-                                        newSelection.splice(ind, 1);
-                                    }
-                                    setSelection(newSelection);
-                                }}
-                                setCurrentEvent={setCurrentEvent}
-                            />
-                        </Fragment>
-                    )}
-                </TableBody>
-                <TableFooter>
-                    <TableRow>
-                        <TableCell colSpan={3} />
-                        <TableCell>
-                            <Typography textAlign="end">
-                                Totaal
-                            </Typography>
-                        </TableCell>
-                        <TableCell>
-                            <Typography >
-                                {formatEuro(receiptTotal)}
-                            </Typography>
-                        </TableCell>
-                        <TableCell />
-                    </TableRow>
-                </TableFooter>
-            </Table>
-        </TableContainer>
+        <>
+            <TableContainer component={Paper} sx={{ my: 2 }}>
+                <Box sx={{ height: '4rem', m: 1 }}>
+                    {someChecked &&
+                        <SelectedActions
+                            receiptId={receiptId}
+                            selection={selection}
+                            clearSelection={() => setSelection([])}
+                        />
+                    }
+                    {
+                        someChecked ||
+                        <QuickAddBox
+                            handleListItem={handleNewItem}
+                            marketId={receipt?.market}
+                        />
+                    }
+                </Box>
+                <Table size="small">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell padding="checkbox">
+                                <Checkbox
+                                    checked={someChecked}
+                                    indeterminate={selection.length < allItemIds.length && someChecked}
+                                    onChange={(event) => onCheckAll(event.target.checked)}
+                                />
+                            </TableCell>
+                            <TableCell>
+                                Aantal
+                            </TableCell>
+                            <TableCell>
+                                Omschrijving
+                            </TableCell>
+                            <TableCell>
+                                Prijs
+                            </TableCell>
+                            <TableCell>
+                                Bedrag
+                            </TableCell>
+                            <TableCell>
+                                Event
+                            </TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody >
+                        {allItems.map(item =>
+                            <Fragment key={item.id}>
+                                <ReceiptItemRow
+                                    item={item}
+                                    selected={selection.includes(item.id)}
+                                    setSelected={(state) => {
+                                        const newSelection = [...selection];
+                                        if (state) {
+                                            newSelection.push(item.id);
+                                        } else {
+                                            const ind = newSelection.indexOf(item.id);
+                                            newSelection.splice(ind, 1);
+                                        }
+                                        setSelection(newSelection);
+                                    }}
+                                    setCurrentEvent={setCurrentEvent}
+                                    onReplaceProduct={onReplaceProduct}
+                                />
+                            </Fragment>
+                        )}
+                    </TableBody>
+                    <TableFooter>
+                        <TableRow>
+                            <TableCell colSpan={3} />
+                            <TableCell>
+                                <Typography textAlign="end">
+                                    Totaal
+                                </Typography>
+                            </TableCell>
+                            <TableCell>
+                                <Typography >
+                                    {formatEuro(receiptTotal)}
+                                </Typography>
+                            </TableCell>
+                            <TableCell />
+                        </TableRow>
+                    </TableFooter>
+                </Table>
+            </TableContainer>
+
+            <ProductPicker
+                handleSelectedProduct={handleSelectedProduct}
+                open={!!itemPickingProduct}
+                onClose={() => setItemPickingProduct(null)}
+                initialParams={{ search: initialProductSearch }}
+            />
+        </>
     );
 }
 

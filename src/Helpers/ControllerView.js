@@ -24,7 +24,10 @@ export default function ControllerView({ children, title, onClose, onBack, onAdd
             <Container
                 disableGutters
                 maxWidth={maxWidth}
-                sx={{ pb: 20 }}
+                sx={{
+                    pb: 20,
+                    bgcolor: 'background.paper'
+                }}
             >
                 {children}
             </Container>

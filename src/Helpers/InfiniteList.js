@@ -1,4 +1,4 @@
-import { List, CircularProgress, Button, Box, Stack } from "@mui/material";
+import { List, CircularProgress, Button, Stack } from "@mui/material";
 
 
 export default function InfiniteList({ onMore, hasMore, isLoading, error, children, ...props }) {

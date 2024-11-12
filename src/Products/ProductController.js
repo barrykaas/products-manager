@@ -30,13 +30,13 @@ const filterOptions = [
 ];
 
 
-export default function ProductController({ handleSelectedProduct, onClose, onMenu }) {
+export default function ProductController({ handleSelectedProduct, onClose, onMenu, initialParams }) {
     const [currentProduct, setCurrentProduct] = useState(null);
     const [messageOpen, setMessageOpen] = useState(false);
     const [messageText, setMessageText] = useState("");
     const [messageState] = useState(true);
     const [editOpen, setEditOpen] = useState(false);
-    const [searchParams, setSearchParams] = useLocalSearchParams(!!onClose);
+    const [searchParams, setSearchParams] = useLocalSearchParams(!!onClose, initialParams);
     const [filterOpen, setFilterOpen] = useState(false);
 
     const invalidateProducts = useProductsInvalidator();

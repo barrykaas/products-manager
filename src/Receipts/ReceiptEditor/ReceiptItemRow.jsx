@@ -10,16 +10,14 @@ import DeleteButton from "../../Common/DeleteButton";
 import CurrencyField from "../../Common/CurrencyField";
 import ChooseEventButton from "../../Common/ChooseEventButton";
 import { ProductFormDialog } from "../../Products/ProductsForm";
-import ProductPicker from "../../Products/ProductPicker";
 import { useSettings } from "../../Settings/settings";
 import IdLabel from "../../Common/IdLabel";
 import EventCard from "../../Events/EventCard";
 import { apiLocations, useApiMutation } from "../../Api/Common";
-import { useReceiptItemMutation } from "../api";
 import ProductCard from "../../Products/ProductCard";
 
 
-export default function ReceiptItemRow({ item, selected, setSelected, setCurrentEvent }) {
+export default function ReceiptItemRow({ item, selected, setSelected, setCurrentEvent, onReplaceProduct }) {
     const [{ nerdInfo }] = useSettings();
     const receiptId = item.receipt;
     const mutateListItem = useApiMutation({
@@ -69,7 +67,9 @@ export default function ReceiptItemRow({ item, selected, setSelected, setCurrent
                         }
                     </Box>
                     {hover ?
-                        <ReplaceProductButton listItem={item} />
+                        <ReplaceProductButton listItem={item}
+                            onClick={() => onReplaceProduct(item)}
+                        />
                         : <Icon />
                     }
                 </Stack>
@@ -325,36 +325,15 @@ function ProductInfo({ productId }) {
     );
 }
 
-function ReplaceProductButton({ listItem }) {
-    const [pickerOpen, setPickerOpen] = useState(false);
-    const updateListItem = useReceiptItemMutation({
-        queryKey: [apiLocations.receipts, listItem.receipt, 'items'],
-        onSuccess: () => setPickerOpen(false)
-    }).mutate;
-    const hasProduct = Boolean(listItem?.product);
-
-    const onClick = () => setPickerOpen(true);
-
-    const handleNewProduct = (product) => updateListItem({
-        id: listItem.id,
-        product: product.id
-    });
-
+function ReplaceProductButton({ listItem, onClick }) {
+    const hasProduct = !!listItem?.product;
     const tooltip = hasProduct ? "Kies ander product" : "Koppel een product";
 
     return (
-        <>
-            <Tooltip title={tooltip}>
-                <IconButton onClick={onClick}>
-                    <FindReplace />
-                </IconButton>
-            </Tooltip>
-
-            <ProductPicker
-                handleSelectedProduct={handleNewProduct}
-                open={pickerOpen}
-                onClose={() => setPickerOpen(false)}
-            />
-        </>
+        <Tooltip title={tooltip}>
+            <IconButton onClick={onClick}>
+                <FindReplace />
+            </IconButton>
+        </Tooltip>
     );
 }
