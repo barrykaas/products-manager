@@ -9,7 +9,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { Balance, Dashboard, Groups, QrCode, ReceiptLong, Sell, Settings, ShoppingCart } from '@mui/icons-material';
+import { Balance, Dashboard, Groups, Payment, QrCode, ReceiptLong, Sell, Settings, ShoppingCart } from '@mui/icons-material';
 import { SwipeableDrawer } from '@mui/material';
 import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
 
@@ -47,6 +47,9 @@ const views = [
     {
         id: "scanned", title: "Gescand", icon: <QrCode />,
         refresh: true, add: true
+    },
+    {
+        id: "transactions", title: "Transacties", icon: <Payment />
     },
     { id: "settings", title: "Instellingen", icon: <Settings /> },
 ];
