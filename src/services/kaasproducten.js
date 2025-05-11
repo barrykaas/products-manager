@@ -1,5 +1,5 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { kaasproducten } from "../lib/kaasproducten";
+import { kaasproducten } from "src/lib/kaasproducten";
 
 
 async function queryFn({ queryKey, pageParam = 1 }) {
@@ -43,8 +43,8 @@ export function usePaginatedQuery({ queryKey, ...args }) {
     return useInfiniteQuery({
         queryFn,
         queryKey: kaasQueryKey(queryKey),
-        getNextPageParam: (lastPage, allPages) => lastPage.next,
-        getPreviousPageParam: (lastPage, allPages) => lastPage.previous,
+        getNextPageParam: (lastPage) => lastPage.next,
+        getPreviousPageParam: (lastPage) => lastPage.previous,
         ...args
     });
 }
@@ -58,7 +58,7 @@ export function useKaasQuery({ queryKey, ...args }) {
 }
 
 export const useModelInstance = (location, id) => useKaasQuery({
-    queryKey: [location, id],
+    queryKey: [location, Number(id)],
     enabled: !!id
 });
 
@@ -77,4 +77,36 @@ export const useKaasInvalidator = () => {
     return (...queryKeys) => queryKeys.map(kaasQueryKey).map(queryKey =>
         queryClient.invalidateQueries({ queryKey })
     );
+};
+
+export const useKaasLocationInvalidator = (location) => {
+    const kaasInvalidate = useKaasInvalidator();
+    return () => kaasInvalidate([location]);
+}
+
+export const useGenericInstanceMutation = (location, options = {}, invalidateLocations = []) => {
+    const invalidate = useKaasInvalidator();
+    return useInstanceMutation(location, {
+        ...options,
+        onSuccess: (...args) => {
+            invalidate([location], ...invalidateLocations);
+            if (options.onSuccess) options.onSuccess(...args);
+        }
+    });
+};
+
+export const useGenericInstanceDeleter = (location, options = {}, invalidateLocations = []) => {
+    const invalidate = useKaasInvalidator();
+    return useInstanceDeleter(location, {
+        ...options,
+        onSuccess: (...args) => {
+            invalidate([location], ...invalidateLocations);
+            if (options.onSuccess) options.onSuccess(...args);
+        }
+    });
+};
+
+export const getInstance = async (location, id) => {
+    const { data } = await kaasproducten.get(location + '/' + id + '/');
+    return data;
 };
